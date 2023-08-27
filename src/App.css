@@ -1,0 +1,166 @@
+@import './index.css';
+@import url('https://fonts.googleapis.com/css2?family=Borel&family=Dosis:wght@500&family=Raleway&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Borel&family=Dosis:wght@500&family=Raleway&family=Rubik:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+body{
+  @apply bg-slate-900;
+  @apply min-h-screen;
+  font-family: 'Poppins', sans-serif;
+}
+
+
+.nav-style {
+  @apply bg-slate-900;
+  font-family: 'Poppins', sans-serif;
+}
+.greeting-style{
+  font-family: 'Poppins', sans-serif;
+}
+.greeting-style.bold{
+  font-weight: 700;
+}
+.filosofi span{
+  color: #00A8FF;
+}
+.divider {
+  max-width: calc(100% - 3rem);
+}
+.slick-prev:before,
+.slick-next:before {
+  color: #00A8FF !important;
+  font-size: 1.5rem !important;
+}
+
+.certificate-card{
+  @apply bg-slate-800;
+}
+.certificate-title{
+  color: #00A8FF;
+}
+.certificate-detail span{
+  color: #00A8FF;
+}
+.article p{
+  @apply text-base;
+  @apply md:text-base;
+  @apply lg:text-lg;
+  @apply leading-loose;
+
+
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  @apply text-[#9ca3af];
+  @apply md:py-1 py-0;
+}
+.article h1,
+.article h2,
+.article h3,
+.article h4,
+.article h5,
+.article h6 {
+  @apply text-2xl;
+  @apply lg:text-3xl;
+  @apply xl:text-4xl;
+  @apply leading-loose;
+  font-family: 'Poppins', sans-serif;
+  @apply font-bold;
+  @apply text-[#00A8FF];
+  @apply md:py-1 py-0;
+}
+.article img {
+  @apply w-full;
+  @apply aspect-video;
+  @apply md:mx-auto;
+  @apply -my-7;
+  @apply rounded-lg;
+}
+.article iframe {
+  @apply w-full;
+  @apply aspect-video;
+  @apply my-3;
+  @apply md:mx-auto;
+  @apply rounded-lg;
+}
+.article video {
+  @apply w-full;
+  @apply aspect-video;
+  @apply my-3;
+  @apply md:mx-auto;
+  @apply rounded-lg;
+}
+.relevant-article-subtitle{
+  font-family: 'Dosis', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+.article-card p {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  @apply text-[#9ca3af];
+}
+.dosis-text{
+  font-family: 'Dosis';
+}
+
+.type-string-label{
+  font-family: 'Montserrat', sans-serif;
+}
+.articles-header{
+  font-family: 'Montserrat', sans-serif;
+  letter-spacing: -4px;
+}
+.extra-space-included{
+  white-space: pre-wrap;
+}
+.slick-track
+{
+    display: flex !important;
+}
+
+.slick-slide
+{
+    height: auto !important;
+}
+
+
+.slick-track {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    
+}
+.slick-track > div {
+  
+  height: 100%;
+}
+.slick-track > div > div{
+  
+  height: 100%;
+}
+.ql-editor {
+ 
+  @apply border-0;/* Warna latar belakang */
+}
+.text-editor{
+  @apply bg-white;
+  @apply border-0;
+}
+#toolbar{
+  
+  @apply border-0;
+  @apply bg-transparent;
+}
+.ql-editor img {
+  @apply aspect-video;
+  @apply lg:max-h-[300px];
+  
+  @apply rounded-md;
+}
+.ql-container.ql-snow{
+  
+   border: none !important;}
