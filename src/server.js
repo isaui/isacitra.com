@@ -34,7 +34,9 @@ db.once("open", ()=>{
 const app = express();
 const PORT = 3001;
 const corsOptions = {
-    origin: true
+    origin: ["https://isacitra-com.vercel.app/"],
+    methods:["POST","GET","DELETE"],
+    credentials: true
 }
 const sessionConfig = {
   secret: 'sipalingambisius',
@@ -51,7 +53,7 @@ const sessionConfig = {
 const resetAll = async () => {
   await User.deleteMany({})
 }
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(session(sessionConfig));
 app.use(flash());
