@@ -15,8 +15,7 @@ import AuthenticationPage from './components/authentication/authpage';
 import ProjectPage from './components/project_page/ProjectPage';
 import Dashboard from './components/dashboard/Dashboard';
 
-const BLOG_ID ='8713623556205165569';
-const API_KEY = 'AIzaSyC_SfzhQZo261Z3kBvxNEz2zY1gzKAQ274'
+
 
 function App() {
   
