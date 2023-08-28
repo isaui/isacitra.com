@@ -10,7 +10,7 @@ import ArticlesPage from './components/article/ArticlesPage';
 import SearchResult from './components/search/SearchResult';
 import PostPage from './components/post_page/PostPage';
 import ArticleManagement from './components/article_management/ArticleManagement';
-import AuthenticationPage from './components/authentication/authenticationPage';
+import AuthenticationPage from './components/authentication/authpage';
 
 import ProjectPage from './components/project_page/ProjectPage';
 import Dashboard from './components/dashboard/Dashboard';
