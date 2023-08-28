@@ -8,7 +8,6 @@ import ImageUpload from '../../components/file_upload/UploadImage'
 import AddCategoryForm from "../add_category/AddCategoryForm";
 import CategoryLabel from "../category_label/CategoryLabel";
 import axios, { formToJSON } from "axios";
-import BlogPost from "../../../models/Post";
 import { useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
