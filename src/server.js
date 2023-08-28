@@ -34,7 +34,7 @@ db.once("open", ()=>{
 const app = express();
 const PORT = 3001;
 const corsOptions = {
-    origin: ["https://isacitra-com.vercel.app/"],
+    
     methods:["POST","GET","DELETE"],
     credentials: true
 }
