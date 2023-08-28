@@ -35,8 +35,6 @@ const app = express();
 const PORT = 3001;
 const corsOptions = {
     
-    methods:["POST","GET","DELETE"],
-    credentials: true
 }
 const sessionConfig = {
   secret: 'sipalingambisius',
