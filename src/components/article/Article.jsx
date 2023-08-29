@@ -263,6 +263,7 @@ const Article =   function (){
            //console.log(JSON.parse(post.tableOfContents))
            setReady(prev=>true)
         }).catch(err => {
+            console.log(err)
             setError(prev => true)
             console.log(err)
         
