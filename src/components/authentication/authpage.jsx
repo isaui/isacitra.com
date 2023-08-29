@@ -106,7 +106,7 @@ export default function ({message='', authenticationState=''}) {
             // todo next lecture
             try {
                 
-                const res = await axios.post('https://isacitra-com-api.vercel.app/authentication/login', {username: loginData.username, password: loginData.password
+                const res = await axios.post('https://isa-citra.adaptable.app/authentication/login', {username: loginData.username, password: loginData.password
             },);
             
             //navigate(navigationTime, {state: {message: `Halo selamat datang kembali, ${loginData.username}`}})
@@ -135,7 +135,7 @@ export default function ({message='', authenticationState=''}) {
             }
             var res;
             try {
-               res = await axios.post('https://isacitra-com-api.vercel.app/authentication/register', registerData);
+               res = await axios.post('https://isa-citra.adaptable.app/authentication/register', registerData);
                const data = res.data;
              //  console.log(data)
                if(data.type === 'success'){
