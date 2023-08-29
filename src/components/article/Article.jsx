@@ -302,7 +302,7 @@ const Article =   function (){
 
 
     
-    return isError? <ErrorPage statusCode={'404'} message={'Maaf Artikel Tidak Ditemukan'}/>:<div className=" relative  w-full bg-yellow-400 ">
+    return isError? <ErrorPage statusCode={'404'} message={'Maaf Artikel Tidak Ditemukan'}/>:<div className="  w-full bg-yellow-400 ">
             <HomepageNav/> 
             <ToastContainer/>
             {post!=null && popUpAuthor &&  <ContactAuthor post={post} onClickOutside={()=> {setPopUpAuthor(false)}} notify={notify}/>}
