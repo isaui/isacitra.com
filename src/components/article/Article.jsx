@@ -302,7 +302,7 @@ const Article =   function (){
 
 
     
-    return isError? <ErrorPage statusCode={'404'} message={'Maaf Artikel Tidak Ditemukan'}/>:<div className=" bg-yellow-400 ">
+    return isError? <div className= 'bg-green-500 flex flex-col'> <ErrorPage statusCode={'404'} message={'Maaf Artikel Tidak Ditemukan'}/>:<div className=" bg-yellow-400 ">
             <HomepageNav/> 
             <ToastContainer/>
             {post!=null && popUpAuthor &&  <ContactAuthor post={post} onClickOutside={()=> {setPopUpAuthor(false)}} notify={notify}/>}
@@ -377,6 +377,7 @@ const Article =   function (){
         <Footer/>
         </div>
     </div>
+        </div>
 }
 
 export {Article, ArticlesGroupCard, ArticlesGroupCardType2, formatDateAndTime}
