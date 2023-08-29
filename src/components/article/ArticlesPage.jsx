@@ -12,7 +12,7 @@ import YoutubePlayer from "../react-yt/YtVideoPlayer";
 export default function (){
     const [articles, setArticles] = useState([]);
     useEffect(()=>{
-        axios.get('https://isacitra-com-api.vercel.app/articles').then( res => {
+        axios.get('https://isa-citra.adaptable.app/articles').then( res => {
           setArticles(res.data.articles)
 
         }).catch(err => console.log(err))
