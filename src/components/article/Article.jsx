@@ -314,7 +314,7 @@ const Article =   function (){
         <div className={` min-h-screen flex justify-center  ${isCommentOpen? 'bg-black bg-opacity-40' : ''} flex-wrap flex-col items-center w-full`}>
          <div className='mt-24 min-h-screen w-full flex flex-col items-center relative'>
         {  
-            post == null ? <div className=" absolute top-1/2 left-1/2"><Loading/></div> : <div className="  h-full w-full max-w-6xl lg:pr-4  lg:items-start items-center  lg:flex justify-center  lg:flex-row  mx-auto mb-4">
+            post == null ? <div className=" absolute top-1/2 left-1/2"><Loading/></div> : <div className="  min-h-screen flex flex-col w-full max-w-6xl lg:pr-4  lg:items-start items-center  justify-center  lg:flex-row  mb-4">
             {post == null ? <Loading/> : 
              <div className="max-w-2xl  mx-auto bg-red-600   -mb-3 w-full md:min-w-[28rem] lg:min-w-[36rem] xl:min-w-[40rem] text-ellipsis h-full pt-3 -mt-1 rounded-lg lg:max-w-2xl  min-h-screen">
                 
