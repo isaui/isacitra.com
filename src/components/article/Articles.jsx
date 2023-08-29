@@ -39,6 +39,18 @@ const ArticlesBodyPage = ({posts, categories}) => { // Data artikel Anda
         }
       }, [selectedCategory, originalArticles]);
 
+      const scrollToTop = () => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth' // Animasi smooth scrolling
+        });
+      };
+    
+      useEffect(() => {
+        // Panggil fungsi scrollToTop() saat komponen dimuat
+        scrollToTop();
+      }, []);
+
     return ( 
         <div className=" mx-auto   w-full my-2 max-w-5xl ">
             
