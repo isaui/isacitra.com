@@ -219,14 +219,14 @@ const Article =   function (){
         }
         if(post.likes.includes(user._id)) {
             const updatedLikes = post.likes.filter((userId) => userId !== user._id);
-            await axios.post('http://localhost:3001/articles/update-reaction', {likes: updatedLikes, dislikes:post.dislikes, postId: post._id, userId: user._id})
+            await axios.post('https://isacitra-com-api.vercel.app/articles/update-reaction', {likes: updatedLikes, dislikes:post.dislikes, postId: post._id, userId: user._id})
             setPost((prev)=>({...prev, likes: updatedLikes}))
             return;
         }
         const updatedLikes = [...post.likes, user._id]
         const updatedDislikes = post.dislikes.filter((userId) => userId !== user._id)
 
-        await axios.post('http://localhost:3001/articles/update-reaction', {likes: updatedLikes, dislikes:updatedDislikes, postId: post._id, userId: user._id})
+        await axios.post('https://isacitra-com-api.vercel.app/articles/update-reaction', {likes: updatedLikes, dislikes:updatedDislikes, postId: post._id, userId: user._id})
         setPost((prev) => ({ ...prev, likes: updatedLikes, dislikes:updatedDislikes }))
         
     }
@@ -238,7 +238,7 @@ const Article =   function (){
         if(post.dislikes.includes(user._id)){
             const updatedDislikes = post.dislikes.filter((userId) => userId !== user._id);
 
-            await axios.post('http://localhost:3001/articles/update-reaction', {likes: post.likes, dislikes:updatedDislikes, postId: post._id, userId: user._id})
+            await axios.post('https://isacitra-com-api.vercel.app/articles/update-reaction', {likes: post.likes, dislikes:updatedDislikes, postId: post._id, userId: user._id})
             setPost((prev)=>({...prev, dislikes: updatedDislikes }))
             
             return;
@@ -246,7 +246,7 @@ const Article =   function (){
 
         const updatedDislikes = [...post.dislikes, user._id]
         const updatedLikes = post.likes.filter((userId) => userId !== user._id)
-        await axios.post('http://localhost:3001/articles/update-reaction', {likes: updatedLikes, dislikes:updatedDislikes, postId: post._id, userId: user._id})
+        await axios.post('https://isacitra-com-api.vercel.app/articles/update-reaction', {likes: updatedLikes, dislikes:updatedDislikes, postId: post._id, userId: user._id})
         setPost((prev) => ({ ...prev, dislikes: updatedDislikes, likes:updatedLikes }))
         
     }
@@ -254,7 +254,7 @@ const Article =   function (){
     
     
     useEffect(() => {
-        axios.get(`http://localhost:3001/articles/${id}`).
+        axios.get(`https://isacitra-com-api.vercel.app/articles/${id}`).
         then((result) => {
             const {post} = result.data;
             const {relatedArticles} = result.data;
@@ -346,9 +346,9 @@ const Article =   function (){
                 
                 <div className=" flex flex-col md:flex md:flex-row lg:flex lg:flex-col justify-center items-center ">
                 <div >
-                <ShareButtons url={'http://localhost:5000/articles/'+post._id} quote={`Check out this interesting article: ${post.title}`}/>
+                <ShareButtons url={'isacitra.com/articles/'+post._id} quote={`Check out this interesting article: ${post.title}`}/>
                 </div>
-                <CopyLinkApp initialUrl={'http://localhost:5000/articles/'+post._id}/>
+                <CopyLinkApp initialUrl={'isacitra.com/articles/'+post._id}/>
                 </div>
                 
                 <div className=" mx-auto  flex flex-col w-full space-x-4 md:grid  lg:items-center md:justify-center md:grid-cols-2 lg:flex lg:flex-col items-center md:items-start justify-center">

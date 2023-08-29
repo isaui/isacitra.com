@@ -13,7 +13,7 @@ export default function () {
 
     const location = useLocation();
     useEffect(()=>{
-        axios.get('http://localhost:3001/').then( res => {
+        axios.get('https://isacitra-com-api.vercel.app/').then( res => {
           setPosts(res.data.topPicks)
         }).catch(err => console.log(err))
       }, [])

@@ -21,7 +21,7 @@ export default function () { // Edit ini untuk argument jika perlu
       };
       const searchPosts = async (searchTerm) => {
         try {
-          const response = await axios.get('http://localhost:3001/articles/search', {
+          const response = await axios.get('https://isacitra-com-api.vercel.app/articles/search', {
             params: { searchTerm },
           });
       
