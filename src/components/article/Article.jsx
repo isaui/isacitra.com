@@ -254,7 +254,7 @@ const Article =   function (){
     
     
     useEffect(() => {
-        axios.get(`https://https://isa-citra.adaptable.app/articles/${id}`).
+        axios.get(`https://isa-citra.adaptable.app/articles/${id}`).
         then((result) => {
             const {post} = result.data;
             const {relatedArticles} = result.data;
