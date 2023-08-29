@@ -302,7 +302,7 @@ const Article =   function (){
 
 
     
-    return isError? <ErrorPage statusCode={'404'} message={'Maaf Artikel Tidak Ditemukan'}/>:<div className="  w-full bg-yellow-400 ">
+    return isError? <ErrorPage statusCode={'404'} message={'Maaf Artikel Tidak Ditemukan'}/>:<div className=" bg-yellow-400 ">
             <HomepageNav/> 
             <ToastContainer/>
             {post!=null && popUpAuthor &&  <ContactAuthor post={post} onClickOutside={()=> {setPopUpAuthor(false)}} notify={notify}/>}
@@ -349,7 +349,7 @@ const Article =   function (){
                 <div >
                 <ShareButtons url={'isacitra.com/articles/'+post._id} quote={`Check out this interesting article: ${post.title}`}/>
                 </div>
-                
+                <CopyLinkApp initialUrl={'isacitra.com/articles/'+post._id}/>
                 </div>
                 
                 <div className=" mx-auto  flex flex-col w-full space-x-4 md:grid  lg:items-center md:justify-center md:grid-cols-2 lg:flex lg:flex-col items-center md:items-start justify-center">
