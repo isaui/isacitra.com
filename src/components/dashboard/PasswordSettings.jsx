@@ -14,7 +14,7 @@ const PasswordSettings = () => {
     if (newPassword === confirmPassword) {
       // Update password logic
       try {
-        const res = await axios.post('https://isacitra-com-api.vercel.app/authentication/changePassword', {password: currentPassword, username: user.username, newPassword: newPassword})
+        const res = await axios.post('https://isa-citra.adaptable.app/authentication/changePassword', {password: currentPassword, username: user.username, newPassword: newPassword})
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('')
