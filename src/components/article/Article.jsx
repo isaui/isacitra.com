@@ -219,14 +219,14 @@ const Article =   function (){
         }
         if(post.likes.includes(user._id)) {
             const updatedLikes = post.likes.filter((userId) => userId !== user._id);
-            await axios.post('https://isacitra-com-api.vercel.app/articles/update-reaction', {likes: updatedLikes, dislikes:post.dislikes, postId: post._id, userId: user._id})
+            await axios.post('https://isa-citra.adaptable.app/articles/update-reaction', {likes: updatedLikes, dislikes:post.dislikes, postId: post._id, userId: user._id})
             setPost((prev)=>({...prev, likes: updatedLikes}))
             return;
         }
         const updatedLikes = [...post.likes, user._id]
         const updatedDislikes = post.dislikes.filter((userId) => userId !== user._id)
 
-        await axios.post('https://isacitra-com-api.vercel.app/articles/update-reaction', {likes: updatedLikes, dislikes:updatedDislikes, postId: post._id, userId: user._id})
+        await axios.post('https://isa-citra.adaptable.app/articles/update-reaction', {likes: updatedLikes, dislikes:updatedDislikes, postId: post._id, userId: user._id})
         setPost((prev) => ({ ...prev, likes: updatedLikes, dislikes:updatedDislikes }))
         
     }
@@ -238,7 +238,7 @@ const Article =   function (){
         if(post.dislikes.includes(user._id)){
             const updatedDislikes = post.dislikes.filter((userId) => userId !== user._id);
 
-            await axios.post('https://isacitra-com-api.vercel.app/articles/update-reaction', {likes: post.likes, dislikes:updatedDislikes, postId: post._id, userId: user._id})
+            await axios.post('https://isa-citra.adaptable.app/articles/update-reaction', {likes: post.likes, dislikes:updatedDislikes, postId: post._id, userId: user._id})
             setPost((prev)=>({...prev, dislikes: updatedDislikes }))
             
             return;
@@ -246,7 +246,7 @@ const Article =   function (){
 
         const updatedDislikes = [...post.dislikes, user._id]
         const updatedLikes = post.likes.filter((userId) => userId !== user._id)
-        await axios.post('https://isacitra-com-api.vercel.app/articles/update-reaction', {likes: updatedLikes, dislikes:updatedDislikes, postId: post._id, userId: user._id})
+        await axios.post('https://isa-citra.adaptable.app/articles/update-reaction', {likes: updatedLikes, dislikes:updatedDislikes, postId: post._id, userId: user._id})
         setPost((prev) => ({ ...prev, dislikes: updatedDislikes, likes:updatedLikes }))
         
     }
@@ -254,7 +254,7 @@ const Article =   function (){
     
     
     useEffect(() => {
-        axios.get(`https://isacitra-com-api.vercel.app/articles/${id}`).
+        axios.get(`https://https://isa-citra.adaptable.app/articles/${id}`).
         then((result) => {
             const {post} = result.data;
             const {relatedArticles} = result.data;
