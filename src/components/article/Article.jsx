@@ -254,7 +254,7 @@ const Article =   function (){
     
     
     useEffect(() => {
-        axios.get(`http://localhost:3001/articles/${id}`).
+        axios.get(`https://isacitra-com-api.vercel.app/articles/${id}`).
         then((result) => {
             const {post} = result.data;
             const {relatedArticles} = result.data;
