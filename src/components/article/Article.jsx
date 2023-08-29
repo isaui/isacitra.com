@@ -343,7 +343,7 @@ const Article =   function (){
              </div>
             }
             <div className="mx-auto w-full  lg:max-w-xs max-w-3xl">
-            <div className="  py-3 h-min  flex flex-col items-center justify-center space-y-4  md:mb-auto md:min-h-[150px] rounded-lg w-full mx-auto md:mr-4 md:ml-0 my-8 md:mt-0">
+            <div className=" bg-blue-400  py-3 h-min  flex flex-col items-center justify-center space-y-4  md:mb-auto md:min-h-[150px] rounded-lg w-full mx-auto md:mr-4 md:ml-0 my-8 md:mt-0">
                 
                 <div className=" flex flex-col md:flex md:flex-row lg:flex lg:flex-col justify-center items-center ">
                 <div >
