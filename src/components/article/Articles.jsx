@@ -78,10 +78,8 @@ const ArticlesBodyPage = ({posts, categories}) => { // Data artikel Anda
                 </div>
             
             <div className="md:mt-3 mt-4 ml-2 ">
-                <HashtagListToggler categories={['Semua', 'Kampus', 'Opini', 'Teknologi','Review']}/>
+                <HashtagListToggler onClick={setCategory} selectedValue={selectedCategory} categories={kategori}/>
             </div>
-           
-                
             
             </div>
 

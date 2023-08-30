@@ -39,6 +39,7 @@ const HashtagBox = ({ hashtag, color='bg-slate-900', }) => {
       <div>
         {categories.map((category, index) => (
           <HashtagBox color={' bg-slate-950'} key={index} hashtag={category} />
+          
         ))}
       </div>
     );
