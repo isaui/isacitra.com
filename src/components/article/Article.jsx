@@ -181,6 +181,18 @@ const Article =   function (){
     const [isCommentOpen, setCommentOpen] = useState(false);
     const [isTOCOpen, setTOC] = useState(false)
     
+    useEffect(() => {
+        const handleNavigation = () => {
+            setCommentOpen(false);
+            document.body.style.overflow = 'unset';
+        };
+
+        window.addEventListener('popstate', handleNavigation);
+
+        return () => {
+            window.removeEventListener('popstate', handleNavigation);
+        };
+    }, []);
     
 
     const toggleComment = () => {
@@ -219,15 +231,16 @@ const Article =   function (){
         }
         if(post.likes.includes(user._id)) {
             const updatedLikes = post.likes.filter((userId) => userId !== user._id);
-            await axios.post('https://isa-citra.adaptable.app/articles/update-reaction', {likes: updatedLikes, dislikes:post.dislikes, postId: post._id, userId: user._id})
             setPost((prev)=>({...prev, likes: updatedLikes}))
+            await axios.post('https://isa-citra.adaptable.app/articles/update-reaction', {likes: updatedLikes, dislikes:post.dislikes, postId: post._id, userId: user._id})
+            
             return;
         }
         const updatedLikes = [...post.likes, user._id]
         const updatedDislikes = post.dislikes.filter((userId) => userId !== user._id)
-
-        await axios.post('https://isa-citra.adaptable.app/articles/update-reaction', {likes: updatedLikes, dislikes:updatedDislikes, postId: post._id, userId: user._id})
         setPost((prev) => ({ ...prev, likes: updatedLikes, dislikes:updatedDislikes }))
+        await axios.post('https://isa-citra.adaptable.app/articles/update-reaction', {likes: updatedLikes, dislikes:updatedDislikes, postId: post._id, userId: user._id})
+        
         
     }
     const dislikePost = async () => {
@@ -237,17 +250,16 @@ const Article =   function (){
         }
         if(post.dislikes.includes(user._id)){
             const updatedDislikes = post.dislikes.filter((userId) => userId !== user._id);
-
-            await axios.post('https://isa-citra.adaptable.app/articles/update-reaction', {likes: post.likes, dislikes:updatedDislikes, postId: post._id, userId: user._id})
             setPost((prev)=>({...prev, dislikes: updatedDislikes }))
-            
+            await axios.post('https://isa-citra.adaptable.app/articles/update-reaction', {likes: post.likes, dislikes:updatedDislikes, postId: post._id, userId: user._id})
             return;
         }
 
         const updatedDislikes = [...post.dislikes, user._id]
         const updatedLikes = post.likes.filter((userId) => userId !== user._id)
-        await axios.post('https://isa-citra.adaptable.app/articles/update-reaction', {likes: updatedLikes, dislikes:updatedDislikes, postId: post._id, userId: user._id})
         setPost((prev) => ({ ...prev, dislikes: updatedDislikes, likes:updatedLikes }))
+        await axios.post('https://isa-citra.adaptable.app/articles/update-reaction', {likes: updatedLikes, dislikes:updatedDislikes, postId: post._id, userId: user._id})
+        
         
     }
 
@@ -302,7 +314,7 @@ const Article =   function (){
 
 
     
-    return isError? <div className= 'bg-green-500 flex flex-col'> <ErrorPage statusCode={'404'} message={'Maaf Artikel Tidak Ditemukan'}/>:<div className=" bg-yellow-400 ">
+    return isError?  <ErrorPage statusCode={'404'} message={'Maaf Artikel Tidak Ditemukan'}/>:<div className=" ">
             <HomepageNav/> 
             <ToastContainer/>
             {post!=null && popUpAuthor &&  <ContactAuthor post={post} onClickOutside={()=> {setPopUpAuthor(false)}} notify={notify}/>}
@@ -343,7 +355,7 @@ const Article =   function (){
              </div>
             }
             <div className="mx-auto w-full  lg:max-w-xs max-w-3xl">
-            <div className=" bg-blue-400  py-3 h-min  flex flex-col items-center justify-center space-y-4  md:mb-auto md:min-h-[150px] rounded-lg w-full mx-auto md:mr-4 md:ml-0 my-8 md:mt-0">
+            <div className="  py-3 h-min  flex flex-col items-center justify-center space-y-4  md:mb-auto md:min-h-[150px] rounded-lg w-full mx-auto md:mr-4 md:ml-0 my-8 md:mt-0">
                 
                 <div className=" flex flex-col md:flex md:flex-row lg:flex lg:flex-col justify-center items-center ">
                 <div >
@@ -377,7 +389,6 @@ const Article =   function (){
         <Footer/>
         </div>
     </div>
-        </div>
 }
 
 export {Article, ArticlesGroupCard, ArticlesGroupCardType2, formatDateAndTime}
