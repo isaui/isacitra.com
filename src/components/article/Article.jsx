@@ -181,16 +181,27 @@ const Article =   function (){
     const [isCommentOpen, setCommentOpen] = useState(false);
     const [isTOCOpen, setTOC] = useState(false)
     
-    useEffect(() => {
-        const handleNavigation = () => {
-            setCommentOpen(false);
+    const resetBodyOverflow = () => {
+        if (typeof window !== 'undefined' && window.document) {
             document.body.style.overflow = 'unset';
+        }
+    };
+
+    useEffect(() => {
+        const handleNavigation = (event) => {
+            if (event.state) {
+                if (event.state.isBackwardNavigation || event.state.isUpwardNavigation) {
+                    setCommentOpen(false);
+                    console.log('hei')
+                    resetBodyOverflow();
+                }
+            }
         };
 
-        window.addEventListener('beforeunload', handleNavigation);
+        window.addEventListener('popstate', handleNavigation);
 
         return () => {
-            window.removeEventListener('beforeunload', handleNavigation);
+            window.removeEventListener('popstate', handleNavigation);
         };
     }, []);
     
