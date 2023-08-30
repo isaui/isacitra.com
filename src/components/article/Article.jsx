@@ -223,13 +223,14 @@ const Article =   function (){
         if(isTOCOpen){
             
             setTOC(false)
-            document.body.style.overflow = 'unset';
+            //document.body.style.overflow = 'unset';
             
         } else{
             setTOC(true)
-            if (typeof window != 'undefined' && window.document) {
-                document.body.style.overflow = 'hidden';
-            }}
+           // if (typeof window != 'undefined' && window.document) {
+          //      document.body.style.overflow = 'hidden';
+            //}
+        }
     }
     
 
@@ -323,13 +324,13 @@ const Article =   function (){
 
 
     
-    return isError?  <ErrorPage statusCode={'404'} message={'Maaf Artikel Tidak Ditemukan'}/>:<div className=" ">
+    return isError?  <ErrorPage statusCode={'500'} message={'Maaf Terjadi Kesalahan Dalam Memuat Artikel'}/>:<div className=" ">
             <HomepageNav/> 
             <ToastContainer/>
             {post!=null && popUpAuthor &&  <ContactAuthor post={post} onClickOutside={()=> {setPopUpAuthor(false)}} notify={notify}/>}
             {post!=null && isTOCOpen && <><div onClick={toggleTOC} className="fixed bg-black bg-opacity-40 w-full min-h-screen z-20"><div onClick={(e)=>{
                 e.stopPropagation();
-            }}className="  fixed top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 z-30 "><TableOfContentOverlay title={'Table of Contents'} toggle={toggleTOC}tableOfContents={JSON.parse(post.tableOfContents)}/></div></div></>}
+            }}className="  fixed top-1/2 left-1/2 -translate-y-/2 -translate-x-1/2 z-30 "><TableOfContentOverlay title={'Table of Contents'} toggle={toggleTOC}tableOfContents={JSON.parse(post.tableOfContents)}/></div></div></>}
            {post!=null && <> <FloatingTabbar toggleTOC={toggleTOC}toggleComment={toggleComment} toggleLike={likePost} toggleDislike={dislikePost} post={post}/>
             <ArticleComments toggle={toggleComment} isOpen={isCommentOpen} post={post} isReady={isReady} toggleComment={toggleComment}/> </>}
         <div className={` min-h-screen flex justify-center  ${isCommentOpen? 'bg-black bg-opacity-40' : ''} flex-wrap flex-col items-center w-full`}>
