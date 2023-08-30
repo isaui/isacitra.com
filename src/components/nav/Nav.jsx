@@ -98,7 +98,7 @@ const Sidebar = ({links, closeSidebar, isSidebarOpen}) => {
     </ul>
     </div>
 
-            {user && <div className=" justify-self-end w-full px-4 mb-12">
+            {user && <div className=" justify-self-end w-full px-4 mb-16">
                 <hr className="border-t-2 border-slate-600"/>
             <button
             onClick={()=> {dispatch(logoutUser())}}

@@ -28,9 +28,9 @@ const HashtagBox = ({ hashtag, color='bg-slate-900', }) => {
   const HashtagBox2 = ({ hashtag, color='bg-slate-900', }) => {
      const styles = `inline-block ${color} px-2 py-1 mb-2 rounded-md mr-2`
       return (
-        <div  className={styles} >
+        <button  className={styles} >
           #{hashtag}
-        </div>
+        </button>
       );
     }
   
