@@ -72,7 +72,7 @@ const ArticlesBodyPage = ({posts, categories}) => { // Data artikel Anda
                 <div>
                 <div  className=" w-full mt-2 flex justify-between items-center">
                 <h1 className=" mr-4 articles-header text-4xl lg:text-5xl text-neutral-300 text-left uppercase ">Artikel Saya📰</h1>
-                <Dropdown options={[{ label: 'Terbaru', value: 'terbaru' },
+                <Dropdown onSelect={setArticles} posts={articles} options={[{ label: 'Terbaru', value: 'terbaru' },
     { label: 'Terpopuler', value: 'terpopuler' }, {label: 'Rekomendasi', value: 'rekomendasi'}]}/>
                 </div>
                 </div>
