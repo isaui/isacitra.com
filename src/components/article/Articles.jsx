@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 const ArticlesBodyPage = ({posts, categories}) => { // Data artikel Anda
     const kategori = ['Semua', 'Kampus', 'Opini', 'Teknologi','Review']
     const [selectedCategory, setCategory] = useState(kategori[0])
+    const [loading, setLoading] = useState(false)
     
     const navigate = useNavigate()
     const handleNavigate = (id) => {
@@ -20,13 +21,16 @@ const ArticlesBodyPage = ({posts, categories}) => { // Data artikel Anda
     const [articles, setArticles] = useState([]); // ini adalah artikel-artikel yang terfilter berdasarkan kategori yang dipilih
 
     useEffect(()=>{
+        setLoading(true)
         if(posts){
             //sort berdasar terbaru
             const sortedPosts = posts.slice().sort((firstPost, secondPost) =>  new Date(secondPost.lastModified) - new Date(firstPost.lastModified ) )
             setOriginalArticles(sortedPosts)
+            setLoading(false)
             return
         }
         setOriginalArticles(posts)
+        setLoading(false)
     },[posts])
 
     useEffect(() => {
@@ -93,7 +97,7 @@ const ArticlesBodyPage = ({posts, categories}) => { // Data artikel Anda
             <div className=" ">
             <Suscribe/>
             </div>
-            {articles.length == 0? <div>
+            {loading? <div><h1 className=" text-white text-base md:text-lg lg:text-2xl"> Loading...</h1> </div> : articles.length == 0? <div>
                 <h1 className=" text-white text-base md:text-lg lg:text-2xl"> Belum ada Artikel</h1>
             </div> :articles.map((article, index) => {
                 return (
