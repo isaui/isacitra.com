@@ -187,10 +187,10 @@ const Article =   function (){
             document.body.style.overflow = 'unset';
         };
 
-        window.addEventListener('popstate', handleNavigation);
+        window.addEventListener('beforeunload', handleNavigation);
 
         return () => {
-            window.removeEventListener('popstate', handleNavigation);
+            window.removeEventListener('beforeunload', handleNavigation);
         };
     }, []);
     
