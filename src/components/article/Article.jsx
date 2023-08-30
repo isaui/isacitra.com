@@ -328,7 +328,7 @@ const Article =   function (){
         {  
             post == null ? <div className=" absolute top-1/2 left-1/2"><Loading/></div> : <div className="  min-h-screen flex flex-col w-full max-w-6xl lg:pr-4  lg:items-start items-center  justify-center  lg:flex-row  mb-4">
             {post == null ? <Loading/> : 
-             <div className="max-w-2xl  mx-auto bg-red-600   -mb-3 w-full md:min-w-[28rem] lg:min-w-[36rem] xl:min-w-[40rem] text-ellipsis h-full pt-3 -mt-1 rounded-lg lg:max-w-2xl  min-h-screen">
+             <div className="max-w-2xl  mx-auto    -mb-3 w-full md:min-w-[28rem] lg:min-w-[36rem] xl:min-w-[40rem] text-ellipsis h-full pt-3 -mt-1 rounded-lg lg:max-w-2xl  min-h-screen">
                 
                 <div className="text-white  text-xl md:text-2xl h-auto lg:text-3xl px-6 md:px-3 mb-3">
                     <div className=" text-sm  h-auto  ">
