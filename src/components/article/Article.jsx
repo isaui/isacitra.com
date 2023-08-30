@@ -192,8 +192,6 @@ const Article =   function (){
             if (event.state) {
                 if (event.state.isBackwardNavigation || event.state.isUpwardNavigation) {
                     setCommentOpen(false);
-                    console.log('hei')
-                    resetBodyOverflow();
                 }
             }
         };
@@ -210,15 +208,15 @@ const Article =   function (){
         
         if(isCommentOpen){
             setCommentOpen(false)
-            document.body.style.overflow = 'unset';
+            //document.body.style.overflow = 'unset';
         }
         else{
             setCommentOpen(true)
             setTOC(false)
 
-            if (typeof window != 'undefined' && window.document) {
-                document.body.style.overflow = 'hidden';
-            }
+           // if (typeof window != 'undefined' && window.document) {
+           //     document.body.style.overflow = 'hidden';
+          //  }
         }
     }
     const toggleTOC = () => {
