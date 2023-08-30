@@ -10,12 +10,18 @@ import axios from "axios";
 import { useLocation } from "react-router-dom";
 export default function () {
     const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const location = useLocation();
     useEffect(()=>{
+        setLoading(true)
         axios.get('https://isa-citra.adaptable.app/').then( res => {
           setPosts(res.data.topPicks)
-        }).catch(err => console.log(err))
+          setLoading(false)
+        }).catch(err =>{ 
+          console.log(err)
+          setLoading(false)
+        })
       }, [])
       
     
@@ -25,7 +31,7 @@ export default function () {
      <div className='homepage-content  min-h-screen w-full flex flex-col my-auto items-center max-w-full'>
       <div className=" min-h-screen w-full ">
       <Greeting/>
-      <ArticleSlider posts={posts} heading={'Artikel Saya'}/>
+      <ArticleSlider isLoading={loading} posts={posts} heading={'Artikel Saya'}/>
       <CertificateContainer data={certificationArray}/>
       </div>
     

@@ -9,6 +9,7 @@ import ZeroArticle from '../../assets/Zero/zero.svg'
 import { useNavigate} from 'react-router-dom'
 import { extractParagraphs } from "../../../utils/paragraph-parser";
 import ViewCounter from "../view_counter/ViewCounter";
+import Loading from "../loading/Loading";
 
 
 
@@ -59,13 +60,15 @@ const HashtagBox = ({ hashtag, color='bg-slate-900', }) => {
     );
   }
 
-const ArticleSlider = function ({ posts, heading}) {
+const ArticleSlider = function ({ posts, heading, isLoading=false}) {
   const navigate = useNavigate()
   const [currentIndex, setCurrentIndex] = useState(0);
   const previewMaxLength = 200;
   const headingSplit = heading.split(' ')
   const firstWord = headingSplit[0];
   const lastWord = headingSplit[1];
+
+
 
   const articles = posts
 
@@ -117,7 +120,7 @@ const ArticleSlider = function ({ posts, heading}) {
           
         </div>
         <div className="slickpos relative  w-full" onMouseDown={e=>mouseDownCoords(e)} >
-        {
+        { isLoading? <div><Loading/></div> :
           articles.length >= 1 ? <div className="  flex flex-col h-full" ><Slider {...settings}>
           {articles.map((article, index) => (
               <div key={index} className="h-full flex  items-stretch">
