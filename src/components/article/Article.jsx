@@ -371,9 +371,7 @@ const Article =   function (){
                 <div >
                 <ShareButtons url={'isacitra.com/articles/'+post._id} quote={`Check out this interesting article: ${post.title}`}/>
                 </div>
-                <div className=" max-w-[80%]">
-                <CopyLinkApp initialUrl={'isacitra.com/articles/'+post._id}/>
-                </div>
+                
                 </div>
                 
                 <div className=" mx-auto  flex flex-col w-full space-x-4 md:grid  lg:items-center md:justify-center md:grid-cols-2 lg:flex lg:flex-col items-center md:items-start justify-center">
