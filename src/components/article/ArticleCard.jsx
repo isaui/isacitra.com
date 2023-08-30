@@ -120,7 +120,7 @@ const ArticleSlider = function ({ posts, heading, isLoading=false}) {
           
         </div>
         <div className="slickpos relative  w-full" onMouseDown={e=>mouseDownCoords(e)} >
-        { isLoading? <div className=" flex flex-col h-full justify-center items-center"><Loading/></div> :
+        { isLoading? <div className=" flex flex-col h-full justify-center my-auto items-center"><Loading/></div> :
           articles.length >= 1 ? <div className="  flex flex-col h-full" ><Slider {...settings}>
           {articles.map((article, index) => (
               <div key={index} className="h-full flex  items-stretch">
