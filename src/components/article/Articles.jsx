@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 const ArticlesBodyPage = ({posts, categories}) => { // Data artikel Anda
     const kategori = ['Semua', 'Kampus', 'Opini', 'Teknologi','Review']
     const [selectedCategory, setCategory] = useState(kategori[0])
+    
     const navigate = useNavigate()
     const handleNavigate = (id) => {
         navigate('/articles/'+id)
