@@ -49,7 +49,7 @@ const HashtagBox = ({ hashtag, color='bg-slate-900', }) => {
     return (
       <div>
         {categories.map((category, index) => (
-          <div className="inline-block" onClick={()=>{onClick(category)}} onPointerDown={()=>{onClick(category)}}>{
+          <div className="inline-block" onClick={()=>{onClick(category)}} >{
             category != selectedValue? <HashtagBox2 color='bg-slate-800 text-white'key={index} hashtag={category} /> : <HashtagBox2 color=" bg-[#00A8FF] text-black" key={index} hashtag={category}/>
           
             }</div>
