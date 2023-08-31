@@ -324,7 +324,7 @@ const Article =   function (){
 
 
     
-    return isError?  <ErrorPage statusCode={'500'} message={'Maaf Terjadi Kesalahan Dalam Memuat Artikel'}/>:<div className=" ">
+    return isError?  <ErrorPage statusCode={'500'} message={'Maaf Terjadi Kesalahan Dalam Memuat Artikel'}/>:<div className="min-h-screen">
             <HomepageNav/> 
             <ToastContainer/>
             {post!=null && popUpAuthor &&  <ContactAuthor post={post} onClickOutside={()=> {setPopUpAuthor(false)}} notify={notify}/>}
