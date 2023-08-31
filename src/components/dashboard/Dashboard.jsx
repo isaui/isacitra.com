@@ -50,11 +50,11 @@ const Dashboard = () => {
 const PasswordSetting = () => {
     return (
         <div className=" relative w-full h-screen bg-slate-900 flex flex-col">
-            <div className="fixed top-0 flex justify-center lg:justify-start items-center text-white w-full lg:w-[80%]  py-3 px-8  ">
+            <div className="fixed z-20 top-0 flex justify-center lg:justify-start items-center text-white w-full lg:w-[80%]  py-3 px-8  ">
                 <h1 className="  text-2xl md:text-3xl ">Password Setting</h1>
                 
                 </div>
-            <div className="mt-20 text-2xl md:text-3xl text-white ml-3 w-full ">
+            <div className="mt-24 text-2xl md:text-3xl text-white ml-3 w-full ">
                 <PasswordSettings/>
             </div>
         </div>)
@@ -145,13 +145,13 @@ const ProfileSetting = () => {
     return (
     <div className=" relative w-full h-screen  flex flex-col">
         <ToastContainer/>
-        <div className="fixed top-0 flex justify-between items-center text-white w-full lg:w-[80%]  py-3 px-8  ">
+        <div className="fixed top-0 flex justify-between items-center text-white w-full lg:w-[80%]  py-3 px-8 z-20 ">
             <h1 className=" text-2xl md:text-3xl ">Profile Setting</h1>
             <button onClick={handleSubmit}className=" bg-neutral-950 hover:bg-neutral-800 rounded-sm px-4 py-2 text-base mr-8">
                 Save
             </button>
             </div>
-        <div className="mt-20 text-2xl md:text-3xl text-white lg:ml-3 w-full  mx-auto ">
+        <div className="mt-24 text-2xl md:text-3xl text-white lg:ml-3 w-full  mx-auto ">
             <ProfileSettings user={user} data={{
                 email,
                 setEmail,

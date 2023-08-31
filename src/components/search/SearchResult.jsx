@@ -7,12 +7,14 @@ import {BlogCard} from '../article/ArticleCard'
 import articles from "../../dummy/article";
 import Unknown from "../../assets/unknown/unknown.svg"
 import axios from "axios";
+import Loading from "../loading/Loading";
 
 
 export default function () { // Edit ini untuk argument jika perlu
     const location = useLocation();
     const searchQuery = new URLSearchParams(location.search).get('q');
     const [articles, setArticles] = useState([])
+    const [loading, setLoading] = useState(false)
     const scrollToTop = () => {
         window.scrollTo({
           top: 0,
@@ -20,15 +22,18 @@ export default function () { // Edit ini untuk argument jika perlu
         });
       };
       const searchPosts = async (searchTerm) => {
+        setLoading(true)
         try {
           const response = await axios.get('https://isa-citra.adaptable.app/articles/search', {
             params: { searchTerm },
           });
       
           const {searchResults} = response.data;
+          setLoading(false);
           return searchResults;
         } catch (error) {
           console.error('Error searching posts:', error);
+          setLoading(false);
           return [];
         }
       };
@@ -50,9 +55,10 @@ export default function () { // Edit ini untuk argument jika perlu
         scrollToTop();
       }, []);
     return (
-        <div className="w-full">
+        <div className="w-full relative">
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
-            <HomepageNav/>
+            <HomepageNav/> 
+            {loading? <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"><Loading/></div> :
          <div className=' min-h-screen w-full max-w-[1240px] items-start flex flex-col'>
             <div className="  mt-28 lg:mt-24 ml-6 lg:ml-11 mb-5">
             <div className=" mt-2 lg:mt-0 text-white lg:text-2xl  text-2xl md:text-xl">
@@ -66,7 +72,7 @@ export default function () { // Edit ini untuk argument jika perlu
                 <ResultCardsContainers results={articles}/>
             </div>
             
-        </div>
+        </div> }
         </div>
         <Footer/>
     </div>
