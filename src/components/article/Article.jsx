@@ -333,7 +333,7 @@ const Article =   function (){
             }}className=" "><TableOfContentOverlay title={'Table of Contents'} toggle={toggleTOC}tableOfContents={JSON.parse(post.tableOfContents)}/></div></div></>}
            {post!=null && <> <FloatingTabbar toggleTOC={toggleTOC}toggleComment={toggleComment} toggleLike={likePost} toggleDislike={dislikePost} post={post}/>
             <ArticleComments toggle={toggleComment} isOpen={isCommentOpen} post={post} isReady={isReady} toggleComment={toggleComment}/> </>}
-        <div className={` min-h-screen flex justify-center  ${isCommentOpen? 'bg-black bg-opacity-40' : ''} flex-wrap flex-col items-center w-full`}>
+        <div className={` md:min-h-screen flex justify-center  ${isCommentOpen? 'bg-black bg-opacity-40' : ''} flex-wrap flex-col items-center w-full`}>
          <div className='mt-24  w-full flex flex-col items-center relative'>
         {  
             post == null ? <div className=" absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"><Loading/></div> : <div className="  flex flex-col w-full max-w-6xl lg:pr-4  lg:items-start items-center  justify-center  lg:flex-row  mb-4">
