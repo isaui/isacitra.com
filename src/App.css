@@ -69,7 +69,8 @@ body{
 .article h4,
 .article h5,
 .article h6 {
-  @apply text-2xl;
+  @apply text-xl;
+  @apply md:text-2xl;
   @apply lg:text-3xl;
   @apply xl:text-4xl;
   @apply leading-loose;
