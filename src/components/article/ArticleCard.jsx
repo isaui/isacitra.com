@@ -60,7 +60,7 @@ const HashtagBox = ({ hashtag, color='bg-slate-900', }) => {
     );
   }
 
-const ArticleSlider = function ({ posts, heading, isLoading=false}) {
+const ArticleSlider = function ({ posts, heading, isLoading=false, seeAll = true}) {
   const navigate = useNavigate()
   const [currentIndex, setCurrentIndex] = useState(0);
   const previewMaxLength = 200;
@@ -108,7 +108,7 @@ const ArticleSlider = function ({ posts, heading, isLoading=false}) {
           <h1>{firstWord+' '}
             <span className=" text-[#00A8FF]">{lastWord}</span> 
           </h1>
-          <div className="flex items-center relative z-10">
+         {seeAll && <div className="flex items-center relative z-10">
           
           <div className=" ml-2 pl-4">
           <button onClick={()=> {
@@ -116,7 +116,7 @@ const ArticleSlider = function ({ posts, heading, isLoading=false}) {
           }} className=" font-light text-base">Lihat Semua</button>
           </div>
           </div>
-          
+}
           
         </div>
         <div className="slickpos relative  w-full" onMouseDown={e=>mouseDownCoords(e)} >

@@ -30,7 +30,7 @@ export default function (){
             <HomepageNav floatingButtonOpen={true}/>
         <div className='mx-auto max-w-[1600px] min-h-screen flex justify-center xl:items-start  items-center flex-col w-full'>
         <div className=" w-full mt-12 ">
-            <ArticleSlider posts={articles} heading={'Relevan Untukmu'}  isLoading={loading}/>
+            <ArticleSlider posts={articles} heading={'Relevan Untukmu'}  isLoading={loading} seeAll={false}/>
         </div>
         <div className=" xl:-mt-5 flex justify-center items-start  w-full">
 
