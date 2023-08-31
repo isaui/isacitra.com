@@ -34,9 +34,9 @@ const TOG = ({title, tableOfContents, toggle}) => {
           headingElement.scrollIntoView({ behavior: 'smooth' });
         }
       };
-    console.log(tableOfContents)
+    //console.log(tableOfContents)
     const navigate = useNavigate()
-    return <div className=" max-h-[50%]  flex-auto my-3 rounded-lg max-w-[18rem] md:max-w-xs  px-4 py-2 certificate-card w-auto flex flex-col bg-slate-950">
+    return <div className=" max-h-[80%]  flex-auto my-3 rounded-lg max-w-[18rem] md:max-w-xs  px-4 py-2 certificate-card w-auto flex flex-col bg-slate-950">
              
              <div className=" text-gray-100 mx-2 mb-1 mt-3 certificate-title font-bold md:text-2xl text-xl">
                 <h1>{title}</h1>

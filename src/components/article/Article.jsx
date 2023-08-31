@@ -328,15 +328,15 @@ const Article =   function (){
             <HomepageNav/> 
             <ToastContainer/>
             {post!=null && popUpAuthor &&  <ContactAuthor post={post} onClickOutside={()=> {setPopUpAuthor(false)}} notify={notify}/>}
-            {post!=null && isTOCOpen && <><div onClick={toggleTOC} className="fixed bg-black bg-opacity-40 w-full min-h-screen z-20"><div onClick={(e)=>{
+            {post!=null && isTOCOpen && <><div onClick={toggleTOC} className="fixed bg-black bg-opacity-40 w-full  flex flex-col justify-center items-center min-h-screen z-20"><div onClick={(e)=>{
                 e.stopPropagation();
-            }}className="  fixed top-1/2 left-1/2 -translate-y-/2 -translate-x-1/2 z-30 "><TableOfContentOverlay title={'Table of Contents'} toggle={toggleTOC}tableOfContents={JSON.parse(post.tableOfContents)}/></div></div></>}
+            }}className=" "><TableOfContentOverlay title={'Table of Contents'} toggle={toggleTOC}tableOfContents={JSON.parse(post.tableOfContents)}/></div></div></>}
            {post!=null && <> <FloatingTabbar toggleTOC={toggleTOC}toggleComment={toggleComment} toggleLike={likePost} toggleDislike={dislikePost} post={post}/>
             <ArticleComments toggle={toggleComment} isOpen={isCommentOpen} post={post} isReady={isReady} toggleComment={toggleComment}/> </>}
         <div className={` min-h-screen flex justify-center  ${isCommentOpen? 'bg-black bg-opacity-40' : ''} flex-wrap flex-col items-center w-full`}>
          <div className='mt-24 min-h-screen w-full flex flex-col items-center relative'>
         {  
-            post == null ? <div className=" absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"><Loading/></div> : <div className="  min-h-screen flex flex-col w-full max-w-6xl lg:pr-4  lg:items-start items-center  justify-center  lg:flex-row  mb-4">
+            post == null ? <div className=" absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"><Loading/></div> : <div className="  flex flex-col w-full max-w-6xl lg:pr-4  lg:items-start items-center  justify-center  lg:flex-row  mb-4">
             {post != null &&
              <div className="max-w-2xl  mx-auto    -mb-3 w-full md:min-w-[28rem] lg:min-w-[36rem] xl:min-w-[40rem] text-ellipsis h-full pt-3 -mt-1 rounded-lg lg:max-w-2xl  min-h-screen">
                 
