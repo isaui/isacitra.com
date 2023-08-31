@@ -41,7 +41,7 @@ export default function (){
         </div>
 
         <div className="w-full h-full  flex justify-center  xl:ml-2  items-start">
-            <ArticlesBodyPage posts={articles}/></div>
+            <ArticlesBodyPage posts={articles} loading={loading} /></div>
          </div>
         </div>
         <div className="hidden xl:flex xl:flex-col h-min px-2 max-w-sm justify-start ml-5 mt-14 space-y-3 mb-2 mr-5">

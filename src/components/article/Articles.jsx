@@ -8,10 +8,9 @@ import UnknownAvatar from '../../assets/unknown/unknown_avatar.svg';
 import { extractParagraphs } from "../../../utils/paragraph-parser";
 import { useNavigate } from "react-router-dom";
 
-const ArticlesBodyPage = ({posts, categories}) => { // Data artikel Anda
+const ArticlesBodyPage = ({posts, categories, loading=false}) => { // Data artikel Anda
     const kategori = ['Semua', 'Kampus', 'Opini', 'Teknologi','Review']
     const [selectedCategory, setCategory] = useState(kategori[0])
-    const [loading, setLoading] = useState(false)
     
     const navigate = useNavigate()
     const handleNavigate = (id) => {
@@ -21,16 +20,16 @@ const ArticlesBodyPage = ({posts, categories}) => { // Data artikel Anda
     const [articles, setArticles] = useState([]); // ini adalah artikel-artikel yang terfilter berdasarkan kategori yang dipilih
 
     useEffect(()=>{
-        setLoading(true)
+        
         if(posts){
             //sort berdasar terbaru
             const sortedPosts = posts.slice().sort((firstPost, secondPost) =>  new Date(secondPost.lastModified) - new Date(firstPost.lastModified ) )
             setOriginalArticles(sortedPosts)
-            setLoading(false)
+            
             return
         }
         setOriginalArticles(posts)
-        setLoading(false)
+        
     },[posts])
 
     useEffect(() => {
