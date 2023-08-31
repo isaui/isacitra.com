@@ -106,6 +106,7 @@ body{
 .article-card p {
   font-family: 'Roboto', sans-serif;
   font-weight: 400;
+  @apply text-justify;
   @apply text-[#9ca3af];
 }
 .dosis-text{
