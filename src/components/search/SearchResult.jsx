@@ -55,10 +55,10 @@ export default function () { // Edit ini untuk argument jika perlu
         scrollToTop();
       }, []);
     return (
-        <div className="w-full relative">
+        <div className="w-full">
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
             <HomepageNav/> 
-            {loading? <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"><Loading/></div> :
+            {loading? <div className="w-full mx-auto my-auto flex items-center   min-h-screen justify-center"><Loading/></div> :
          <div className=' min-h-screen w-full max-w-[1240px] items-start flex flex-col'>
             <div className="  mt-28 lg:mt-24 ml-6 lg:ml-11 mb-5">
             <div className=" mt-2 lg:mt-0 text-white lg:text-2xl  text-2xl md:text-xl">
