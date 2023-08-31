@@ -353,7 +353,7 @@ const Article =   function (){
                     <hr className="border-2 border-[#1D5B79] my-2 rounded-full" />
                 </div>
                 {
-                    post.thumbnail.trim() !== '' && <div className="w-full article px-6 md:px-3 mx-auto text-[#9ca3af] my-12">
+                    post.thumbnail.trim() !== '' && <div className="w-full article px-6 md:px-3 mx-auto text-[#9ca3af] my-4">
                     {post.thumbnail != '' && <><img  className='article rounded-lg 'src={post.thumbnail} alt="" /></>}
                 </div>
                 }
