@@ -338,7 +338,7 @@ const Article =   function (){
         {  
             post == null ? <div className=" absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"><Loading/></div> : <div className="  flex flex-col w-full max-w-6xl lg:pr-4  lg:items-start items-center  justify-center  lg:flex-row  mb-4">
             {post != null &&
-             <div className="max-w-2xl  mx-auto    -mb-3 w-full md:min-w-[28rem] lg:min-w-[36rem] xl:min-w-[40rem] text-ellipsis h-full pt-3 -mt-1 rounded-lg lg:max-w-2xl  min-h-screen">
+             <div className="max-w-2xl  mx-auto    -mb-3 w-full md:min-w-[28rem] lg:min-w-[36rem] xl:min-w-[40rem] text-ellipsis h-full pt-3 -mt-1 rounded-lg lg:max-w-2xl ">
                 
                 <div className="text-white  text-xl md:text-2xl h-auto lg:text-3xl px-6 md:px-3 mb-3">
                     <div className=" text-sm  h-auto  ">
@@ -346,7 +346,7 @@ const Article =   function (){
                     <ViewCounter views={post.views}/>
                     </div>
                     <div className="  max-w-full flex flex-wrap overflow-ellipsis">
-                    <h1 className="  pr-2">{post.title}</h1>
+                    <h1 className=" font-bold pr-2">{post.title}</h1>
                     </div>
                     <p className=" text-sm mt-2 text-[#9ca3af]">Ditulis oleh {post.author.profile.firstName + " "+post.author.profile.lastName}</p>
                     <p className=" text-sm mt-2 text-[#9ca3af]">Terakhir diperbarui pada {formatDateAndTime(new Date(post.lastModified))}</p>
