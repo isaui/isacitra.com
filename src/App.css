@@ -60,6 +60,7 @@ body{
 
   font-family: 'Roboto', sans-serif;
   font-weight: 400;
+  @apply text-justify;
   @apply text-[#9ca3af];
   @apply md:py-1 py-0;
 }
