@@ -82,7 +82,7 @@ body{
   @apply w-full;
   @apply aspect-video;
   @apply md:mx-auto;
-  @apply -my-7;
+  @apply my-3;
   @apply rounded-lg;
 }
 .article iframe {
