@@ -328,7 +328,7 @@ const Article =   function (){
             <HomepageNav/> 
             <ToastContainer/>
             {post!=null && popUpAuthor &&  <ContactAuthor post={post} onClickOutside={()=> {setPopUpAuthor(false)}} notify={notify}/>}
-            {post!=null && isTOCOpen && <><div onClick={toggleTOC} className="relative fixed bg-black bg-opacity-40 w-full min-h-screen z-20"><div onClick={(e)=>{
+            {post!=null && isTOCOpen && <><div onClick={toggleTOC} className="fixed bg-black bg-opacity-40 w-full min-h-screen z-20"><div onClick={(e)=>{
                 e.stopPropagation();
             }}className="  fixed top-1/2 left-1/2 -translate-y-/2 -translate-x-1/2 z-30 "><TableOfContentOverlay title={'Table of Contents'} toggle={toggleTOC}tableOfContents={JSON.parse(post.tableOfContents)}/></div></div></>}
            {post!=null && <> <FloatingTabbar toggleTOC={toggleTOC}toggleComment={toggleComment} toggleLike={likePost} toggleDislike={dislikePost} post={post}/>
