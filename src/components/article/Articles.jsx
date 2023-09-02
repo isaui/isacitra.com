@@ -75,7 +75,7 @@ const ArticlesBodyPage = ({posts, categories, loading=false}) => { // Data artik
             <div className="w-full lg:hidden mb-8 flex lg:flex-row flex-col items-center">
                 <div>
                 <div  className=" w-full mt-2 flex justify-between items-center">
-                <h1 className=" mr-2 articles-header md:text-4xl text-3xl font-bold text-white text-left">Artikel<span className=" text-[#00A8FF]">ku</span>📰</h1>
+                <h1 className=" mr-2  md:text-4xl text-3xl font-bold text-white text-left">Artikel<span className=" text-[#00A8FF]"> Aku</span> 📰</h1>
                 <Dropdown onSelect={setArticles} posts={articles} options={[{ label: 'Terbaru', value: 'terbaru' },
     { label: 'Terpopuler', value: 'terpopuler' }, {label: 'Rekomendasi', value: 'rekomendasi'}]}/>
                 </div>
