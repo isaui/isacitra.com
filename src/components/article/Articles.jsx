@@ -59,7 +59,7 @@ const ArticlesBodyPage = ({posts, categories, loading=false}) => { // Data artik
         <div className=" mx-auto   w-full my-2 max-w-5xl ">
             
             <div className="hidden mb-8 mt-8 lg:flex lg:flex-row flex-col items-center">
-            <h1 className=" articles-header text-4xl lg:text-5xl xl:text-4xl 2xl:text-5xl text-neutral-300 text-left uppercase">Artikel Saya📰</h1>
+            <h1 className=" filosofi text-4xl lg:text-5xl xl:text-4xl 2xl:text-5xl text-neutral-300 text-left uppercase">Artikel Saya📰</h1>
             <div className="md:mt-3 mt-4 ml-2 ">
                 <HashtagListToggler onClick= {setCategory}selectedValue={selectedCategory}categories={kategori}/>
             </div>
@@ -75,7 +75,7 @@ const ArticlesBodyPage = ({posts, categories, loading=false}) => { // Data artik
             <div className="w-full lg:hidden mb-8 flex lg:flex-row flex-col items-center">
                 <div>
                 <div  className=" w-full mt-2 flex justify-between items-center">
-                <h1 className=" mr-4 articles-header text-4xl lg:text-5xl text-neutral-300 text-left uppercase ">Artikel Saya📰</h1>
+                <h1 className=" mr-2 articles-header md:text-4xl text-3xl font-bold text-white text-left">Artikel<span className=" text-[#00A8FF]">ku</span>📰</h1>
                 <Dropdown onSelect={setArticles} posts={articles} options={[{ label: 'Terbaru', value: 'terbaru' },
     { label: 'Terpopuler', value: 'terpopuler' }, {label: 'Rekomendasi', value: 'rekomendasi'}]}/>
                 </div>
