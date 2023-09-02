@@ -12,11 +12,11 @@ const ProjectWithVideo =  ({videoId, name, contributors, label, widgetTitle, wid
         </div>
         <div className="  pb-4 px-6 lg:col-span-2 col-span-3 flex flex-col justify-start text-center mx-auto lg:text-left text-white w-full greeting-style">
         
-        <h1 className="greeting-style px-6 font-bold md:text-5xl sm:text-4xl text-3xl ">{widgetTitle}</h1>
+        <h1 className="greeting-style md:px-6 font-bold md:text-5xl sm:text-4xl text-3xl ">{widgetTitle}</h1>
         <div className="filosofi">
-        <p className=" text-justify lg:text-lg text-gray-400 md:text-base sm:text-sm text-sm md:py-7 py-5 px-6">{widgetContent}</p>
+        <p className=" text-justify lg:text-lg text-gray-400 md:text-base sm:text-sm text-sm md:py-7 py-5 md:px-6">{widgetContent}</p>
         </div>
-        <div className="flex justify-center md:space-x-4 space-x-2 lg:justify-start px-6">
+        <div className="flex justify-center md:space-x-4 space-x-2 lg:justify-start md:px-6">
             <button className=" bg-slate-950 hover:bg-neutral-950  rounded-md py-3 px-2 text-sm md:text-base md:min-w-[180px] text-white">
              <div className=" flex justify-center items-center">
                 <h1 className=" mr-2">Lihat di </h1>

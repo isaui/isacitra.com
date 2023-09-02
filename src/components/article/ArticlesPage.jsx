@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, } from "react";
 import { HomepageNav } from "../nav/Nav";
 import Footer from "../footer/Footer";
 import {ArticlesBodyPage}from './Articles'
 import { ArticlesGroupCard, ArticlesGroupCardType2, formatDateAndTime} from "./Article";
 import { ArticleSlider, } from "./ArticleCard";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import YoutubePlayer from "../react-yt/YtVideoPlayer";
 
@@ -12,6 +13,7 @@ import YoutubePlayer from "../react-yt/YtVideoPlayer";
 export default function (){
     const [articles, setArticles] = useState([]);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
     useEffect(()=>{
         setLoading(true)
         axios.get('https://isa-citra.adaptable.app/articles').then( res => {
@@ -48,7 +50,9 @@ export default function (){
 
             <div className=" flex justify-between mb-2">
             <h1 className=" text-white font-normal  text-2xl">Lihat Projek Kami</h1>
-            <button
+            <button onClick={()=>{
+                navigate('/projects')
+            }}
             className="bg-slate-950 hover:bg-slate-800 text-white text-xs py-2 px-3 rounded-sm transition duration-300">
             Lihat Semua
             </button>
