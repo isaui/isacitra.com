@@ -31,9 +31,10 @@ export default function () {
      <div className='homepage-content  min-h-screen w-full flex flex-col my-auto items-center max-w-full'>
       <div className=" min-h-screen w-full ">
       <Greeting/>
-      <ArticleSlider isLoading={loading} posts={posts} heading={'Artikel Saya'}/>
+      <ArticleSlider isLoading={loading} posts={posts} heading={'Artikel Aku'}/>
       <CertificateContainer data={certificationArray}/>
       </div>
+      
     
     </div>
     </div>

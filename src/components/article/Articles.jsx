@@ -59,7 +59,7 @@ const ArticlesBodyPage = ({posts, categories, loading=false}) => { // Data artik
         <div className=" mx-auto   w-full my-2 max-w-5xl ">
             
             <div className="hidden mb-8 mt-8 lg:flex lg:flex-row flex-col items-center">
-            <h1 className=" text-4xl lg:text-5xl xl:text-4xl 2xl:text-5xl font-bold text-white text-left">Artikel <span className="text-[#00A8FF]">Aku</span> 📰</h1>
+            <h1 className=" md:text-4xl text-3xl font-bold text-white text-left">Artikel <span className="text-[#00A8FF]">Aku</span> 📰</h1>
             <div className="md:mt-3 mt-4 ml-2 ">
                 <HashtagListToggler onClick= {setCategory}selectedValue={selectedCategory}categories={kategori}/>
             </div>
