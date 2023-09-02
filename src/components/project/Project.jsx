@@ -10,7 +10,7 @@ const ProjectWithVideo =  ({videoId, name, contributors, label, widgetTitle, wid
         <div className={` col-span-3 ${index % 2 != 0? 'lg:order-last':''} lg:col-span-1 flex flex-col justify-start items-center`}>
         <YoutubePlayer videoId={videoId} name={name} contributors={contributors} label={label}/>
         </div>
-        <div className="  pb-4 px-6 lg:col-span-2 col-span-3 flex flex-col justify-start text-center mx-auto lg:text-left text-white w-full greeting-style">
+        <div className="  pb-4 md:px-6 lg:col-span-2 col-span-3 flex flex-col justify-start text-center mx-auto lg:text-left text-white w-full greeting-style">
         
         <h1 className="greeting-style md:px-6 font-bold md:text-5xl sm:text-4xl text-3xl ">{widgetTitle}</h1>
         <div className="filosofi">

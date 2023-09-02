@@ -50,7 +50,7 @@ const Dashboard = () => {
 const PasswordSetting = () => {
     return (
         <div className=" relative w-full h-screen bg-slate-900 flex flex-col">
-            <div className="fixed z-20 top-0 flex justify-center lg:justify-start items-center text-white w-full lg:w-[80%]  py-3 px-8  ">
+            <div className="fixed z-20 top-0 flex justify-center lg:justify-start items-center text-white w-full lg:w-[80%]  py-3 px-8 bg-slate-900 ">
                 <h1 className="  text-2xl md:text-3xl ">Password Setting</h1>
                 
                 </div>
@@ -145,7 +145,7 @@ const ProfileSetting = () => {
     return (
     <div className=" relative w-full h-screen  flex flex-col">
         <ToastContainer/>
-        <div className="fixed top-0 flex justify-between items-center text-white w-full lg:w-[80%]  py-3 px-8 z-20 ">
+        <div className="fixed top-0 flex justify-between items-center text-white w-full lg:w-[80%]  py-3 px-8 z-20 bg-slate-900 ">
             <h1 className=" text-2xl md:text-3xl ">Profile Setting</h1>
             <button onClick={handleSubmit}className=" bg-neutral-950 hover:bg-neutral-800 rounded-sm px-4 py-2 text-base mr-8">
                 Save
@@ -175,7 +175,7 @@ const DashboardSet = ({panels, currentContent, setCurrentContent}) => {
     const dispatch = useDispatch()
     const user = useSelector((state) => state.auth.user)
     return (
-        <div className=" hidden fixed top-0 left-0 w-[20%] bg-black h-screen lg:flex flex-col ">
+        <div className=" hidden fixed top-0 left-0 w-[20%] bg-black h-screen lg:flex flex-col overflow-y-auto">
             <h1 className=" mt-4 mx-auto text-2xl md:text-3xl text-white mb-2">Dashboard</h1>
             <ul className="  bg-slate-950 mx-4 rounded-md mt-4">
         {panels.map((data, index)=> <div onClick={()=>{setCurrentContent(data.value)}}key={index} className={`${index !== panels.length - 1 ? 'border-b-2 border-slate-900' : ''} ${data.value == currentContent? 'bg-slate-900' : ''}`}><DashboardSideButton option={data}/></div>)}
