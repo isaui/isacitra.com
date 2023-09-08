@@ -5,9 +5,9 @@ import Error from '../../assets/error/error.svg';
 import {AiOutlineMenu, AiOutlineClose, AiFillCloseCircle, AiOutlineSearch} from 'react-icons/ai'
 import { useNavigate} from 'react-router-dom';
 
-export default function ({statusCode, message}) {
+export default function () {
     
-    
+    const arr = [1,2,3,4,6];
     return (
         <div className="">
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
@@ -25,7 +25,17 @@ export default function ({statusCode, message}) {
            </div>
 
            <div className="my-4 mx-auto text-center md:my-8 justify-center grid grid-flow-row auto-rows-max md:grid-cols-2 lg:grid-cols-3 md:gap-4 lg:gap-6">
-                {[1,2,3,4,5,6].map((value, index)=> {
+                {arr.length == 0? <div className="flex items-center my-auto h-full">
+                <div className=" my-auto h-full flex justify-center items-center mx-auto md:flex-row flex-col-reverse">
+                <div className="mx-8">
+                <h1 className=" text-red-400 lg:text-5xl md:text-4xl text-3xl mx-auto md:text-left text-center mt-3">Tidak Ada</h1>
+                <p className=" text-gray-200 lg:text-2xl md:text-2xl text-lg text-center md:text-left">Matkul belum tersedia. Silahkan menambahkan.</p>
+                </div>
+                <div className="">
+                    <img className= " lg:min-h-[200px] lg:h-[210px] md:min-h-[180px] md:h-[190px] h-[180px]"src={Error} alt="" />
+                </div>
+                </div>
+            </div>: arr.map((value, index)=> {
                     return <CourseCard/>
                 })}
            </div>
