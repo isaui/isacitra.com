@@ -13,7 +13,14 @@ export default function ({statusCode, message}) {
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
             <HomepageNav/>
          <div className=' mt-24 min-h-screen w-full max-w-[1240px] flex flex-col'>
-            <MobileSearchbar/>
+           <div className=" flex justify-center items-center">
+           <MobileSearchbar/>
+           <div className="ml-auto">
+            <button className=" Text-white rounded-md bg-red-500 px-2 py-2">
+                Click Me
+            </button>
+           </div>
+           </div>
             
         </div>
         </div>
