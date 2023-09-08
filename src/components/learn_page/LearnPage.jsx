@@ -23,22 +23,23 @@ export default function () {
             </div>
            </div>
            </div>
-
+           {
+            arr.length == 0? <div className="flex items-center my-auto h-full">
+            <div className="w-full my-auto h-full flex justify-center items-center mx-auto md:flex-row flex-col-reverse">
+            <div className="mx-8">
+            <h1 className=" text-red-400 lg:text-5xl md:text-4xl text-3xl mx-auto md:text-left text-center mt-3">Tidak Ada</h1>
+            <p className=" text-gray-200 lg:text-2xl md:text-2xl text-lg text-center md:text-left">Matkul belum tersedia. Silahkan menambahkan.</p>
+            </div>
+            <div className="">
+                <img className= " lg:min-h-[200px] lg:h-[210px] md:min-h-[180px] md:h-[190px] h-[180px]"src={Error} alt="" />
+            </div>
+            </div>
+        </div>:
            <div className="my-4 mx-auto text-center md:my-8 justify-center grid grid-flow-row auto-rows-max md:grid-cols-2 lg:grid-cols-3 md:gap-4 lg:gap-6">
-                {arr.length == 0? <div className="flex items-center my-auto h-full">
-                <div className="w-full my-auto h-full flex justify-center items-center mx-auto md:flex-row flex-col-reverse">
-                <div className="mx-8">
-                <h1 className=" text-red-400 lg:text-5xl md:text-4xl text-3xl mx-auto md:text-left text-center mt-3">Tidak Ada</h1>
-                <p className=" text-gray-200 lg:text-2xl md:text-2xl text-lg text-center md:text-left">Matkul belum tersedia. Silahkan menambahkan.</p>
-                </div>
-                <div className="">
-                    <img className= " lg:min-h-[200px] lg:h-[210px] md:min-h-[180px] md:h-[190px] h-[180px]"src={Error} alt="" />
-                </div>
-                </div>
-            </div>: arr.map((value, index)=> {
+                {arr.map((value, index)=> {
                     return <CourseCard/>
                 })}
-           </div>
+           </div>}
             
         </div>
         </div>
