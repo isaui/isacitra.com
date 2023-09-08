@@ -16,9 +16,9 @@ export default function ({statusCode, message}) {
            <div className=" flex justify-center items-center">
            <MobileSearchbar/>
            <div className="ml-auto">
-            <button className=" text-white rounded-md bg-red-500 px-5 py-2 text-xs">
-                + Tambahkan Matkul
-            </button>
+            <div className=" text-white rounded-md bg-neutral-950 px-5 py-2 text-xs">
+                <h1>+ Tambahkan</h1>
+            </div>
            </div>
            </div>
             
