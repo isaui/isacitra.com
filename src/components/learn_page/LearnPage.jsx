@@ -13,7 +13,7 @@ export default function ({statusCode, message}) {
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
             <HomepageNav/>
          <div className=' mt-24 min-h-screen w-full max-w-[1240px] flex flex-col'>
-           <div className=" flex justify-center items-center md:items-start flex-col md:flex-row space-y-4 md:space-y-0 ">
+           <div className=" flex justify-center items-center flex-col md:flex-row space-y-4 md:space-y-0 ">
            <div className="w-full md:max-w-xl">
            <MobileSearchbar/>
            </div>
@@ -53,7 +53,7 @@ const MobileSearchbar = () => {
       <input
         type="text"
         placeholder="Cari Matkul..."
-        className=" bg-slate-800 rounded-md py-2 pr-10 pl-4 w-full focus:outline-none focus:ring-1 focus:ring-[#00A8FF]"
+        className=" bg-slate-800 rounded-full py-2 pr-10 pl-4 w-full focus:outline-none focus:ring-1 focus:ring-[#00A8FF]"
         value={query}
         onChange={handleInputChange}
       />
