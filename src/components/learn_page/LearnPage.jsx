@@ -12,8 +12,8 @@ export default function () {
         <div className="">
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
             <HomepageNav/>
-         <div className='mt-28 md:mt-24 min-h-screen w-full max-w-[1240px] flex flex-col'>
-           <div className=" flex justify-center items-center flex-col md:flex-row space-y-4 md:space-y-0 ">
+         <div className=' min-h-screen w-full max-w-[1240px] flex flex-col'>
+           <div className=" mt-28 md:mt-24 flex justify-center items-center flex-col md:flex-row space-y-4 md:space-y-0 ">
            <div className="w-full md:max-w-lg">
            <MobileSearchbar/>
            </div>
