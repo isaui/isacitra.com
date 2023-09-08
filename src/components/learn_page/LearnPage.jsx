@@ -14,7 +14,7 @@ export default function ({statusCode, message}) {
             <HomepageNav/>
          <div className=' mt-24 min-h-screen w-full max-w-[1240px] flex flex-col'>
            <div className=" flex justify-center items-center flex-col md:flex-row space-y-4 md:space-y-0 ">
-           <div className="w-full md:max-w-xl">
+           <div className="w-full md:max-w-lg">
            <MobileSearchbar/>
            </div>
            <div className="ml-auto md:ml-0 mr-4">
