@@ -13,8 +13,8 @@ export default function ({statusCode, message}) {
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
             <HomepageNav/>
          <div className=' mt-24 min-h-screen w-full max-w-[1240px] flex flex-col'>
-           <div className=" flex justify-center items-center">
-           <div className=" max-w-xs">
+           <div className=" flex justify-center items-center flex-col md:flex-row ">
+           <div className="">
            <MobileSearchbar/>
            </div>
            <div className="ml-auto">
