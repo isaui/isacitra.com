@@ -13,7 +13,7 @@ export default function () {
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
             <HomepageNav/>
          <div className=' min-h-screen w-full max-w-[1240px] flex flex-col'>
-           <div className=" mt-28 md:mt-24 flex justify-center items-center flex-col md:flex-row space-y-4 md:space-y-0 ">
+           <div className=" mt-28 md:mt-24 flex justify-center items-center flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 ">
            <div className="w-full md:max-w-lg">
            <MobileSearchbar/>
            </div>
@@ -70,7 +70,7 @@ const MobileSearchbar = () => {
       <input
         type="text"
         placeholder="Cari Matkul..."
-        className=" bg-slate-800 rounded-full py-2 pr-10 pl-4 w-full focus:outline-none focus:ring-1 focus:ring-[#00A8FF]"
+        className=" bg-gray-800 rounded-full py-2 pr-10 pl-4 w-full focus:outline-none focus:ring-1 focus:ring-[#00A8FF]"
         value={query}
         onChange={handleInputChange}
       />
