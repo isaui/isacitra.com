@@ -7,7 +7,7 @@ import { useNavigate} from 'react-router-dom';
 
 export default function () {
     
-    const arr = [1,2,3,4,6];
+    const arr = [];
     return (
         <div className="">
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
