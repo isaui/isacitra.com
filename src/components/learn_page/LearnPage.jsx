@@ -14,7 +14,7 @@ export default function () {
             <HomepageNav/>
          <div className=' min-h-screen w-full max-w-[1240px] flex flex-col'>
            <div className=" mt-28 md:mt-24 flex justify-center items-center flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 ">
-           <div className="w-full max-w-lg">
+           <div className="w-full md:max-w-lg">
            <MobileSearchbar/>
            </div>
            <div className="ml-auto md:ml-0 mr-4">
