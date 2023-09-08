@@ -13,6 +13,7 @@ import ArticleManagement from './components/article_management/ArticleManagement
 import AuthenticationPage from './components/authentication/authpage';
 import ProjectPage from './components/project_page/ProjectPage';
 import Dashboard from './components/dashboard/Dashboard';
+import LearnPage from './components/learn_page/LearnPage';
 
 
 
@@ -35,6 +36,7 @@ function App() {
             <Route path='/dashboard' element= {<Dashboard/>}></Route>
             <Route path='/projects' element= {<ProjectPage/>}></Route>
             <Route path='/search' element= {<SearchResult/>}></Route>
+            <Route path='/learn' element= {<LearnPage/>}></Route>
             <Route path='*' element= {<ErrorPage/>}></Route>
     </Routes>
     </Router>
