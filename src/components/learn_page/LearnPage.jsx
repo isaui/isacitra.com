@@ -49,7 +49,7 @@ const MobileSearchbar = () => {
     setQuery('');
   };
   //fixed top-[64px] left-0
-    return (<div className=" bg-slate-900 py-2 px-4  w-full z-10"> 
+    return (<div className=" bg-red-600 py-2 px-4  w-full z-10"> 
     <form className="flex items-center" onSubmit={handleSubmit}>
       <input
         type="text"
