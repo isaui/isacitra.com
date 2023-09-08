@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { HomepageNav } from "../nav/Nav";
 import Footer from "../footer/Footer";
 import Error from '../../assets/error/error.svg';
@@ -6,6 +6,7 @@ import {AiOutlineMenu, AiOutlineClose, AiFillCloseCircle, AiOutlineSearch} from 
 import { useNavigate} from 'react-router-dom';
 
 export default function ({statusCode, message}) {
+    
     
     return (
         <div className="">
