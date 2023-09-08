@@ -12,7 +12,7 @@ export default function ({statusCode, message}) {
         <div className="">
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
             <HomepageNav/>
-         <div className=' min-h-screen w-full max-w-[1240px] flex flex-col'>
+         <div className=' mt-24 min-h-screen w-full max-w-[1240px] flex flex-col'>
             <MobileSearchbar/>
             
         </div>
