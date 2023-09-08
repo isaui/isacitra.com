@@ -17,8 +17,8 @@ export default function ({statusCode, message}) {
            <div className="w-full max-w-2xl">
            <MobileSearchbar/>
            </div>
-           <div className="ml-auto mr-4">
-            <div className=" text-white rounded-md bg-neutral-950 px-5 py-2 hover:bg-neutral-800">
+           <div className="ml-auto md:ml-0 mr-4">
+            <div className=" text-white rounded-md bg-neutral-950 px-5 py-2 hover:bg-neutral-800 text-base">
                 <h1>+ Tambahkan Matkul</h1>
             </div>
            </div>
