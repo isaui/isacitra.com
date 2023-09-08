@@ -70,7 +70,7 @@ const MobileSearchbar = () => {
       <input
         type="text"
         placeholder="Cari Matkul..."
-        className=" bg-gray-800 rounded-full py-2 pr-10 pl-4 w-full focus:outline-none focus:ring-1 focus:ring-[#00A8FF]"
+        className=" bg-zinc-900 rounded-full py-2 pr-10 pl-4 w-full focus:outline-none focus:ring-1 focus:ring-[#00A8FF]"
         value={query}
         onChange={handleInputChange}
       />
