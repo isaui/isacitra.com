@@ -14,10 +14,10 @@ export default function ({statusCode, message}) {
             <HomepageNav/>
          <div className=' mt-24 min-h-screen w-full max-w-[1240px] flex flex-col'>
            <div className=" flex justify-center items-center flex-col md:flex-row ">
-           <div className="">
+           <div className="w-full max-w-2xl">
            <MobileSearchbar/>
            </div>
-           <div className="ml-auto">
+           <div className="ml-auto mr-2">
             <div className=" text-white rounded-md bg-neutral-950 px-5 py-2 text-xs">
                 <h1>+ Tambahkan</h1>
             </div>
