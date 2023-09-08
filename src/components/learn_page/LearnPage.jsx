@@ -7,7 +7,7 @@ import { useNavigate} from 'react-router-dom';
 
 export default function () {
     
-    const arr = [];
+    const arr = [1,2,3,4,5,6];
     return (
         <div className="">
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
@@ -69,8 +69,8 @@ const MobileSearchbar = () => {
     <form className="flex items-center" onSubmit={handleSubmit}>
       <input
         type="text"
-        placeholder="Cari Matkul..."
-        className=" bg-zinc-900 rounded-full py-2 pr-10 pl-4 w-full focus:outline-none focus:ring-1 focus:ring-[#00A8FF]"
+        placeholder="Cari Mata Kuliah..."
+        className=" bg-zinc-950 rounded-full py-2 pr-10 pl-4 w-full focus:outline-none focus:ring-1 focus:ring-[#00A8FF]"
         value={query}
         onChange={handleInputChange}
       />
