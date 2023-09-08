@@ -89,6 +89,10 @@ const CourseCard = ({data}) => {
              </div>
              <div className=" text-white mx-2 text-sm certificate-detail">
              <hr className="border-t-1 border-[#19A7CE] my-2 -mx-2" />
+                <p>Semester:  <span>3</span></p>
+             </div>
+             <div className=" text-white mx-2 text-sm certificate-detail">
+             <hr className="border-t-1 border-[#19A7CE] my-2 -mx-2" />
                 <p>Dibuat oleh:  <span>Isa Citra Buana</span></p>
              </div>
              <div className=" text-white mx-2 text-sm certificate-detail">
