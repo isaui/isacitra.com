@@ -23,6 +23,12 @@ export default function ({statusCode, message}) {
             </div>
            </div>
            </div>
+
+           <div className="my-4 mx-auto text-center md:my-8 justify-center grid grid-flow-row auto-rows-max md:grid-cols-2 lg:grid-cols-3 md:gap-4 lg:gap-6">
+                {[1,2,3,4,5,6].map((value, index)=> {
+                    return <CourseCard/>
+                })}
+           </div>
             
         </div>
         </div>
@@ -66,4 +72,32 @@ const MobileSearchbar = () => {
     </form>
   </div>
 )
+}
+
+const CourseCard = ({data}) => {
+   // const navigate = useNavigate()
+    return <div className=" flex-auto my-3 rounded-lg max-w-xs certificate-card w-auto flex flex-col">
+             
+             <div>
+                <img className=' w-full h-auto rounded-t-lg'src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjHo8LPH0dr05KyZ9p_HC-kHB9p36dt2zWOg&usqp=CAU' alt="" />
+             </div>
+             <div className=" text-gray-100 mx-2 mb-1 mt-3 certificate-title font-bold text-base">
+                <h1>Struktur Data Algoritma</h1>
+             </div>
+             <div className=" text-gray-700 mx-2 text-sm">
+                <p>Diterbitkan pada 07 Juni 2016</p>
+             </div>
+             <div className=" text-white mx-2 text-sm certificate-detail">
+             <hr className="border-t-1 border-[#19A7CE] my-2 -mx-2" />
+                <p>Dibuat oleh:  <span>Isa Citra Buana</span></p>
+             </div>
+             <div className=" text-white mx-2 text-sm certificate-detail">
+             <hr className="border-t-1 border-[#19A7CE] my-2 -mx-2" />
+             </div>
+             <div className="mx-2 mt-auto">
+                <button className="w-full bg-slate-900 hover:bg-slate-950 text-white py-2 mb-2 rounded-md"><a >Buka</a></button>
+             </div>
+
+
+    </div>
 }
