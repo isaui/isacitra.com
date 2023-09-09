@@ -48,7 +48,9 @@ const Sidebar = ()=>{
     return (
         <div className="h-screen bg-slate-950 w-[60%]  md:w-[40%] ">
             <div className=" w-full min-h-screen bg-yellow-400">
-                <h1>TEST</h1>
+                <div className=" w-full mx-2 py-3 flex justify-center text-white bg-[#1D1C1C] hover:bg-[#333030]">
+                    <h1> + Tambah Materi</h1>
+                </div>
             </div>
             
 
