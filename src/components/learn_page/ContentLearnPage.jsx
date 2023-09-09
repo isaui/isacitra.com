@@ -13,6 +13,9 @@ export default function () {
     return (
         <div className="">
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
+            {sidebarActive && <div className=" fixed top-0 left-0 md:hidden">
+                <Sidebar/>
+            </div>}
             <button onClick={()=> {
                 toggleSidebar()
             }}className="fixed top-3 right-5  p-3 rounded-lg bg-neutral-950 hover:bg-neutral-800">{
@@ -20,5 +23,13 @@ export default function () {
             }</button>
         </div>
     </div>
+    )
+}
+
+const Sidebar = ()=>{
+    return (
+        <div className=" h-screen bg-slate-950 w-full max-w-[60%]">
+
+        </div>
     )
 }
