@@ -13,7 +13,7 @@ export default function () {
     return (
         <div className="">
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
-            {sidebarActive && <div className=" fixed top-0 left-0 md:hidden z-20">
+            {sidebarActive && <div className=" fixed top-0 left-0 md:hidden z-20 w-[60%]">
                 <Sidebar/>
             </div>}
             <button onClick={()=> {
@@ -28,7 +28,7 @@ export default function () {
 
 const Sidebar = ()=>{
     return (
-        <div className=" h-screen bg-slate-950 w-full max-w-[60%]">
+        <div className=" h-screen bg-slate-950 w-full">
 
         </div>
     )
