@@ -48,7 +48,7 @@ const Sidebar = ()=>{
     return (
         <div className="h-screen bg-slate-950 w-[60%]  md:w-[40%] ">
             <div className=" w-full min-h-screen bg-yellow-400">
-
+                <h1>TEST</h1>
             </div>
             
 
