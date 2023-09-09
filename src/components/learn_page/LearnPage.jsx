@@ -1,15 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { HomepageNav } from "../nav/Nav";
 import Footer from "../footer/Footer";
 import Error from '../../assets/error/error.svg';
 import {AiOutlineMenu, AiOutlineClose, AiFillCloseCircle, AiOutlineSearch} from 'react-icons/ai'
 import { useNavigate} from 'react-router-dom';
 import ZeroArticle from '../../assets/Zero/zero.svg';
-
+import { HashtagList } from "../article/ArticleCard";
+import DefaultThumbnail from '../../assets/no_thumbnail/default.svg'
+import axios from "axios";
 export default function () {
     
     const navigate = useNavigate();
-    const arr = [2,1];
+    const [arr, setArr] = useState([]);
+
+    useEffect(() => {
+      const setCourses =  async () => {
+        try {
+          const res = await axios.get('https://isa-citra.adaptable.app/learn');
+          setArr(res.data)
+        } catch (error) {
+          
+        }
+      }
+      setCourses()
+    }, [])
     return (
         <div className="">
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
@@ -42,8 +56,8 @@ export default function () {
             </div>
         </div>:
            <div className="my-4 mx-auto text-center md:my-8 justify-center grid grid-flow-row auto-rows-max md:grid-cols-2 lg:grid-cols-3 md:gap-4 lg:gap-6">
-                {arr.map((value, index)=> {
-                    return <CourseCard/>
+                {arr.map((data, index)=> {
+                    return <CourseCard data={data} key={index}/>
                 })}
            </div>}
             
@@ -96,21 +110,29 @@ const CourseCard = ({data}) => {
     return <div className=" flex-auto my-3 rounded-lg max-w-xs certificate-card w-auto flex flex-col">
              
              <div>
-                <img className=' w-full h-auto rounded-t-lg'src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjHo8LPH0dr05KyZ9p_HC-kHB9p36dt2zWOg&usqp=CAU' alt="" />
+                <img className=' w-full h-auto rounded-t-lg'src={data.thumbnail.trim() == ""? DefaultThumbnail : data.thumbnail} alt="" />
              </div>
              <div className=" text-gray-100 mx-2 mb-1 mt-3 certificate-title font-bold text-base">
-                <h1>Struktur Data Algoritma</h1>
+                <h1>{data.title}</h1>
              </div>
              <div className=" text-gray-700 mx-2 text-sm">
-                <p>Diterbitkan pada 07 Juni 2016</p>
+                <p>Dibuat pada {data.createdAt}</p>
              </div>
              <div className=" text-white mx-2 text-sm certificate-detail">
              <hr className="border-t-1 border-[#19A7CE] my-2 -mx-2" />
-                <p>Semester:  <span>3</span></p>
+                <p>Semester:  <span>{data.semester.trim()  == ""? "-":data.semester}</span></p>
              </div>
              <div className=" text-white mx-2 text-sm certificate-detail">
              <hr className="border-t-1 border-[#19A7CE] my-2 -mx-2" />
-                <p>Dibuat oleh:  <span>Isa Citra Buana</span></p>
+                <p>Dibuat oleh:  <span>{data.author.profile.firstName + data.author.profile.lastName}</span></p>
+             </div>
+
+             <div className=" text-white mx-2 text-sm certificate-detail">
+             <hr className="border-t-1 border-[#19A7CE] my-2 -mx-2" />
+                 <div className="flex text-white">
+                  <h1>Tag: {data.categories.length == 0? <span> - </span>: <span></span>}</h1>
+                 {data.categories.length  != 0 && <HashtagList categories={data.categories.slice(0,4)}/>}
+                 </div>
              </div>
              <div className=" text-white mx-2 text-sm certificate-detail">
              <hr className="border-t-1 border-[#19A7CE] my-2 -mx-2" />
