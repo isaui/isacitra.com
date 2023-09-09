@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { HomepageNav } from "../nav/Nav";
 import Footer from "../footer/Footer";
 import Error from '../../assets/error/error.svg';
@@ -10,15 +10,28 @@ import { Storage } from "../../../firebase";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import ImageUpload from '../../components/file_upload/UploadImage';
 import AddCategoryForm from "../add_category/AddCategoryForm";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useSelector } from "react-redux";
+
 
 
 export default function () {
+    const user = useSelector((state) => state.auth.user);
+    const navigate = useNavigate();
     const [title, setTitle] = useState('');
     const [semester, setSemester] = useState('');
     const [uploadStatus,setUploadStatus] = useState(false);
     const [thumbnail,setThumbnail] = useState('');
     const [categories, setCategories] = useState([]);
     const [showOverlay, setShowOverlay] = useState(false);
+
+    useEffect(()=>{
+      if(!user){
+        navigate('/authentication', {state:{message:'Anda belum mendapatkan izin untuk mengaksesnya. silahkan masuk atau membuat akun baru'}});
+        return;
+    }
+    }, [user])
     const closeOverlay = ()=> {
         setShowOverlay(false)
     }
