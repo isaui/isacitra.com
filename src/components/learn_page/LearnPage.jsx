@@ -3,7 +3,7 @@ import { HomepageNav } from "../nav/Nav";
 import Footer from "../footer/Footer";
 import Error from '../../assets/error/error.svg';
 import {AiOutlineMenu, AiOutlineClose, AiFillCloseCircle, AiOutlineSearch} from 'react-icons/ai'
-import { useNavigate} from 'react-router-dom';
+import { useNavigate, useLocation} from 'react-router-dom';
 import ZeroArticle from '../../assets/Zero/zero.svg';
 import { HashtagList } from "../article/ArticleCard";
 import DefaultThumbnail from '../../assets/no_thumbnail/default.svg'
@@ -27,7 +27,9 @@ function formatDateToDDMMYYYY(dateString) {
 export default function () {
     
     const navigate = useNavigate();
-    const [arr, setArr] = useState([]);
+    const searchQuery = new URLSearchParams(location.search).get('q') ?? '';
+    const [originalarr, setArr] = useState([]);
+    const arr = originalarr.filter((value)=> value.title.toLowerCase().includes(searchQuery.toLowerCase()))
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -80,7 +82,7 @@ export default function () {
             </div>
         </div>:
            <div className="my-4 mx-auto text-center md:my-8 justify-center grid grid-flow-row auto-rows-max md:grid-cols-2 lg:grid-cols-3 md:gap-4 lg:gap-6">
-                {arr.map((data, index)=> {
+                { arr.map((data, index)=> {
                     return <CourseCard data={data} key={index}/>
                 })}
            </div>}
@@ -104,7 +106,7 @@ const MobileSearchbar = () => {
   //  console.log(' i want to submit');
     event.preventDefault();
     if(query.trim().length >=1){
-      navigate('/search?q='+query);
+      navigate('/learn?q='+query);
     }
     setQuery('');
   };
