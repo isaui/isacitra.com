@@ -27,9 +27,9 @@ function formatDateToDDMMYYYY(dateString) {
 export default function () {
     
     const navigate = useNavigate();
-    const [searchQuery, setSearchQuery] = useState(new URLSearchParams(location.search).get('q') ?? '');
+    const searchQuery = new URLSearchParams(location.search).get('q') ?? '';
     const [originalarr, setArr] = useState([]);
-    const [arr, setCurrentArr] = useState([]);
+    const arr = originalarr.filter((value)=> value.title.toLowerCase().includes(searchQuery.toLowerCase()))
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -45,11 +45,6 @@ export default function () {
       }
       setCourses()
     }, [])
-
-    useEffect(()=>{
-      setCurrentArr(originalarr.filter((value)=> value.title.toLowerCase().includes(searchQuery.toLowerCase())));
-      //const arr = originalarr.filter((value)=> value.title.toLowerCase().includes(searchQuery.toLowerCase()))
-    }, [originalarr, searchQuery])
     return (
         <div className="">
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
@@ -69,7 +64,7 @@ export default function () {
             </div>
             <div onClick={
               ()=>{
-                setSearchQuery('')
+                navigate('/learn')
               }
             } className=" text-white rounded-md bg-neutral-950 px-5 py-2 hover:bg-neutral-800 text-base">
                 <h1>+ Tambahkan Matkul</h1>
