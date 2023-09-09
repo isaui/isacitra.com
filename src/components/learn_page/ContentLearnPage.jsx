@@ -26,6 +26,7 @@ export default function () {
           window.removeEventListener('resize', handleResize);
         };
       }, []);
+      
 
     
     return (
