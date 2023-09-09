@@ -47,7 +47,7 @@ export default function () {
 
 const Sidebar = ()=>{
     return (
-        <div className="relative h-screen bg-slate-950 w-[60%]  md:w-[40%] ">
+        <div className="h-screen bg-slate-950 w-[60%]  md:w-[40%] ">
             <div className="flex flex-col items-center  w-full min-h-screen bg-yellow-400">
                 <div className=" w-[90%] mt-6 py-2 flex justify-center text-white bg-[#1D1C1C] hover:bg-[#333030]">
                     <h1> + Tambah Materi</h1>
