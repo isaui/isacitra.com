@@ -39,7 +39,7 @@ export default function () {
             }}className="fixed top-3 right-5 z-20  p-3 rounded-lg bg-neutral-950 hover:bg-neutral-800">{
             sidebarActive? <AiOutlineClose size={24} color="white"/> : <FaBook  size={24} color="white"/>
             }</button>
-            
+
         </div>
     </div>
     )
@@ -49,7 +49,7 @@ const Sidebar = ()=>{
     return (
         <div className="relative h-screen bg-slate-950 w-[60%]  md:w-[40%] ">
             <div className="flex flex-col items-center  w-full min-h-screen bg-yellow-400">
-                <div className=" w-[90%] mt-4 py-2 rounded-md flex justify-center text-white bg-[#1D1C1C] hover:bg-[#333030]">
+                <div className=" w-[90%] mt-4  rounded-md flex justify-center text-white bg-[#1D1C1C] hover:bg-[#333030]">
                     <h1> + Tambah Materi</h1>
                 </div>
             </div>
