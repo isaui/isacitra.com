@@ -54,7 +54,14 @@ export default function () {
            <div className="w-full md:max-w-lg">
            <MobileSearchbar/>
            </div>
-           <div className="ml-auto md:ml-0 mr-4">
+           <div className=" flex space-x-1 ml-auto md:ml-0 mr-4">
+           <div onClick={
+              ()=>{
+                navigate('/learn')
+              }
+            } className=" text-white rounded-md bg-neutral-950 px-5 py-2 hover:bg-neutral-800 text-base">
+                <h1>Reset</h1>
+            </div>
             <div onClick={
               ()=>{
                 navigate('/learn/add')
