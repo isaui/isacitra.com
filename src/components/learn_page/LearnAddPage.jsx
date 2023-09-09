@@ -7,6 +7,7 @@ import { useNavigate} from 'react-router-dom';
 import ZeroArticle from '../../assets/Zero/zero.svg';
 import { Storage } from "../../../firebase";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import ImageUpload from '../../components/file_upload/UploadImage';
 
 
 export default function () {
