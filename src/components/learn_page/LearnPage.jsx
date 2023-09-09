@@ -130,7 +130,7 @@ const CourseCard = ({data}) => {
             {
               data.categories.length > 0 && <div className=" text-white mx-2 text-sm certificate-detail">
                <hr className="border-t-1 border-[#19A7CE] my-2 -mx-2" />
-                   {data.categories.length  != 0 && <HashtagList categories={data.categories.slice(0,4)}/>}
+                   {data.categories.length  != 0 && <HashtagList categories={data.categories.slice(0,2)}/>}
                </div>
             }
              <div className=" text-white mx-2 text-sm certificate-detail">
