@@ -110,7 +110,7 @@ const CourseCard = ({data}) => {
     return <div className=" flex-auto my-3 rounded-lg max-w-xs certificate-card w-auto flex flex-col">
              
              <div>
-                <img className=' w-full h-auto rounded-t-lg'src={data.thumbnail.trim() == ""? DefaultThumbnail : data.thumbnail} alt="" />
+                <img className=' w-full h-auto aspect-video rounded-t-lg'src={data.thumbnail.trim() == ""? DefaultThumbnail : data.thumbnail} alt="" />
              </div>
              <div className=" text-gray-100 mx-2 mb-1 mt-3 certificate-title font-bold text-base">
                 <h1>{data.title}</h1>
