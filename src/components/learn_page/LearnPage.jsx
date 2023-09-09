@@ -7,6 +7,7 @@ import { useNavigate} from 'react-router-dom';
 
 export default function () {
     
+    const navigate = useNavigate();
     const arr = [1,2,3,4,5,6];
     return (
         <div className="">
@@ -18,9 +19,13 @@ export default function () {
            <MobileSearchbar/>
            </div>
            <div className="ml-auto md:ml-0 mr-4">
-            <a href="https://isacitra.com/learn/add" className=" text-white rounded-md bg-neutral-950 px-5 py-2 hover:bg-neutral-800 text-base">
+            <div onClick={
+              ()=>{
+                navigate('/learn/add')
+              }
+            } className=" text-white rounded-md bg-neutral-950 px-5 py-2 hover:bg-neutral-800 text-base">
                 <h1>+ Tambahkan Matkul</h1>
-            </a>
+            </div>
            </div>
            </div>
            {
