@@ -8,6 +8,7 @@ import ZeroArticle from '../../assets/Zero/zero.svg';
 import { HashtagList } from "../article/ArticleCard";
 import DefaultThumbnail from '../../assets/no_thumbnail/default.svg'
 import axios from "axios";
+import Loading from "../loading/Loading";
 
 function formatDateToDDMMYYYY(dateString) {
   // Buat objek Date dari string tanggal yang diberikan
@@ -32,10 +33,12 @@ export default function () {
     useEffect(() => {
       const setCourses =  async () => {
         try {
+          setLoading(true)
           const res = await axios.get('https://isa-citra.adaptable.app/learn');
           setArr(res.data)
+          setLoading(false)
         } catch (error) {
-          
+          setLoading(false)
         }
       }
       setCourses()
@@ -59,7 +62,12 @@ export default function () {
             </div>
            </div>
            </div>
-           {
+           {loading? 
+           <div className="flex items-center my-auto h-full">
+           <div className="w-full my-auto h-full flex justify-center items-center mx-auto md:flex-row flex-col-reverse">
+           <Loading/>
+           </div>
+       </div>:
             arr.length == 0? <div className="flex items-center my-auto h-full">
             <div className="w-full my-auto h-full flex justify-center items-center mx-auto md:flex-row flex-col-reverse">
             <div className="mx-8">
