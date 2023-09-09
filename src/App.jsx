@@ -15,6 +15,7 @@ import ProjectPage from './components/project_page/ProjectPage';
 import Dashboard from './components/dashboard/Dashboard';
 import LearnPage from './components/learn_page/LearnPage';
 import LearnAddPage from './components/learn_page/LearnAddPage';
+import ContentLearnPage from './components/learn_page/ContentLearnPage';
 
 
 
@@ -38,7 +39,9 @@ function App() {
             <Route path='/projects' element= {<ProjectPage/>}></Route>
             <Route path='/search' element= {<SearchResult/>}></Route>
             <Route path='/learn' element= {<LearnPage/>}></Route>
+            <Route path='/learn/:id' element= {<ContentLearnPage/>}></Route>
             <Route path='/learn/add' element= {<LearnAddPage/>}></Route>
+
             <Route path='*' element= {<ErrorPage/>}></Route>
     </Routes>
     </Router>

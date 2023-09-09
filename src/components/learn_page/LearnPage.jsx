@@ -139,7 +139,7 @@ const MobileSearchbar = () => {
 }
 
 const CourseCard = ({data}) => {
-   // const navigate = useNavigate()
+    const navigate = useNavigate()
     return <div className=" flex-auto my-3 rounded-lg max-w-xs certificate-card w-auto flex flex-col">
              
              <div>
@@ -170,7 +170,11 @@ const CourseCard = ({data}) => {
              <hr className="border-t-1 border-[#19A7CE] my-2 -mx-2" />
              </div>
              <div className="mx-2 mt-auto">
-                <button className="w-full bg-slate-900 hover:bg-slate-950 text-white py-2 mb-2 rounded-md"><a >Buka</a></button>
+                <button onClick={
+                  ()=>{
+                    navigate('/learn/'+data._id);
+                  }
+                } className="w-full bg-slate-900 hover:bg-slate-950 text-white py-2 mb-2 rounded-md"><a  >Buka</a></button>
              </div>
 
 
