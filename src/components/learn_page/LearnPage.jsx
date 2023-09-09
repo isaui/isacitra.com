@@ -64,7 +64,7 @@ export default function () {
             </div>
             <div onClick={
               ()=>{
-                navigate('/learn')
+                navigate('/learn/add')
               }
             } className=" text-white rounded-md bg-neutral-950 px-5 py-2 hover:bg-neutral-800 text-base">
                 <h1>+ Tambahkan Matkul</h1>
