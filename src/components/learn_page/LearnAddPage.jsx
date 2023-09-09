@@ -5,9 +5,11 @@ import Error from '../../assets/error/error.svg';
 import {AiOutlineMenu, AiOutlineClose, AiFillCloseCircle, AiOutlineSearch} from 'react-icons/ai'
 import { useNavigate} from 'react-router-dom';
 import ZeroArticle from '../../assets/Zero/zero.svg';
+import CategoryLabel from "../category_label/CategoryLabel";
 import { Storage } from "../../../firebase";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import ImageUpload from '../../components/file_upload/UploadImage';
+import AddCategoryForm from "../add_category/AddCategoryForm";
 
 
 export default function () {
@@ -15,6 +17,11 @@ export default function () {
     const [semester, setSemester] = useState('');
     const [uploadStatus,setUploadStatus] = useState(false);
     const [thumbnail,setThumbnail] = useState('');
+    const [categories, setCategories] = useState([]);
+    const [showOverlay, setShowOverlay] = useState(false);
+    const closeOverlay = ()=> {
+        setShowOverlay(false)
+    }
     const handleUploadThumbnail = async (e, file) => {
         e.preventDefault();
         if(!file) return;
@@ -40,6 +47,18 @@ export default function () {
     );
 
     }
+    const handleAddCategory = (categoryName) => {
+        if(! categories.includes(categoryName)){
+            const newCategories = [...categories, categoryName];
+            setCategories(newCategories);
+        }
+    
+        setShowOverlay(false);
+  };
+  const handleDeleteCategory = (categoryName) => {
+    const updatedCategories = categories.filter((category) => category !== categoryName);
+    setCategories(updatedCategories);}
+
     return (
         <div className="">
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
@@ -53,19 +72,38 @@ export default function () {
             </div>
 
             <div className=" my-2 mx-4  w-full ">
-            <label htmlFor="title" class="block mb-2 text-sm font-medium text-white">Title</label>
-            <input value={title} onChange={e => setTitle(e.target.value)}type="text" id="title" class=" bg-slate-800 focus:border  text-white  text-sm rounded-xs focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="Nama Mata Kuliah"></input>
+            <label htmlFor="title" className="block mb-2 text-sm font-medium text-white">Title</label>
+            <input value={title} onChange={e => setTitle(e.target.value)}type="text" id="title" className=" bg-slate-800 focus:border  text-white  text-sm rounded-xs focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="Nama Mata Kuliah"></input>
         </div>
 
         <div className=" my-2 mx-4  w-full">
-            <label htmlFor="semester" class="block mb-2 text-sm font-medium text-white">Semester</label>
-            <input value={semester} onChange={e => setSemester(e.target.value)}type="text" id="semester" class=" bg-slate-800 focus:border  text-white  text-sm rounded-xs focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="Semester 3"></input>
+            <label htmlFor="semester" className="block mb-2 text-sm font-medium text-white">Semester</label>
+            <input value={semester} onChange={e => setSemester(e.target.value)}type="text" id="semester" className=" bg-slate-800 focus:border  text-white  text-sm rounded-xs focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="Semester 3"></input>
         </div>
 
         <div className=" my-2 mx-4  w-full">
-            <label htmlFor="thumbnail" class="block mb-2 text-sm font-medium text-white ">Thumbnail</label>
+            <label htmlFor="thumbnail" className="block mb-2 text-sm font-medium text-white ">Thumbnail</label>
             <ImageUpload setToUpload={handleUploadThumbnail} status={uploadStatus} setStatus={setUploadStatus}/>
         </div>
+
+        <div className=" my-2 mx-4 flex justify-between items-center flex-wrap w-full">
+        <div onClick={()=>setShowOverlay(true)}className=" px-5 py-2 my-2 bg-slate-950 text-white rounded hover:bg-slate-800">Add A Category</div>
+        <div className="flex flex-wrap">
+            {categories.map((value,index)=>{
+                return <><div className=" inline-block mr-2"><CategoryLabel key={index} onDelete={handleDeleteCategory} categoryName={value}/></div></>
+            })}
+        </div>
+        </div>
+
+
+        {showOverlay && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          
+            <AddCategoryForm onAddCategory={handleAddCategory} closeOverlay={closeOverlay} />
+            
+    
+        </div>
+      )}
         </div>
         </div>
         <Footer/>

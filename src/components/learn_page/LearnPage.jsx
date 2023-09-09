@@ -9,7 +9,7 @@ import ZeroArticle from '../../assets/Zero/zero.svg';
 export default function () {
     
     const navigate = useNavigate();
-    const arr = [];
+    const arr = [2,1];
     return (
         <div className="">
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
