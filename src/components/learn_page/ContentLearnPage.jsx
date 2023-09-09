@@ -8,7 +8,7 @@ export default function () {
     return (
         <div className="">
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
-            <button className="fixed top-0 left-0  p-4 rounded-md bg-neutral-950 hover:bg-neutral-800"><FaBook color="white"/></button>
+            <button className="fixed top-2 left-2  p-4 rounded-md bg-neutral-950 hover:bg-neutral-800"><FaBook  size={32} color="white"/></button>
         </div>
     </div>
     )
