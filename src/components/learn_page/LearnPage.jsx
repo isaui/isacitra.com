@@ -27,7 +27,7 @@ function formatDateToDDMMYYYY(dateString) {
 export default function () {
     
     const navigate = useNavigate();
-    const searchQuery = useState(new URLSearchParams(location.search).get('q') ?? '');
+    const [searchQuery, setSearchQuery] = useState(new URLSearchParams(location.search).get('q') ?? '');
     const [originalarr, setArr] = useState([]);
     const [arr, setCurrentArr] = useState([]);
     const [loading, setLoading] = useState(true);
