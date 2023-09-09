@@ -13,7 +13,7 @@ export default function () {
     return (
         <div className="">
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
-            {sidebarActive && <div className=" fixed top-0 left-0 md:hidden">
+            {sidebarActive && <div className=" fixed top-0 left-0 md:hidden z-20">
                 <Sidebar/>
             </div>}
             <button onClick={()=> {
