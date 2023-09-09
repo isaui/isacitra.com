@@ -72,10 +72,32 @@ export default function () {
     const updatedCategories = categories.filter((category) => category !== categoryName);
     setCategories(updatedCategories);}
 
+  const handleSubmit = async (e) => {
+      e.preventDefault();
+      //console.log(htmlText)
+      if(!title.trim()){
+          toast.error('Judul wajib diisi', {
+              autoClose: 2000,
+            })
+          return;
+      }
+      
+      try {
+          
+          
+  
+      } catch (error) {
+          
+      }
+      
+  
+    }
+
     return (
         <div className="">
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
             <HomepageNav/>
+            <ToastContainer position="top-center" /> 
          <div className=' min-h-screen w-full max-w-5xl flex flex-col items-center px-2'>
          <div className="md:mt-20 mt-24 flex justify-between items-center text-white w-full   py-3  bg-slate-900 ">
             <h1 className=" text-2xl md:text-3xl ">Tambahkan Mata Kuliah</h1>
@@ -91,7 +113,7 @@ export default function () {
 
         <div className=" my-2 mx-4  w-full">
             <label htmlFor="semester" className="block mb-2 text-sm font-medium text-white">Semester</label>
-            <input value={semester} onChange={e => setSemester(e.target.value)}type="text" id="semester" className=" bg-slate-800 focus:border  text-white  text-sm rounded-xs focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="Semester 3"></input>
+            <input value={semester} onChange={e => setSemester(e.target.value)}type="text" id="semester" className=" bg-slate-800 focus:border  text-white  text-sm rounded-xs focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="3"></input>
         </div>
 
         <div className=" my-2 mx-4  w-full">
