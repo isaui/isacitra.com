@@ -62,7 +62,7 @@ export default function () {
             <input value={semester} onChange={e => setSemester(e.target.value)}type="text" id="semester" class=" bg-slate-800 focus:border  text-white  text-sm rounded-xs focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="Semester 3"></input>
         </div>
 
-        <div className=" my-2 mx-4 w-full">
+        <div className=" my-2 mx-4 px-8  w-full">
             <label htmlFor="thumbnail" class="block mb-2 text-sm font-medium text-white ">Thumbnail</label>
             <ImageUpload setToUpload={handleUploadThumbnail} status={uploadStatus} setStatus={setUploadStatus}/>
         </div>
