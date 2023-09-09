@@ -4,11 +4,12 @@ import Footer from "../footer/Footer";
 import Error from '../../assets/error/error.svg';
 import {AiOutlineMenu, AiOutlineClose, AiFillCloseCircle, AiOutlineSearch} from 'react-icons/ai'
 import { useNavigate} from 'react-router-dom';
+import ZeroArticle from '../../assets/Zero/zero.svg';
 
 export default function () {
     
     const navigate = useNavigate();
-    const arr = [1,2,3,4,5,6];
+    const arr = [];
     return (
         <div className="">
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
@@ -36,7 +37,7 @@ export default function () {
             <p className=" text-gray-200 lg:text-2xl md:text-2xl text-lg text-center md:text-left">Matkul belum tersedia. Silahkan menambahkan.</p>
             </div>
             <div className="">
-                <img className= " lg:min-h-[200px] lg:h-[210px] md:min-h-[180px] md:h-[190px] h-[180px]"src={Error} alt="" />
+                <img className= " lg:min-h-[200px] lg:h-[210px] md:min-h-[180px] md:h-[190px] h-[180px]"src={ZeroArticle} alt="" />
             </div>
             </div>
         </div>:
