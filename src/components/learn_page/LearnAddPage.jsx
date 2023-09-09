@@ -13,6 +13,7 @@ import AddCategoryForm from "../add_category/AddCategoryForm";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 
 
@@ -83,11 +84,20 @@ export default function () {
       }
       
       try {
-          
-          
+          const data = {
+            title:title,
+            semester:semester,
+            categories:categories,
+            chapters:[]
+          };
+          await axios.post('https://isa-citra.adaptable.app/learn', data)
+          toast.success('Berhasil menambahkan mata kuliah', {
+            autoClose: 2000,
+          })
+          navigate(-1)
   
       } catch (error) {
-          
+          console.log(error);
       }
       
   
