@@ -13,7 +13,7 @@ export default function () {
     return (
         <div className="">
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
-            {<div className={`fixed ease-in-out duration-500 top-0 md:hidden z-10 w-full ${sidebarActive? 'left-0':'left-[-100%]'}`}>
+            {<div className={`fixed ease-in-out duration-500 top-0 lg:hidden z-10 w-full ${sidebarActive? 'left-0':'left-[-100%]'}`}>
                 <Sidebar/>
             </div>}
             <button onClick={()=> {
@@ -28,7 +28,7 @@ export default function () {
 
 const Sidebar = ()=>{
     return (
-        <div className=" h-screen bg-slate-950 w-[60%]">
+        <div className=" h-screen bg-slate-950 w-[60%] md:w-[40%]">
             
 
         </div>
