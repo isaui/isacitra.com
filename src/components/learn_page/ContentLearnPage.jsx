@@ -13,12 +13,12 @@ export default function () {
     return (
         <div className="">
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
-            {sidebarActive && <div className=" fixed top-0 left-0 md:hidden z-20 w-[60%]">
+            {<div className={`fixed ease-in-out duration-500 top-0 md:hidden z-10 w-full ${sidebarActive? 'left-0':'left-[-100%]'}`}>
                 <Sidebar/>
             </div>}
             <button onClick={()=> {
                 toggleSidebar()
-            }}className="fixed top-3 right-5  p-3 rounded-lg bg-neutral-950 hover:bg-neutral-800">{
+            }}className="fixed top-3 right-5 z-20  p-3 rounded-lg bg-neutral-950 hover:bg-neutral-800">{
             sidebarActive? <AiOutlineClose size={24} color="white"/> : <FaBook  size={24} color="white"/>
             }</button>
         </div>
@@ -28,7 +28,8 @@ export default function () {
 
 const Sidebar = ()=>{
     return (
-        <div className=" h-screen bg-slate-950 w-full">
+        <div className=" h-screen bg-slate-950 w-[60%]">
+            
 
         </div>
     )
