@@ -28,7 +28,7 @@ export default function () {
     
     const navigate = useNavigate();
     const [arr, setArr] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
       const setCourses =  async () => {
