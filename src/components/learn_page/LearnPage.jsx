@@ -8,6 +8,21 @@ import ZeroArticle from '../../assets/Zero/zero.svg';
 import { HashtagList } from "../article/ArticleCard";
 import DefaultThumbnail from '../../assets/no_thumbnail/default.svg'
 import axios from "axios";
+
+function formatDateToDDMMYYYY(dateString) {
+  // Buat objek Date dari string tanggal yang diberikan
+  const date = new Date(dateString);
+
+  // Ambil tanggal, bulan, dan tahun dari objek Date
+  const day = date.getDate().toString().padStart(2, '0'); // padStart digunakan untuk menambahkan '0' jika angkanya kurang dari 10
+  const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Bulan dimulai dari 0, jadi perlu ditambah 1
+  const year = date.getFullYear();
+
+  // Gabungkan dalam format "tanggal-bulan-tahun"
+  const formattedDate = `${day}-${month}-${year}`;
+
+  return formattedDate;
+}
 export default function () {
     
     const navigate = useNavigate();
@@ -116,7 +131,7 @@ const CourseCard = ({data}) => {
                 <h1>{data.title}</h1>
              </div>
              <div className=" text-gray-700 mx-2 text-sm">
-                <p>Dibuat pada {data.createdAt}</p>
+                <p>Dibuat pada {formatDateToDDMMYYYY(data.createdAt.toString())}</p>
              </div>
              <div className=" text-white mx-2 text-sm certificate-detail">
              <hr className="border-t-1 border-[#19A7CE] my-2 -mx-2" />
