@@ -88,7 +88,8 @@ export default function () {
             title:title,
             semester:semester,
             categories:categories,
-            chapters:[]
+            chapters:[],
+            thumbnail:thumbnail
           };
           await axios.post('https://isa-citra.adaptable.app/learn', data)
           toast.success('Berhasil menambahkan mata kuliah', {
