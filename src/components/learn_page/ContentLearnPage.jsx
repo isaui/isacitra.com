@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { HomepageNav } from "../nav/Nav";
 import Footer from "../footer/Footer";
 import Error from '../../assets/error/error.svg'
@@ -10,6 +10,24 @@ export default function () {
     const toggleSidebar = () => {
         setSidebarActive(prev => !prev);
     }
+    const closeSidebar = ()=> {
+        setSidebarActive(false);
+    }
+
+    const handleResize = () => {
+        if (window.innerWidth > 1024) {
+          closeSidebar()
+        } 
+      };
+      useEffect(() => {
+        window.addEventListener('resize', handleResize);
+        handleResize(); // Panggil handleResize pada awal render
+        return () => {
+          window.removeEventListener('resize', handleResize);
+        };
+      }, []);
+
+    
     return (
         <div className="">
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
