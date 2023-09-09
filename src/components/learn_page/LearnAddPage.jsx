@@ -45,7 +45,7 @@ export default function () {
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
             <HomepageNav/>
          <div className=' min-h-screen w-full max-w-5xl flex flex-col items-center'>
-         <div className="md:mt-20 mt-24 flex justify-between items-center text-white w-full   py-3  bg-slate-900 ">
+         <div className="md:mt-20 mt-24 flex justify-between items-center text-white w-full px-2  py-3  bg-slate-900 ">
             <h1 className=" text-2xl md:text-3xl ">Tambahkan Mata Kuliah</h1>
             <button className=" bg-neutral-950 hover:bg-neutral-800 rounded-sm px-4 py-2 text-base">
                 Save
