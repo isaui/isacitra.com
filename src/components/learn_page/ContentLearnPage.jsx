@@ -15,7 +15,7 @@ export default function () {
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
             <button onClick={()=> {
                 toggleSidebar()
-            }}className="fixed top-3 left-5  p-3 rounded-lg bg-neutral-950 hover:bg-neutral-800">{
+            }}className="fixed top-3 right-5  p-3 rounded-lg bg-neutral-950 hover:bg-neutral-800">{
             sidebarActive? <AiOutlineClose size={24} color="white"/> : <FaBook  size={24} color="white"/>
             }</button>
         </div>
