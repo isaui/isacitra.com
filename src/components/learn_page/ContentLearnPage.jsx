@@ -46,10 +46,8 @@ export default function () {
 
 const Sidebar = ()=>{
     return (
-        <div className="h-screen bg-slate-950 w-[60%] max-w-[60%] md:w-[40%] md:max-w-[40%]">
-            <div className=" w-full py-2 mx-4  my-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-white">
-                <h1>+ Tambah Materi</h1>
-            </div>
+        <div className="h-screen bg-slate-950 w-[60%]  md:w-[40%] ">
+            
 
         </div>
     )
