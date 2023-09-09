@@ -47,6 +47,11 @@ export default function () {
 const Sidebar = ()=>{
     return (
         <div className="h-screen bg-slate-950 w-[60%]  md:w-[40%] ">
+            <button className=" flex justify-center bg-blue-600 w-full text-white mx-6 mt-6">
+                <h1>
+                    Tambah Materi
+                </h1>
+            </button>
             
 
         </div>
