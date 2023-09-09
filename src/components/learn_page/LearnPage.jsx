@@ -124,13 +124,13 @@ const CourseCard = ({data}) => {
              </div>
              <div className=" text-white mx-2 text-sm certificate-detail">
              <hr className="border-t-1 border-[#19A7CE] my-2 -mx-2" />
-                <p>Dibuat oleh:  <span>{data.author.profile.firstName + data.author.profile.lastName}</span></p>
+                <p>Dibuat oleh:  <span>{data.author.profile.firstName +" " +data.author.profile.lastName}</span></p>
              </div>
 
              <div className=" text-white mx-2 text-sm certificate-detail">
              <hr className="border-t-1 border-[#19A7CE] my-2 -mx-2" />
-                 <div className="flex text-white">
-                  <h1>Tag: {data.categories.length == 0? <span> - </span>: <span></span>}</h1>
+                 <div className="flex items-center  text-white">
+                  <h1 className=" mr-4">Tag: {data.categories.length == 0? <span> - </span>: <span></span>}</h1>
                  {data.categories.length  != 0 && <HashtagList categories={data.categories.slice(0,4)}/>}
                  </div>
              </div>
