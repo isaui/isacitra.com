@@ -29,7 +29,7 @@ export default function () {
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState(new URLSearchParams(location.search).get('q') ?? '');
     const [originalarr, setArr] = useState([]);
-    const arr = originalarr.filter((value)=> value.title.toLowerCase().includes(searchQuery.toLowerCase()))
+    const [arr, setCurrentArr] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -44,7 +44,12 @@ export default function () {
         }
       }
       setCourses()
-    }, [])
+    }, []),
+
+    useEffect(()=>{
+      setCurrentArr(originalarr.filter((value)=> value.title.toLowerCase().includes(searchQuery.toLowerCase())));
+      //const arr = originalarr.filter((value)=> value.title.toLowerCase().includes(searchQuery.toLowerCase()))
+    }, [originalarr, searchQuery])
     return (
         <div className="">
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
