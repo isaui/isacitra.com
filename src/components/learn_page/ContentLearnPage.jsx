@@ -572,7 +572,7 @@ const NotesPage = ({matkul, activeMateri, activeChapter }) => {
     <div onClick={(e)=>{
       e.stopPropagation();
       navigate('/learn/'+id+"/addNote", {state: {matkul, activeMateri, activeChapter}})
-    }} className="absolute lg:hidden bottom-12  right-6 text-white text-sm flex justify-center rounded-md items-center px-4 py-2 bg-neutral-800 hover:bg-neutral-700">
+    }} className="fixed lg:hidden bottom-12  right-6 text-white text-sm flex justify-center rounded-md items-center px-4 py-2 bg-neutral-800 hover:bg-neutral-700">
       <h1> + Tambah Note</h1>
     </div>
     <div onClick={(e)=>{
@@ -637,7 +637,7 @@ const VideosPage = ( {setAddVideoBox, activeMateri}) => {
         navigate('/authentication', {state:{message:'Anda belum mendapatkan izin untuk mengaksesnya. silahkan masuk atau membuat akun baru'}})
       }
       setAddVideoBox(true)
-    }}className="absolute lg:hidden bottom-12  right-6 text-white text-sm flex justify-center rounded-md items-center px-4 py-2 bg-neutral-800 hover:bg-neutral-700">
+    }}className="fixed lg:hidden bottom-12  right-6 text-white text-sm flex justify-center rounded-md items-center px-4 py-2 bg-neutral-800 hover:bg-neutral-700">
       <h1> + Tambah Video</h1>
     </div>
     <div onClick={(e)=>{
@@ -846,7 +846,7 @@ export default function () {
 
 function TabBar({ activeTab='notes', onTabClick=(str)=>{} }) {
   return (
-    <div className=" text-sm absolute top-2 left-1/2 transform -translate-x-1/2 bg-gray-800 rounded-full p-2 shadow-lg">
+    <div className=" text-sm fixed lg:absolute top-2 left-1/2 transform -translate-x-1/2 bg-gray-800 rounded-full p-2 shadow-lg">
       <button
         className={`rounded-full mr-2 py-2 px-4 focus:outline-none ${
           activeTab === 'notes' ? 'bg-slate-950 text-white' : 'bg-gray-600 text-gray-400'
