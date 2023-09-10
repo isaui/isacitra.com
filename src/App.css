@@ -172,3 +172,25 @@ body{
 .ql-container.ql-snow{
   
    border: none !important;}
+
+   ::-webkit-scrollbar {
+    width: 8px; /* Lebar scrollbar */
+    background-color: #333; /* Warna latar belakang scrollbar */
+  }
+  
+  /* Style thumb (kursor) scrollbar */
+  ::-webkit-scrollbar-thumb {
+    background-color: #555; /* Warna thumb (kursor) scrollbar */
+    border-radius: 10px; /* Bentuk rounded */
+  }
+  
+  /* Style track (jalur) scrollbar */
+  ::-webkit-scrollbar-track {
+    background-color: #111; /* Warna track (jalur) scrollbar */
+    border-radius: 10px; /* Bentuk rounded */
+  }
+  
+  /* Style corner (sudut) scrollbar (jika diperlukan) */
+  ::-webkit-scrollbar-corner {
+    background-color: #111; /* Warna sudut scrollbar */
+  }

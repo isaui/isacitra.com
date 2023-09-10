@@ -16,6 +16,8 @@ import Dashboard from './components/dashboard/Dashboard';
 import LearnPage from './components/learn_page/LearnPage';
 import LearnAddPage from './components/learn_page/LearnAddPage';
 import ContentLearnPage from './components/learn_page/ContentLearnPage';
+import AddSectionPage from './components/learn_page/AddSectionPage';
+import AddNotePage from './components/learn_page/AddNotePage';
 
 
 
@@ -41,7 +43,7 @@ function App() {
             <Route path='/learn' element= {<LearnPage/>}></Route>
             <Route path='/learn/:id' element= {<ContentLearnPage/>}></Route>
             <Route path='/learn/add' element= {<LearnAddPage/>}></Route>
-
+            <Route path='/learn/:id/addNote' element= {<AddNotePage/>}></Route>
             <Route path='*' element= {<ErrorPage/>}></Route>
     </Routes>
     </Router>
