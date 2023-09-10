@@ -654,7 +654,7 @@ const VideosPage = ( {setAddVideoBox, activeMateri}) => {
     </div>: <div className="flex flex-col items-center w-full  mt-24 md:mt-20">
       {activeMateri.videos.map((video, index)=>{
        // console.log(matkul)
-        return <div key={video._id} className="lg:max-w-3xl max-w-full mx-auto mb-4 mx-2 bg-slate-950 pb-3 mb-3 w-full md:min-w-[32rem] lg:min-w-[36rem] xl:min-w-[40rem] text-ellipsis  pt-3 -mt-1 rounded-lg ">
+        return <div key={video._id} className="lg:max-w-3xl max-w-full mx-auto mb-4 mx-2 bg-slate-950 bg-opacity-20  pb-3 mb-3 w-full md:min-w-[32rem] lg:min-w-[36rem] xl:min-w-[40rem] text-ellipsis  pt-3 -mt-1 rounded-lg ">
                 
         <div className="text-white  text-xl md:text-2xl h-auto lg:text-3xl px-6 md:px-3 mb-3">
             <div className="  max-w-full flex flex-wrap overflow-ellipsis">
@@ -664,8 +664,8 @@ const VideosPage = ( {setAddVideoBox, activeMateri}) => {
             <hr className="border-2 border-[#1D5B79] my-2 rounded-full" />
         </div>
         {
-           <div className="w-[95%] aspect-video article px-6 md:px-3 mx-auto text-[#9ca3af] my-4">
-            <iframe className="w-full h-full" src={"https://www.youtube.com/embed/"+extractYouTubeVideoId(video.url)} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+           <div className="w-[97%] aspect-video  mx-auto text-[#9ca3af] my-4">
+            <iframe className="w-full h-full" src={"https://www.youtube.com/embed/"+extractYouTubeVideoId(video.url)} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
         </div>
         }
         
