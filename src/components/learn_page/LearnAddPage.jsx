@@ -14,6 +14,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useSelector } from "react-redux";
 import axios from "axios";
+import mongoose from "mongoose";
 
 
 
@@ -85,6 +86,7 @@ export default function () {
       
       try {
           const data = {
+            _id: new mongoose.Types.ObjectId(),
             title:title,
             semester:semester,
             categories:categories,
