@@ -635,6 +635,7 @@ const VideosPage = ( {setAddVideoBox, activeMateri}) => {
       if(!user){
         navigate('/authentication', {state:{message:'Anda belum mendapatkan izin untuk mengaksesnya. silahkan masuk atau membuat akun baru'}})
       }
+      setAddVideoBox(true)
     }}className="absolute lg:hidden bottom-4  right-6 text-white text-sm flex justify-center rounded-md items-center px-4 py-2 bg-neutral-800 hover:bg-neutral-700">
       <h1> + Tambah Video</h1>
     </div>
@@ -664,7 +665,7 @@ const VideosPage = ( {setAddVideoBox, activeMateri}) => {
             <hr className="border-2 border-[#1D5B79] my-2 rounded-full" />
         </div>
         {
-           <div className="w-[97%] aspect-video  mx-auto text-[#9ca3af] my-4">
+           <div className="w-[97%] aspect-video rounded-md  mx-auto text-[#9ca3af] my-4">
             <iframe className="w-full h-full" src={"https://www.youtube.com/embed/"+extractYouTubeVideoId(video.url)} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
         </div>
         }
