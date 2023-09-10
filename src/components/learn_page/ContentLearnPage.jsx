@@ -279,7 +279,7 @@ const DeleteConfirmationBox = ({ onConfirm, onCancel, text, loading }) => {
   };
 
 
-function ChapterDropdown({ activeChapter,setActiveChapter,chapter, mataKuliah, setMataKuliah, activeMateri, setActiveMateri }) {
+function ChapterDropdown({ onClickInside=()=>{},activeChapter,setActiveChapter,chapter, mataKuliah, setMataKuliah, activeMateri, setActiveMateri }) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [deleteBoxShowing, setDeleteBoxShowing] = useState(false);
     const [deleteMateri, setDeleteMateri] = useState(false);
@@ -521,6 +521,7 @@ function ChapterDropdown({ activeChapter,setActiveChapter,chapter, mataKuliah, s
                 <label onClick={()=>{
                   setActiveMateri(materi)
                   setActiveChapter(chapter)
+                  onClickInside();
                 }} className={`ml-auto mr-2 block text-white flex ${!activeMateri ? 'bg-slate-900' : activeMateri._id == materi._id? 'bg-teal-900' : 'bg-slate-900'}  rounded-sm p-2 w-[95%] text-xs truncate`}>
                   <h1 className=" mr-auto">{materi.title}</h1>
                   <div onClick={(e)=>{
@@ -571,7 +572,7 @@ const NotesPage = ({matkul, activeMateri, activeChapter }) => {
     <div onClick={(e)=>{
       e.stopPropagation();
       navigate('/learn/'+id+"/addNote", {state: {matkul, activeMateri, activeChapter}})
-    }} className="absolute lg:hidden bottom-4  right-6 text-white text-sm flex justify-center rounded-md items-center px-4 py-2 bg-neutral-800 hover:bg-neutral-700">
+    }} className="absolute lg:hidden bottom-8  right-6 text-white text-sm flex justify-center rounded-md items-center px-4 py-2 bg-neutral-800 hover:bg-neutral-700">
       <h1> + Tambah Note</h1>
     </div>
     <div onClick={(e)=>{
@@ -636,7 +637,7 @@ const VideosPage = ( {setAddVideoBox, activeMateri}) => {
         navigate('/authentication', {state:{message:'Anda belum mendapatkan izin untuk mengaksesnya. silahkan masuk atau membuat akun baru'}})
       }
       setAddVideoBox(true)
-    }}className="absolute lg:hidden bottom-4  right-6 text-white text-sm flex justify-center rounded-md items-center px-4 py-2 bg-neutral-800 hover:bg-neutral-700">
+    }}className="absolute lg:hidden bottom-8  right-6 text-white text-sm flex justify-center rounded-md items-center px-4 py-2 bg-neutral-800 hover:bg-neutral-700">
       <h1> + Tambah Video</h1>
     </div>
     <div onClick={(e)=>{
@@ -815,7 +816,7 @@ export default function () {
 
                 closeSidebar()
             }} className={` bg-gray-950 bg-opacity-20 fixed ease-in-out duration-500 top-0  z-10 w-full ${sidebarActive? 'left-0':'left-[-100%]'}`}>
-                <Sidebar activeChapter={activeChapter}setActiveChapter={setActiveChapter} setActiveMateri={setActiveMateri} activeMateri={activeMateri} loading={load} setAddSectionBox={setAddSectionBox} mataKuliah={mataKuliah} setMataKuliah={setMataKuliah} idMatkul={id} chapters={mataKuliah? mataKuliah.chapters : []}/>
+                <Sidebar setSidebar={setSidebarActive} activeChapter={activeChapter}setActiveChapter={setActiveChapter} setActiveMateri={setActiveMateri} activeMateri={activeMateri} loading={load} setAddSectionBox={setAddSectionBox} mataKuliah={mataKuliah} setMataKuliah={setMataKuliah} idMatkul={id} chapters={mataKuliah? mataKuliah.chapters : []}/>
             </div>}
             <button onClick={()=> {
                 toggleSidebar()
@@ -915,7 +916,7 @@ const SidePanel = ({activeChapter,setActiveChapter ,chapters ,activeMateri, setA
 }
 
 
-const Sidebar = ({activeChapter,setActiveChapter,setMataKuliah, chapters ,activeMateri, setActiveMateri ,idMatkul, mataKuliah, setAddSectionBox, loading}, )=>{
+const Sidebar = ({setSidebar,activeChapter,setActiveChapter,setMataKuliah, chapters ,activeMateri, setActiveMateri ,idMatkul, mataKuliah, setAddSectionBox, loading}, )=>{
     const navigate = useNavigate();
     const groupedChapters = chapters.reduce((result, chapter) =>{
         const {bab} = chapter;
@@ -948,7 +949,7 @@ const Sidebar = ({activeChapter,setActiveChapter,setMataKuliah, chapters ,active
                            return  <div key={index+100}>
                             <h1 className=" text-white text-sm truncate mx-2 mb-3">{val}</h1>
                             {groupedChapters[val].map((dt,idx)=>{
-                               return <ChapterDropdown activeChapter={activeChapter} setActiveChapter={setActiveChapter} setActiveMateri={setActiveMateri} activeMateri={activeMateri}setMataKuliah={setMataKuliah} key={idx} chapter={dt} mataKuliah={mataKuliah}/>
+                               return <ChapterDropdown onClickInside={()=>{setSidebar(false)}} activeChapter={activeChapter} setActiveChapter={setActiveChapter} setActiveMateri={setActiveMateri} activeMateri={activeMateri}setMataKuliah={setMataKuliah} key={idx} chapter={dt} mataKuliah={mataKuliah}/>
                             })}
                            </div>
                         })
