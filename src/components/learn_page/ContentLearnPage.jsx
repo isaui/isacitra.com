@@ -664,8 +664,8 @@ const VideosPage = ( {setAddVideoBox, activeMateri}) => {
             <hr className="border-2 border-[#1D5B79] my-2 rounded-full" />
         </div>
         {
-           <div className="w-[95%] aspect-video article px-6 md:px-3 mx-auto text-[#9ca3af] my-4 bg-slate-800">
-            <iframe  src={"https://www.youtube.com/embed/"+extractYouTubeVideoId(video.url)} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+           <div className="w-[95%] aspect-video article px-6 md:px-3 mx-auto text-[#9ca3af] my-4">
+            <iframe className="w-full h-full" src={"https://www.youtube.com/embed/"+extractYouTubeVideoId(video.url)} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
         </div>
         }
         
