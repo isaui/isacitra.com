@@ -572,7 +572,7 @@ const NotesPage = ({matkul, activeMateri, activeChapter }) => {
     <div onClick={(e)=>{
       e.stopPropagation();
       navigate('/learn/'+id+"/addNote", {state: {matkul, activeMateri, activeChapter}})
-    }} className="absolute lg:hidden bottom-8  right-6 text-white text-sm flex justify-center rounded-md items-center px-4 py-2 bg-neutral-800 hover:bg-neutral-700">
+    }} className="absolute lg:hidden bottom-12  right-6 text-white text-sm flex justify-center rounded-md items-center px-4 py-2 bg-neutral-800 hover:bg-neutral-700">
       <h1> + Tambah Note</h1>
     </div>
     <div onClick={(e)=>{
@@ -637,7 +637,7 @@ const VideosPage = ( {setAddVideoBox, activeMateri}) => {
         navigate('/authentication', {state:{message:'Anda belum mendapatkan izin untuk mengaksesnya. silahkan masuk atau membuat akun baru'}})
       }
       setAddVideoBox(true)
-    }}className="absolute lg:hidden bottom-8  right-6 text-white text-sm flex justify-center rounded-md items-center px-4 py-2 bg-neutral-800 hover:bg-neutral-700">
+    }}className="absolute lg:hidden bottom-12  right-6 text-white text-sm flex justify-center rounded-md items-center px-4 py-2 bg-neutral-800 hover:bg-neutral-700">
       <h1> + Tambah Video</h1>
     </div>
     <div onClick={(e)=>{
