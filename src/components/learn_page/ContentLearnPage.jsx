@@ -61,7 +61,7 @@ const AddVideoBox = ({ onConfirm, onCancel, text, buttonText, loading }) => {
               className="my-2 px-3 py-2 w-full bg-gray-800 border border-gray-600 rounded-md text-white focus:outline-none focus:ring focus:border-blue-300"
             />
 
-            <label className="text-white md:text-lg text-base leading-relaxed">URL Video:</label>
+            <label className="text-white md:text-lg text-base leading-relaxed">URL Video Youtube:</label>
             <input
               type="text"
               name="urlVideo"
