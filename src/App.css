@@ -72,6 +72,7 @@ body{
   @apply rounded-sm;
   @apply py-2;
   @apply px-1;
+  @apply break-words;
 
 }
 .article h1,
