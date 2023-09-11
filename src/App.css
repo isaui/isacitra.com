@@ -56,7 +56,7 @@ body{
   @apply md:text-base;
   @apply lg:text-lg;
   @apply leading-loose;
-  @apply break-words;
+  @apply break-words !important;
 
 
   font-family: 'Roboto', sans-serif;
@@ -89,7 +89,7 @@ body{
   @apply font-bold;
   @apply text-[#00A8FF];
   @apply md:py-1 py-0;
-  @apply break-words;
+  @apply break-words !important;
 }
 .article img {
   @apply w-full;
