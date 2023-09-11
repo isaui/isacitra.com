@@ -607,7 +607,7 @@ const NotesPage = ({matkul, activeMateri, activeChapter }) => {
         </div>
         }
         
-        <div className= 'whitespace-pre-wrap mb-2 w-full break-words article px-6 md:px-3 mx-auto text-[#9ca3af]' dangerouslySetInnerHTML={{__html:note.content}}>
+        <div className= 'overflow-x-auto whitespace-pre-wrap mb-2 w-full break-words article px-6 md:px-3 mx-auto text-[#9ca3af]' dangerouslySetInnerHTML={{__html:note.content}}>
         </div>
         
         
