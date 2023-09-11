@@ -68,7 +68,7 @@ body{
 
 .article pre{
   @apply bg-indigo-900;
-  @apply bg-opacity-50;
+  @apply bg-opacity-20;
   @apply rounded-sm;
   @apply py-2;
   @apply px-1;
