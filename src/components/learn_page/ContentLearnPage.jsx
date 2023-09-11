@@ -522,8 +522,8 @@ function ChapterDropdown({ onClickInside=()=>{},activeChapter,setActiveChapter,c
                   setActiveMateri(materi)
                   setActiveChapter(chapter)
                   onClickInside();
-                }} className={`ml-auto mr-2 block text-white flex ${!activeMateri ? 'bg-slate-900' : activeMateri._id == materi._id? 'bg-teal-900' : 'bg-slate-900'}  rounded-sm p-2 w-[95%] text-xs truncate`}>
-                  <h1 className=" mr-auto">{materi.title}</h1>
+                }} className={` truncate ml-auto mr-2 block text-white flex ${!activeMateri ? 'bg-slate-900' : activeMateri._id == materi._id? 'bg-teal-900' : 'bg-slate-900'}  rounded-sm p-2 w-[95%] text-xs truncate`}>
+                  <h1 className="truncate  mr-auto">{materi.title}</h1>
                   <div onClick={(e)=>{
                     e.stopPropagation();
                     idMateriToEdit.current = materi._id;
