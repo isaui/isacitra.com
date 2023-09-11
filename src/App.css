@@ -64,6 +64,14 @@ body{
   @apply text-[#9ca3af];
   @apply md:py-1 py-0;
 }
+
+.article code{
+  @apply bg-slate-800;
+  @apply rounded-sm;
+  @apply py-2;
+  @apply px-1;
+  
+}
 .article h1,
 .article h2,
 .article h3,
