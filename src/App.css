@@ -73,6 +73,7 @@ body{
   @apply py-2;
   @apply px-1;
   @apply break-words;
+  @apply overflow-x-auto;
 
 }
 .article h1,
