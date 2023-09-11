@@ -588,7 +588,7 @@ const NotesPage = ({matkul, activeMateri, activeChapter }) => {
     </div>: <div className="flex flex-col items-center w-full  mt-24 md:mt-20">
       {activeMateri.notes.map((note, index)=>{
         //console.log(matkul)
-        return <div key={note._id} className="lg:max-w-3xl max-w-full mx-auto mb-4 mx-2 bg-slate-950 bg-opacity-40 pb-3 mb-3 w-full md:min-w-[32rem] lg:min-w-[36rem] xl:min-w-[40rem] text-ellipsis  pt-3 -mt-1 rounded-lg ">
+        return <div key={note._id} className="lg:max-w-3xl max-w-full mx-auto mb-4 mx-2 bg-teal-950 pb-3 mb-3 w-full md:min-w-[32rem] lg:min-w-[36rem] xl:min-w-[40rem] text-ellipsis  pt-3 -mt-1 rounded-lg ">
                 
         <div className="text-white  text-xl md:text-2xl h-auto lg:text-3xl px-6 md:px-3 mb-3">
             <div className=" text-sm  h-auto  ">
