@@ -140,7 +140,8 @@ export default function () {
         materiId: data.activeMateri._id,
         chapterId: data.activeChapter._id,
         message:'hahhahaa'
-      }
+      },
+      replace:true
     });
     
     
