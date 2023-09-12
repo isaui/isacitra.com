@@ -16,7 +16,15 @@ import { HashtagList } from "../article/ArticleCard";
 import { getDayString, getMonthString } from "../../../utils/date";
 import {io} from 'socket.io-client';
 
-const socket = io('https://isa-citra.adaptable.app')
+const socket = io('https://isa-citra.adaptable.app', {
+  reconnectionDelay: 1000,
+  reconnection: true,
+  reconnectionAttemps: 10,
+  transports: ['websocket'],
+  agent: false,
+  upgrade: false,
+  rejectUnauthorized: false
+})
 
 const AddVideoBox = ({ onConfirm, onCancel, text, buttonText, loading }) => {
   const [judulMateri, setJudulMateri] = useState('');
