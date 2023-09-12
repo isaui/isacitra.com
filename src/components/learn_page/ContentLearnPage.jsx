@@ -5,7 +5,7 @@ import Footer from "../footer/Footer";
 import Error from '../../assets/error/error.svg'
 import { FaBook, FaCaretDown, FaCaretUp, FaPencilAlt } from "react-icons/fa";
 import { AiOutlineClose, AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -581,13 +581,15 @@ const NotesPage = ({matkul, activeMateri, activeChapter }) => {
   return <div className=" w-full h-screen flex-col flex items-center">
     <div onClick={(e)=>{
       e.stopPropagation();
-      navigate('/learn/'+id+"/addNote", {state: {matkul, activeMateri, activeChapter}})
+      const lastUrl = "/learn/"+matkul._id
+      navigate('/learn/'+id+"/addNote", {state: {matkul, activeMateri, activeChapter, lastUrl}})
     }} className="fixed lg:hidden bottom-12  right-6 text-white text-sm flex justify-center rounded-md items-center px-4 py-2 bg-neutral-800 hover:bg-neutral-700">
       <h1> + Tambah Note</h1>
     </div>
     <div onClick={(e)=>{
       e.stopPropagation();
-      navigate('/learn/'+activeChapter._id+"/addNote", {state: {matkul, activeMateri, activeChapter}})
+      const lastUrl = "/learn/"+matkul._id
+      navigate('/learn/'+activeChapter._id+"/addNote", {state: {matkul, activeMateri, activeChapter, lastUrl}})
     }}
      className="absolute hidden top-4  right-6 text-white text-sm lg:flex justify-center rounded-md items-center px-4 py-2 bg-neutral-800 hover:bg-neutral-700">
       <h1> + Tambah Note</h1>
@@ -697,6 +699,10 @@ const VideosPage = ( {setAddVideoBox, activeMateri}) => {
 
 export default function () {
     const {id} = useParams();
+    //console.log(id)
+    const location = useLocation();
+    const data = location.state;
+   // console.log('ini data!!!', data)
     const [sidebarActive, setSidebarActive] = useState(false);
     const [mataKuliah, setMataKuliah] = useState(null);
     const [SidePanelOpen ,setSidePanelOpen] = useState(false);
@@ -709,6 +715,7 @@ export default function () {
     const [addSectionBox, setAddSectionBox] = useState(false);
     const [addVideoBox, setAddVideoBox] = useState(false);
     const [page, setPage] = useState('notes');
+    const [sekali, setSudahSekali] = useState(false)
     //console.log(mataKuliah)
     const handleAddVideo = async (video)=>{
       try {
@@ -794,9 +801,30 @@ export default function () {
       if(! mataKuliah) {
         return
       }
+    //  console.log(data)
+    //  console.log(location)
+     // const pickData = localStorage.getItem(id+"-lastPick")
+     // console.log(pickData, localStorage.key)
+    // console.log(data)
+      if(!sekali && data){
+        const chapterId = data.chapterId;
+        const materiId = data.materiId;
+        if(chapterId){
+          const chapterSelected = mataKuliah.chapters.find(chapter => chapter._id == chapterId)
+          if(chapterSelected){
+            const materiSelected = chapterSelected.materi.find(materi=> materi._id == materiId)
+            if(materiSelected){
+              setActiveChapter(chapterSelected)
+              setActiveMateri(materiSelected)
+            }
+          }
+        }
+        setSudahSekali(true)
+        return 
+      }
       if(! activeMateri){
         let materiPertama = null;
-
+      
         for (let i = 0; i < mataKuliah.chapters.length; i++) {
           const chapter = mataKuliah.chapters[i];
           if (chapter.materi.length > 0) {
@@ -807,6 +835,7 @@ export default function () {
           }
           setActiveMateri(materiPertama);
       }
+      setSudahSekali(true)
     },[mataKuliah])
     const toggleSidebar = () => {
         setSidebarActive(prev => !prev);

@@ -22,6 +22,7 @@ export default function () {
 
     
     const data = useLocation().state;
+    //console.log(data)
     const [showOverlay, setShowOverlay] = useState(false);
     const [categories, setCategories] = useState([]);
     const [title, setTitle] = useState('');
@@ -128,8 +129,20 @@ export default function () {
                 }               
         }
     const res = await axios.post("https://isa-citra.adaptable.app/learn/edit/"+ mataKuliah._id, mataKuliah);
+    const key = `${data.matkul_id}-lastPick`;
+    localStorage.setItem(key,  {
+      materiId: data.activeMateri._id,
+      chapterId: data.activeChapter._id,
+      message:'hahhahaa'
+    } );
+    navigate(data.lastUrl, {
+      state: {
+        materiId: data.activeMateri._id,
+        chapterId: data.activeChapter._id,
+        message:'hahhahaa'
+      }
+    });
     
-    navigate(-1)
     
 
     } catch (error) {
