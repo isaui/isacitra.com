@@ -774,7 +774,9 @@ export default function () {
 
         socket.on('update-matkul', (updatedMataKuliah) => {
           // Ketika ada pembaruan dari server melalui Socket.io, perbarui state
-          console.log('terupdate!!')
+          if(mataKuliah !== updatedMataKuliah){
+            setMataKuliah(updatedMataKuliah)
+          }
         });
     
         return () => {
