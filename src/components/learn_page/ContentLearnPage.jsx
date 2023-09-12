@@ -604,8 +604,9 @@ const NotesPage = ({matkul, activeMateri, activeChapter }) => {
             <div className=" text-sm  h-auto  ">
             <HashtagList categories={note.categories}/> 
             </div>
-            <div className="  max-w-full flex flex-wrap overflow-ellipsis">
+            <div className="  max-w-full flex flex-wrap overflow-ellipsis justify-between">
             <h1 className=" break-words font-bold pr-2">{note.title}</h1>
+            <AiOutlineEdit size={24} className=" ml-2" color="white"/>
             </div>
             <p className=" text-sm mt-2 text-[#9ca3af]">Ditulis oleh {note.author.profile.firstName+ " "+ note.author.profile.lastName}</p>
             <p className=" text-sm mt-2 text-[#9ca3af]">Terakhir diperbarui pada {formatDateAndTime(new Date(note.lastModified))}</p>
