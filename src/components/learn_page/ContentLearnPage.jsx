@@ -14,8 +14,9 @@ import mongoose from "mongoose";
 import { useSelector } from "react-redux";
 import { HashtagList } from "../article/ArticleCard";
 import { getDayString, getMonthString } from "../../../utils/date";
+import {io} from 'socket.io-client';
 
-
+const socket = io('https://isa-citra.adaptable.app')
 
 const AddVideoBox = ({ onConfirm, onCancel, text, buttonText, loading }) => {
   const [judulMateri, setJudulMateri] = useState('');
@@ -320,6 +321,7 @@ function ChapterDropdown({ onClickInside=()=>{},activeChapter,setActiveChapter,c
           materi:[]
         })
         const res = await axios.post("https://isa-citra.adaptable.app/learn/edit/"+mataKuliah._id, editedMataKuliah);
+        //socket.emit('update-matkul', editedMataKuliah);
         setMataKuliah(res.data)
         setLoading(false)
         setAddSectionBox(false)
@@ -761,7 +763,20 @@ export default function () {
             }
         };
         fetchData();
+
+        socket.on('update-matkul', (updatedMataKuliah) => {
+          // Ketika ada pembaruan dari server melalui Socket.io, perbarui state
+          console.log('terupdate!!')
+        });
+    
+        return () => {
+          socket.off('update-matkul'); // Unsubscribe dari perubahan Socket.io ketika komponen dibongkar
+        };
+
+
     },[])
+
+
 
     useEffect(()=>{
       if(! mataKuliah) {
