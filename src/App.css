@@ -74,6 +74,9 @@ body{
   @apply px-1;
   @apply break-words;
   @apply overflow-x-auto;
+  @apply text-base;
+  @apply md:text-base;
+  @apply lg:text-lg;
 
 }
 .article h1,
