@@ -606,7 +606,7 @@ const NotesPage = ({matkul, activeMateri, activeChapter }) => {
             </div>
             <div className="  max-w-full flex flex-wrap overflow-ellipsis justify-between">
             <h1 className=" break-words font-bold pr-2">{note.title}</h1>
-            <AiOutlineEdit size={24} className=" ml-2" color="white"/>
+            {note.author._id == user._id && <AiOutlineEdit color="white" size={24} className=" ml-2"/>}
             </div>
             <p className=" text-sm mt-2 text-[#9ca3af]">Ditulis oleh {note.author.profile.firstName+ " "+ note.author.profile.lastName}</p>
             <p className=" text-sm mt-2 text-[#9ca3af]">Terakhir diperbarui pada {formatDateAndTime(new Date(note.lastModified))}</p>
@@ -670,8 +670,9 @@ const VideosPage = ( {setAddVideoBox, activeMateri}) => {
         return <div key={video._id} className="lg:max-w-3xl max-w-full mx-auto mb-4 mx-2 bg-slate-950 bg-opacity-20  pb-3 mb-3 w-full md:min-w-[32rem] lg:min-w-[36rem] xl:min-w-[40rem] text-ellipsis  pt-3 -mt-1 rounded-lg ">
                 
         <div className="text-white  text-xl md:text-2xl h-auto lg:text-3xl px-6 md:px-3 mb-3">
-            <div className="  max-w-full flex flex-wrap overflow-ellipsis">
+            <div className="  max-w-full flex flex-wrap overflow-ellipsis justify-between">
             <h1 className=" font-bold pr-2">{video.title}</h1>
+            {video.author._id == user._id && <AiOutlineEdit color="white" size={24} className=" ml-2"/>}
             </div>
             <p className=" text-sm mt-2 text-[#9ca3af]">Dikirim oleh {video.author.profile.firstName+ " "+ video.author.profile.lastName}</p>
             <hr className="border-2 border-[#1D5B79] my-2 rounded-full" />
