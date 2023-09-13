@@ -36,7 +36,7 @@ export default function () {
       const setCourses =  async () => {
         try {
           setLoading(true)
-          const res = await axios.get('https://isa-citra.adaptable.app/learn');
+          const res = await axios.get('https://isacitra-com-api.vercel.app/learn');
           setArr(res.data)
           setLoading(false)
         } catch (error) {

@@ -16,7 +16,7 @@ import { HashtagList } from "../article/ArticleCard";
 import { getDayString, getMonthString } from "../../../utils/date";
 import {io} from 'socket.io-client';
 
-const socket = io('https://isa-citra.adaptable.app', {
+const socket = io('https://isacitra-com-api.vercel.app', {
   reconnectionDelay: 1000,
   reconnection: true,
   reconnectionAttemps: 10,
@@ -328,7 +328,7 @@ function ChapterDropdown({ onClickInside=()=>{},activeChapter,setActiveChapter,c
           bab:bab.trim(),
           materi:[]
         })
-        const res = await axios.post("https://isa-citra.adaptable.app/learn/edit/"+mataKuliah._id, editedMataKuliah);
+        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/edit/"+mataKuliah._id, editedMataKuliah);
         //socket.emit('update-matkul', editedMataKuliah);
         setMataKuliah(res.data)
         setLoading(false)
@@ -389,7 +389,7 @@ function ChapterDropdown({ onClickInside=()=>{},activeChapter,setActiveChapter,c
             notes:[]
           }
         )
-        const res = await axios.post("https://isa-citra.adaptable.app/learn/edit/"+mataKuliah._id, editedMataKuliah);
+        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/edit/"+mataKuliah._id, editedMataKuliah);
         setMataKuliah(res.data)
         setLoading(false)
         setAddBox(false)
@@ -442,7 +442,7 @@ function ChapterDropdown({ onClickInside=()=>{},activeChapter,setActiveChapter,c
         const chapterToEdit = editedMataKuliah.chapters.find((anotherChapter)=> chapter._id === anotherChapter._id);
         //todo
         chapterToEdit.materi = chapterToEdit.materi.filter((materi) => materi._id !== id);
-        const res = await axios.post("https://isa-citra.adaptable.app/learn/edit/"+mataKuliah._id, editedMataKuliah);
+        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/edit/"+mataKuliah._id, editedMataKuliah);
         setMataKuliah(res.data)
         setLoading(false)
         setDeleteMateri(false)
@@ -466,8 +466,9 @@ function ChapterDropdown({ onClickInside=()=>{},activeChapter,setActiveChapter,c
         if(chapterIndexToDelete != -1){
           editedMataKuliah.chapters.splice(chapterIndexToDelete, 1)
         }
-        const res = await axios.post("https://isa-citra.adaptable.app/learn/edit/"+mataKuliah._id, editedMataKuliah);
+        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/edit/"+mataKuliah._id, editedMataKuliah);
         setMataKuliah(res.data)
+        console.log(res)
         setLoading(false)
         toast.success("Berhasil menghapus section", {autoClose:2000})
         if(activeChapter._id == id){
@@ -771,7 +772,7 @@ export default function () {
     useEffect(()=>{
         const fetchData = async ()=>{
             try {
-                const MataKuliah = (await axios.get('https://isa-citra.adaptable.app/learn/' + id)).data;
+                const MataKuliah = (await axios.get('https://isacitra-com-api.vercel.app/learn/' + id)).data;
                 setMataKuliah(MataKuliah);
                 setLoad(false)
             } catch (error) {
