@@ -128,7 +128,7 @@ export default function () {
                     console.log('wkwk ')
                 }               
         }
-    const res = await axios.post("https://isa-citra.adaptable.app/learn/edit/"+ mataKuliah._id, mataKuliah);
+    const res = await axios.post("https://isacitra-com-api.vercel.app/learn/edit/"+ mataKuliah._id, mataKuliah);
     const key = `${data.matkul_id}-lastPick`;
     localStorage.setItem(key,  {
       materiId: data.activeMateri._id,

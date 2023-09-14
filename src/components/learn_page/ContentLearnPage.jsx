@@ -412,7 +412,7 @@ function ChapterDropdown({ onClickInside=()=>{},activeChapter,setActiveChapter,c
         if(materiToEdit){
           materiToEdit.title = str
         }
-        const res = await axios.post("https://isa-citra.adaptable.app/learn/edit/"+mataKuliah._id, editedMataKuliah);
+        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/edit/"+mataKuliah._id, editedMataKuliah);
         setMataKuliah(res.data)
         setLoading(false)
         setEditMateri(false)
