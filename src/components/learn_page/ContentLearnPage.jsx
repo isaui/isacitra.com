@@ -14,7 +14,7 @@ import mongoose from "mongoose";
 import { useSelector } from "react-redux";
 import { HashtagList } from "../article/ArticleCard";
 import { getDayString, getMonthString } from "../../../utils/date";
-import Ably from 'ably';
+import Ably from 'ably/build/ably-webworker.min';
 
 const ably = new Ably.Realtime({
   key: 'o7gv-w.ulW0zw:olcD9FroY5pv3a9EhFzb4X7Hth-nedgovu4bdz8bsFI'
