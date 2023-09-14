@@ -72,7 +72,6 @@ body{
   @apply rounded-sm;
   @apply py-2;
   @apply px-1;
-  @apply break-words;
   @apply overflow-x-auto;
   @apply text-base;
   @apply md:text-base;
