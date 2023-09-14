@@ -14,17 +14,12 @@ import mongoose from "mongoose";
 import { useSelector } from "react-redux";
 import { HashtagList } from "../article/ArticleCard";
 import { getDayString, getMonthString } from "../../../utils/date";
-import {io} from 'socket.io-client';
+import Ably from 'ably';
 
-const socket = io('https://isacitra-com-api.vercel.app', {
-  reconnectionDelay: 1000,
-  reconnection: true,
-  reconnectionAttemps: 10,
-  transports: ['websocket'],
-  agent: false,
-  upgrade: false,
-  rejectUnauthorized: false
+const ably = new Ably.Realtime({
+  key: 'o7gv-w.Dqaqog:JwEtvGNYUx_PbFo3FNzTMaFdvitLhzTI6UlPSI-GWuA'
 })
+const channel = ably.channels.get('update-matkul-channel')
 
 const AddVideoBox = ({ onConfirm, onCancel, text, buttonText, loading }) => {
   const [judulMateri, setJudulMateri] = useState('');
@@ -782,15 +777,14 @@ export default function () {
         };
         fetchData();
 
-        socket.on('update-matkul', (updatedMataKuliah) => {
-          // Ketika ada pembaruan dari server melalui Socket.io, perbarui state
-          if(mataKuliah !== updatedMataKuliah){
-            setMataKuliah(updatedMataKuliah)
+        channel.subscribe('update-matkul', (message)=>{
+          if(mataKuliah !== message.data){
+            setMataKuliah(message.data)
           }
-        });
+        })
     
         return () => {
-          socket.off('update-matkul'); // Unsubscribe dari perubahan Socket.io ketika komponen dibongkar
+          channel.unsubscribe('update-matkul')
         };
 
 
