@@ -17,7 +17,7 @@ import { getDayString, getMonthString } from "../../../utils/date";
 import Ably from 'ably';
 
 const ably = new Ably.Realtime({
-  key: 'o7gv-w.Dqaqog:JwEtvGNYUx_PbFo3FNzTMaFdvitLhzTI6UlPSI-GWuA'
+  key: 'o7gv-w.ulW0zw:olcD9FroY5pv3a9EhFzb4X7Hth-nedgovu4bdz8bsFI'
 })
 const channel = ably.channels.get('update-matkul-channel')
 
@@ -778,6 +778,7 @@ export default function () {
         fetchData();
 
         channel.subscribe('update-matkul', (message)=>{
+          console.log("update something")
           if(mataKuliah !== message.data){
             setMataKuliah(message.data)
           }
