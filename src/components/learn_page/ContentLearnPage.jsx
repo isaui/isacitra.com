@@ -778,7 +778,7 @@ export default function () {
         fetchData();
 
         channel.subscribe('update-matkul', (message)=>{
-          console.log("update something")
+          console.log(message)
           if(mataKuliah !== message.data){
             setMataKuliah(message.data)
           }
