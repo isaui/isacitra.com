@@ -578,7 +578,7 @@ const NotesPage = ({matkul, activeMateri, activeChapter }) => {
     <div onClick={(e)=>{
       e.stopPropagation();
       const lastUrl = "/learn/"+matkul._id
-      navigate('/learn/'+id+"/addNote", {state: {matkul, activeMateri, activeChapter, lastUrl}})
+      navigate('/learn/'+activeChapter._id+"/addNote", {state: {matkulId:matkul._id, activeMateriId: activeMateri._id, activeChapterId: activeChapter._id, lastUrl}})
     }} className="fixed lg:hidden bottom-12  right-6 text-white text-sm flex justify-center rounded-md items-center px-4 py-2 bg-neutral-800 hover:bg-neutral-700">
       <h1> + Tambah Note</h1>
     </div>

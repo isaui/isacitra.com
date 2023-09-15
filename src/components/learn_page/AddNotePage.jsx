@@ -23,7 +23,7 @@ export default function () {
 
     
     const data = useLocation().state;
-    //console.log(data)
+    console.log(data)
     const [showOverlay, setShowOverlay] = useState(false);
     const [categories, setCategories] = useState([]);
     const [title, setTitle] = useState('');
