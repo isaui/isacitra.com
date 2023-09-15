@@ -792,7 +792,7 @@ export default function () {
     },[])
 
     useEffect(()=>{
-      if(mataKuliah){
+      if(mataKuliah && activeChapter && activeMateri){
         const chapterId = activeChapter._id;
             const materiId = activeMateri._id;
               if(chapterId){
