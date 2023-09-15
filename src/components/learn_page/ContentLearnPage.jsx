@@ -791,6 +791,24 @@ export default function () {
 
     },[])
 
+    useEffect(()=>{
+      if(mataKuliah){
+        const chapterId = activeChapter._id;
+            const materiId = activeMateri._id;
+              if(chapterId){
+                const chapterSelected = mataKuliah.chapters.find(chapter => chapter._id == chapterId)
+                if(chapterSelected){
+                  const materiSelected = chapterSelected.materi.find(materi=> materi._id == materiId)
+                  if(materiSelected){
+                    //setActiveChapter(chapterSelected)
+                    setActiveMateri(materiSelected)
+                  }
+                }
+              }
+      }
+    }
+      ,[mataKuliah])
+
 
 
     useEffect(()=>{
