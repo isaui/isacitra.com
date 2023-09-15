@@ -11,7 +11,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Loading from "../loading/Loading";
 import mongoose from "mongoose";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { updateCurrentActiveMateri } from "../../slice/mapMatkulSlice";
 import { HashtagList } from "../article/ArticleCard";
 import { getDayString, getMonthString } from "../../../utils/date";
 import Ably from 'ably/build/ably-webworker.min';
@@ -20,6 +21,164 @@ const ably = new Ably.Realtime({
   key: 'o7gv-w.ulW0zw:olcD9FroY5pv3a9EhFzb4X7Hth-nedgovu4bdz8bsFI'
 })
 const channel = ably.channels.get('update-matkul-channel')
+
+
+
+
+
+
+
+const EditVideoBox = ({  onCancel, matkul, activeChapter, activeMateri, currentVideo,  text, buttonText }) => {
+  const [judulMateri, setJudulMateri] = useState('');
+  const [urlVideo, setUrlVideo] = useState('');
+  const [deskripsi, setDeskripsi] = useState('');
+  const user = useSelector((state) => state.auth.user);
+  const [loadingDel, setLoadingDel] = useState(false);
+  const [loading,setLoading] = useState(false);
+
+  useEffect(()=>{
+    if(currentVideo){
+      setJudulMateri(currentVideo.title);
+      setDeskripsi(currentVideo.description);
+      setUrlVideo(currentVideo.url);
+    }
+  }, [])
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    if (name === 'judulMateri') {
+      setJudulMateri(value);
+    } else if (name === 'urlVideo') {
+      setUrlVideo(value);
+    } else if (name === 'deskripsi') {
+      setDeskripsi(value);
+    }
+  };
+
+  return (
+    <>
+    <ToastContainer/>
+    <div onClick={() => onCancel()} className="fixed inset-0 flex items-center justify-center z-50">
+      <div className="relative w-full max-w-md mx-auto my-6 mx-[10%]">
+        <div onClick={(e) => { e.stopPropagation() }} className="relative flex flex-col w-full bg-gray-900 border-2 border-blue-600 rounded-lg shadow-lg outline-none focus:outline-none">
+          <div className="flex items-start justify-between p-5 border-b border-gray-700 rounded-t">
+            <h3 className="text-2xl font-semibold text-white">{text}</h3>
+            <button
+              className="p-1 ml-auto bg-transparent border-0 text-white opacity-70 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
+              onClick={onCancel}
+            >
+              <span className="text-white h-6 w-6 text-2xl block outline-none focus:outline-none">
+                ×
+              </span>
+            </button>
+          </div>
+          <div className="relative p-6 flex-auto">
+            <label className="text-white md:text-lg text-base leading-relaxed">Judul Video:</label>
+            <input
+              type="text"
+              name="judulMateri"
+              value={judulMateri}
+              onChange={handleInputChange}
+              className="my-2 px-3 py-2 w-full bg-gray-800 border border-gray-600 rounded-md text-white focus:outline-none focus:ring focus:border-blue-300"
+            />
+
+            <label className="text-white md:text-lg text-base leading-relaxed">URL Video Youtube:</label>
+            <input
+              type="text"
+              name="urlVideo"
+              value={urlVideo}
+              onChange={handleInputChange}
+              className="my-2 px-3 py-2 w-full bg-gray-800 border border-gray-600 rounded-md text-white focus:outline-none focus:ring focus:border-blue-300"
+            />
+
+            <label className="text-white md:text-lg text-base leading-relaxed">Deskripsi:</label>
+            <textarea
+              name="deskripsi"
+              value={deskripsi}
+              onChange={handleInputChange}
+              className="my-2 px-3 py-2 w-full h-24 bg-gray-800 border border-gray-600 rounded-md text-white focus:outline-none focus:ring focus:border-blue-300"
+            ></textarea>
+          </div>
+          <div className="flex items-center justify-end p-6 border-t border-gray-700 rounded-b">
+            <button
+              className="text-white bg-blue-600 rounded-md hover:bg-blue-800 px-6 py-2 text-sm font-medium outline-none focus:outline-none mr-2"
+              onClick={() => {
+                if(judulMateri.trim().length == 0){
+                  return toast.error('Maaf judul tidak boleh kosong', {autoClose:2000});
+                }
+                if(urlVideo.trim().length == 0){
+                  return toast.error('Maaf url tidak boleh kosong', {autoClose:2000});
+                }
+                if(deskripsi.trim().length == 0){
+                  return toast.error('Maaf deskripsi tidak boleh kosong',{autoClose:2000});
+                }
+                setLoading(true)
+                try {
+                  axios.post("https://isacitra-com-api.vercel.app/learn/editVideo",{
+                    idMatkul: matkul._id, idChapter:activeChapter._id, idMateri:
+                    activeMateri._id, idVideo:currentVideo._id ,dataVideo:{
+                      title: judulMateri,
+                      url:urlVideo,
+                      description:deskripsi
+                    }
+                  })
+                  setLoading(false)
+                  onCancel()
+                  
+                } catch (error) {
+                  console.log(error)
+                  setLoading(false)
+                }
+              
+              }}
+                
+                
+
+
+            >
+              {loading ? <Loading /> : <h1>{buttonText}</h1>}
+            </button>
+
+            <button
+              className="text-white bg-red-600 rounded-md hover:bg-red-800 px-6 py-2 text-sm font-medium outline-none focus:outline-none mr-2"
+              onClick={ async() => {
+                try {
+                  setLoadingDel(true);
+                  await axios.post("https://isacitra-com-api.vercel.app/learn/deleteVideo",
+                  {idMatkul:matkul._id, idChapter: activeChapter._id, idMateri: activeMateri._id,  idVideo: currentVideo._id })
+               setLoadingDel(false)
+               onCancel()
+                } catch (error) {
+                  setLoadingDel(false)
+                }}}
+               
+            >
+              {loadingDel ? <Loading /> : <h1>{'Delete'}</h1>}
+            </button>
+
+            <button
+              className="text-white bg-gray-600 rounded-md hover:bg-gray-700 px-6 py-2 text-sm font-medium outline-none focus:outline-none"
+              onClick={onCancel}
+            >
+              Batal
+            </button>
+          </div>
+        </div>
+      </div>
+    </div></>
+  );
+};
+
+
+
+
+
+
+
+
+
+
+
+
 
 const AddVideoBox = ({ onConfirm, onCancel, text, buttonText, loading }) => {
   const [judulMateri, setJudulMateri] = useState('');
@@ -297,6 +456,8 @@ function ChapterDropdown({ onClickInside=()=>{},activeChapter,setActiveChapter,c
     const toggleExpansion = () => {
       setIsExpanded(!isExpanded);
     };
+    const dispatch = useDispatch();
+    const matakuliahSavedData = useSelector(state => state.matkul.savedData);
 
     useEffect(()=>{
       if(!activeMateri){
@@ -317,13 +478,14 @@ function ChapterDropdown({ onClickInside=()=>{},activeChapter,setActiveChapter,c
       }
       try {
         setLoading(true)
-        const editedMataKuliah = {...mataKuliah};
-        editedMataKuliah.chapters.push({
+        const newChapter = {
+          _id: new mongoose.Types.ObjectId(),
           title: judul.trim(),
           bab:bab.trim(),
           materi:[]
-        })
-        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/edit/"+mataKuliah._id, editedMataKuliah);
+        }
+        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/addSection", 
+        {idMatkul:mataKuliah._id, dataChapter: newChapter});
         //socket.emit('update-matkul', editedMataKuliah);
         setMataKuliah(res.data)
         setLoading(false)
@@ -346,13 +508,9 @@ function ChapterDropdown({ onClickInside=()=>{},activeChapter,setActiveChapter,c
       }
       try {
         setLoading(true)
-        const editedMataKuliah = {...mataKuliah};
-        const chp = editedMataKuliah.chapters.find((ch) => ch._id == chapter._id);
-        if(chp){
-          chp.title = judul;
-          chp.bab = bab;
-        }
-        const res = await axios.post("https://isa-citra.adaptable.app/learn/edit/"+mataKuliah._id, editedMataKuliah);
+        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/editSection",
+          {idMatkul: mataKuliah._id, idChapter: chapter._id, title:judul, bab:bab }
+        );
         setMataKuliah(res.data)
         setLoading(false)
         setEditSection(false)
@@ -374,17 +532,14 @@ function ChapterDropdown({ onClickInside=()=>{},activeChapter,setActiveChapter,c
       }
       try {
         setLoading(true)
-        const editedMataKuliah = {...mataKuliah};
-        const chapterToEdit = editedMataKuliah.chapters.find((anotherChapter)=> chapter._id === anotherChapter._id);
-        chapterToEdit.materi.push(
-          {
-            _id:new mongoose.Types.ObjectId(),
-            title:str,
-            videos: [],
-            notes:[]
-          }
-        )
-        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/edit/"+mataKuliah._id, editedMataKuliah);
+        const newMateri = {
+          _id: new mongoose.Types.ObjectId(),
+          title: str,
+          videos: [],
+          notes:[]
+        }
+        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/addMateri", 
+        {idMatkul:mataKuliah._id, idChapter:chapter._id, dataMateri:newMateri } );
         setMataKuliah(res.data)
         setLoading(false)
         setAddBox(false)
@@ -406,13 +561,8 @@ function ChapterDropdown({ onClickInside=()=>{},activeChapter,setActiveChapter,c
       }
       try {
         setLoading(true)
-        const editedMataKuliah = {...mataKuliah};
-        const chapterToEdit = editedMataKuliah.chapters.find((anotherChapter)=> chapter._id === anotherChapter._id);
-        const materiToEdit = chapterToEdit.materi.find((materi)=> materi._id == idMateriToEdit.current);
-        if(materiToEdit){
-          materiToEdit.title = str
-        }
-        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/edit/"+mataKuliah._id, editedMataKuliah);
+        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/editMateri", 
+        {idMatkul: mataKuliah._id, idChapter:chapter._id, idMateri:idMateriToEdit.current, title: str });
         setMataKuliah(res.data)
         setLoading(false)
         setEditMateri(false)
@@ -433,11 +583,8 @@ function ChapterDropdown({ onClickInside=()=>{},activeChapter,setActiveChapter,c
       }
       try {
         setLoading(true)
-        const editedMataKuliah = {...mataKuliah};
-        const chapterToEdit = editedMataKuliah.chapters.find((anotherChapter)=> chapter._id === anotherChapter._id);
-        //todo
-        chapterToEdit.materi = chapterToEdit.materi.filter((materi) => materi._id !== id);
-        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/edit/"+mataKuliah._id, editedMataKuliah);
+        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/deleteMateri", 
+        {idMatkul:mataKuliah._id, idChapter:chapter._id, idMateri:id });
         setMataKuliah(res.data)
         setLoading(false)
         setDeleteMateri(false)
@@ -456,12 +603,8 @@ function ChapterDropdown({ onClickInside=()=>{},activeChapter,setActiveChapter,c
       }
       try {
         setLoading(true)
-        const editedMataKuliah = {...mataKuliah};
-        const chapterIndexToDelete = editedMataKuliah.chapters.findIndex((chapter) => chapter._id === id)
-        if(chapterIndexToDelete != -1){
-          editedMataKuliah.chapters.splice(chapterIndexToDelete, 1)
-        }
-        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/edit/"+mataKuliah._id, editedMataKuliah);
+        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/deleteSection", 
+        {idMatkul:mataKuliah._id, idChapter: id });
         setMataKuliah(res.data)
         console.log(res)
         setLoading(false)
@@ -528,6 +671,9 @@ function ChapterDropdown({ onClickInside=()=>{},activeChapter,setActiveChapter,c
                   setActiveMateri(materi)
                   setActiveChapter(chapter)
                   onClickInside();
+                  dispatch(updateCurrentActiveMateri({idMatkul: mataKuliah._id, key:"active-materi", value: materi._id}))
+                  dispatch(updateCurrentActiveMateri({idMatkul: mataKuliah._id, key:"active-chapter", value: chapter._id}))
+                  
                 }} className={` truncate ml-auto mr-2 block text-white flex ${!activeMateri ? 'bg-slate-900' : activeMateri._id == materi._id? 'bg-teal-900' : 'bg-slate-900'}  rounded-sm p-2 w-[95%] text-xs truncate`}>
                   <h1 className="truncate  mr-auto">{materi.title}</h1>
                   <div onClick={(e)=>{
@@ -584,7 +730,8 @@ const NotesPage = ({matkul, activeMateri, activeChapter }) => {
     </div>
     <div onClick={(e)=>{
       e.stopPropagation();
-      const lastUrl = "/learn/"+matkul._id
+      const lastUrl = "/learn/"+matkul._id;
+
       navigate('/learn/'+activeChapter._id+"/addNote", {state: {matkulId:matkul._id, activeMateriId: activeMateri._id, activeChapterId: activeChapter._id, lastUrl}})
     }}
      className="absolute hidden top-4  right-6 text-white text-sm lg:flex justify-center rounded-md items-center px-4 py-2 bg-neutral-800 hover:bg-neutral-700">
@@ -604,7 +751,9 @@ const NotesPage = ({matkul, activeMateri, activeChapter }) => {
             </div>
             <div className="  max-w-full flex flex-wrap overflow-ellipsis justify-between">
             <h1 className=" break-words font-bold pr-2">{note.title}</h1>
-            {user? note.author._id == user._id && <AiOutlineEdit color="white" size={24} className=" ml-2"/> : <></>}
+            {user? note.author._id == user._id && <AiOutlineEdit onClick={ async ()=>{
+                navigate('/learn/'+matkul._id+'/editNote',{state:{matkulId:matkul._id, activeMateriId: activeMateri._id, activeChapterId: activeChapter._id, note: note}});
+            }}color="white" size={24} className=" ml-2"/> : <></>}
             </div>
             <p className=" text-sm mt-2 text-[#9ca3af]">Ditulis oleh {note.author.profile.firstName+ " "+ note.author.profile.lastName}</p>
             <p className=" text-sm mt-2 text-[#9ca3af]">Terakhir diperbarui pada {formatDateAndTime(new Date(note.lastModified))}</p>
@@ -625,8 +774,9 @@ const NotesPage = ({matkul, activeMateri, activeChapter }) => {
     </div>}
   </div>
 }
-const VideosPage = ( {setAddVideoBox, activeMateri}) => {
-
+const VideosPage = ( {setAddVideoBox, activeMateri, matkul, activeChapter}) => {
+  const [edit, setEdit] = useState(false);
+  const currVideo = useRef(null);
   function extractYouTubeVideoId(url) {
     const regExp = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?([a-zA-Z0-9_-]{11})/;
     const match = url.match(regExp);
@@ -639,7 +789,11 @@ const VideosPage = ( {setAddVideoBox, activeMateri}) => {
   }
   const navigate = useNavigate()
   const user = useSelector((state) => state.auth.user);
-  return <div className=" w-full h-screen flex-col flex items-center">
+  return <>
+  {edit && <EditVideoBox text={'Edit Video'} buttonText={'Edit'} activeChapter={activeChapter} currentVideo = {currVideo.current}activeMateri={activeMateri} matkul={matkul}  onCancel={()=>{
+    setEdit(false)
+  }}/>}
+  <div className=" w-full h-screen flex-col flex items-center">
     <div  onClick={(e)=>{
       e.stopPropagation();
       if(!user){
@@ -670,7 +824,17 @@ const VideosPage = ( {setAddVideoBox, activeMateri}) => {
         <div className="text-white  text-xl md:text-2xl h-auto lg:text-3xl px-6 md:px-3 mb-3">
             <div className="  max-w-full flex flex-wrap overflow-ellipsis justify-between">
             <h1 className=" font-bold pr-2">{video.title}</h1>
-            {user? video.author._id == user._id && <AiOutlineEdit color="white" size={24} className=" ml-2"/>:<></>}
+            {user? video.author._id == user._id && <AiOutlineEdit onClick={
+              (e)=>{
+                e.stopPropagation();
+                if(!user){
+                  navigate('/authentication', {state:{message:'Anda belum mendapatkan izin untuk mengaksesnya. silahkan masuk atau membuat akun baru'}})
+                  
+                }
+                currVideo.current = video
+                setEdit(true);
+              }
+            }color="white" size={24} className=" ml-2"/>:<></>}
             </div>
             <p className=" text-sm mt-2 text-[#9ca3af]">Dikirim oleh {video.author.profile.firstName+ " "+ video.author.profile.lastName}</p>
             <hr className="border-2 border-[#1D5B79] my-2 rounded-full" />
@@ -689,12 +853,14 @@ const VideosPage = ( {setAddVideoBox, activeMateri}) => {
      </div>
       })}
     </div>}
-  </div>
+  </div> </> 
 }
 
 
 export default function () {
     const {id} = useParams();
+    const dispatch = useDispatch();
+    const savedData = useSelector(state => state.matkul.savedData);
     //console.log(id)
     const location = useLocation();
     const data = location.state;
@@ -712,19 +878,17 @@ export default function () {
     const [addVideoBox, setAddVideoBox] = useState(false);
     const [page, setPage] = useState('notes');
     const [sekali, setSudahSekali] = useState(false)
-    //console.log(mataKuliah)
+
+    // fix
     const handleAddVideo = async (video)=>{
+      if(!mataKuliah){
+        return;
+      }
       try {
         setLoading(true)
-        const mataKuliahDiedit = {...mataKuliah};
-        const chapter = mataKuliah.chapters.find(chap => chap._id == activeChapter._id);
-        if(chapter){
-          const materi = chapter.materi.find(mtr => mtr._id == activeMateri._id);
-          if(materi){
-            materi.videos.push(video);
-          }
-        }
-        const res = await axios.post("https://isa-citra.adaptable.app/learn/edit/"+ mataKuliah._id, mataKuliahDiedit);
+        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/addVideo", 
+        {idMatkul: mataKuliah._id, idChapter: activeChapter._id, idMateri: activeMateri._id,  dataMateri:video }
+        );
         setMataKuliah(res.data)
         toast.success("Berhasil menambahkan video", {autoClose:2000})
         setAddVideoBox(false)
@@ -735,6 +899,7 @@ export default function () {
       }
     }
 
+      // fix
     const handleSubmitAddSection = async (judul,bab) => {
       if(!mataKuliah) {
         return
@@ -744,14 +909,15 @@ export default function () {
       }
       try {
         setLoading(true)
-        const editedMataKuliah = {...mataKuliah};
-        editedMataKuliah.chapters.push({
+        const newSection = {
           _id: new mongoose.Types.ObjectId(),
           title: judul.trim(),
           bab:bab.trim(),
           materi:[]
-        })
-        const res = await axios.post("https://isa-citra.adaptable.app/learn/edit/"+mataKuliah._id, editedMataKuliah);
+        }
+        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/addSection", 
+        {idMatkul: mataKuliah._id, dataChapter: newSection });
+
         setMataKuliah(res.data)
         setLoading(false)
         setAddSectionBox(false)
@@ -765,23 +931,28 @@ export default function () {
     }
 
     useEffect(()=>{
-        const fetchData = async ()=>{
-            try {
-                const MataKuliah = (await axios.get('https://isacitra-com-api.vercel.app/learn/' + id)).data;
-                setMataKuliah(MataKuliah);
-                setLoad(false)
-            } catch (error) {
-                console.log(error)
-                setLoad(false)
-            }
-        };
-        fetchData();
+      const fetchData = async ()=>{
+        try {
+            const MataKuliah = (await axios.get('https://isacitra-com-api.vercel.app/learn/' + id)).data;
+            setMataKuliah(MataKuliah);
+            setLoad(false)
+        } catch (error) {
+            console.log(error)
+            setLoad(false)
+        }
+    };
+    fetchData();
+    }, [])
 
-        channel.subscribe('update-matkul', (message)=>{
+    useEffect(()=>{
+          channel.subscribe('update-matkul', (message)=>{
           console.log(message)
           console.log("heiii update ini!!")
           if(message.data.chapters != undefined  && mataKuliah !== message.data){
+            console.log('aku di sini! bersama mu...')
             setMataKuliah(message.data)
+            console.log('active ch -> ', activeChapter)
+            console.log('active materi - >', activeMateri)
             if(message.data && activeChapter && activeMateri){
               const chapterId = activeChapter._id;
                   const materiId = activeMateri._id;
@@ -790,8 +961,14 @@ export default function () {
                       if(chapterSelected){
                         const materiSelected = chapterSelected.materi.find(materi=> materi._id == materiId)
                         if(materiSelected){
-                          //setActiveChapter(chapterSelected)
+                          setActiveChapter(chapterSelected)
                           setActiveMateri(materiSelected)
+                          dispatch(updateCurrentActiveMateri({key: "active-materi", value: materiSelected._id,
+                          idMatkul:mataKuliah._id
+                          }))
+                          dispatch(updateCurrentActiveMateri({key: "active-chapter", value: chapterSelected._id,
+                          idMatkul:mataKuliah._id
+                          }))
                         }
                       }
                     }
@@ -805,7 +982,7 @@ export default function () {
         };
 
 
-    },[])
+    },[activeChapter, activeMateri])
 
    
 
@@ -819,9 +996,9 @@ export default function () {
      // const pickData = localStorage.getItem(id+"-lastPick")
      // console.log(pickData, localStorage.key)
     // console.log(data)
-      if(!sekali && data){
-        const chapterId = data.chapterId;
-        const materiId = data.materiId;
+      if(!sekali){
+        const chapterId = savedData['active-chapter'+'-'+mataKuliah._id];
+        const materiId = savedData['active-materi'+'-'+mataKuliah._id];
         if(chapterId){
           const chapterSelected = mataKuliah.chapters.find(chapter => chapter._id == chapterId)
           if(chapterSelected){
@@ -847,6 +1024,7 @@ export default function () {
            }
           }
           setActiveMateri(materiPertama);
+
       }
       setSudahSekali(true)
     },[mataKuliah])
@@ -905,7 +1083,7 @@ export default function () {
                   <div className=" w-full h-full overflow-y-auto">
                     <TabBar activeTab={page} onTabClick={(str)=>{setPage(str)}}/>
                     {page == 'notes' && <NotesPage matkul={mataKuliah} activeChapter={activeChapter} activeMateri={activeMateri}/>}
-                    {page == 'videos' && <VideosPage setAddVideoBox={setAddVideoBox} activeMateri={activeMateri}/>}
+                    {page == 'videos' && <VideosPage activeChapter={activeChapter} matkul={mataKuliah} setAddVideoBox={setAddVideoBox} activeMateri={activeMateri}/>}
                     </div>}
             </div>
         </div>

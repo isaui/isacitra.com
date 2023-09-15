@@ -47,7 +47,7 @@ const CertificateContainer = ({ data }) => {
     return (
         <div className="">
             <div className="mt-3 -mb-3 flex justify-center items-center">
-                <h1 className="text-white md:text-3xl text-2xl font-bold text-center"><span className="text-[#00A8FF]">Sertifikasi</span> Saya</h1>
+                <h1 className="text-white lg:text-4xl md:text-3xl text-2xl font-bold text-center"><span className="text-[#00A8FF]">Sertifikasi</span> Saya</h1>
                 <div className="ml-3">
             <button
                     className="px-4 py-2 text-white bg-slate-800  text-xs rounded-md hover:bg-slate-700"

@@ -29,7 +29,8 @@ export default function () {
     const [title, setTitle] = useState('');
     const [htmlText, setHtmlText] = useState('');
     const [thumbnail, setThumbnail] = useState('');
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
+    const [loadingDel,setLoadingDel] = useState(false);
     const [currentId, setCurrentId] = useState('');
     const [isUpdate, setIsUpdate] = useState(false);
     const [isReady, setIsReady] = useState(false);
@@ -38,6 +39,19 @@ export default function () {
     const {id} = useParams();
     const user = useSelector((state) => state.auth.user)
     const [progresspercent, setProgresspercent] = useState(0);
+
+    useEffect(()=>{
+        if(data.note){
+            const note = data.note
+            setTitle(note.title);
+            setCategories(note.categories);
+            setThumbnail(data.thumbnail);
+            setHtmlText(note.content);
+            setCurrentId(note._id)
+            setIsReady(true)
+        }
+        
+    }, [])
 
     useEffect(() => {
         if(!user){
@@ -73,17 +87,24 @@ export default function () {
 
     }
 
-    const handleDelete = async (articleId) => {
+    const handleDelete = async (id) => {
         try {
+          setLoadingDel(true)
                 if(isReady){
-                    axios.delete('https://isa-citra.adaptable.app/articles/'+articleId).then((res)=>{
-                navigate(-1)
-            })
+                    const res = await axios.post("https://isacitra-com-api.vercel.app/learn/deleteNote", {
+                        "idMatkul": data.matkulId,
+                        "idChapter": data.activeChapterId,
+                        "idMateri": data.activeMateriId,
+                        "idNote": currentId
+                      });
+                      setLoadingDel(false)
+                      navigate(-1);
                 }
                 
             
         } catch (error) {
             console.log(error)
+            setLoading(false)
         }
     }
 
@@ -121,12 +142,13 @@ export default function () {
     }
     try {
         
-    const res = await axios.post("https://isacitra-com-api.vercel.app/learn/addNotes", {
+    const res = await axios.post("https://isacitra-com-api.vercel.app/learn/editNote", {
       "idMatkul": data.matkulId,
       "idChapter": data.activeChapterId,
       "idMateri": data.activeMateriId,
       "dataMateri": {"title": title, "content":updatedHtmlString, createdAt:Date.now, lastModified: Date.now,
-      "categories":categories, "thumbnail":thumbnail, _id: new mongoose.Types.ObjectId(), author: user}
+      "categories":categories, "thumbnail":thumbnail},
+      "idNote": currentId
     });
     setLoading(false)
     navigate(-1);
@@ -175,8 +197,8 @@ export default function () {
          <ToastContainer position="top-center" /> 
          <form  onSubmit={handleSubmit} className=" max-w-[1024px] flex flex-col  mx-auto">
             <div className="my-2 mx-4 flex justify-between items-center">
-                <h1 className="text-white text-2xl md:text-4xl">{isUpdate? 'Edit' : 'Create New'} Note</h1>
-                {isUpdate && <button  onClick={() => handleDelete(id)}type="button"  className="mt-3 px-5 py-2 bg-red-700 text-white rounded hover:bg-red-500">Delete</button>}
+                <h1 className="text-white text-2xl md:text-4xl">Edit Note</h1>
+                {<button  onClick={() => handleDelete(id)}type="button"  className="mt-3 px-5 py-2 bg-red-700 text-white rounded hover:bg-red-500">{loadingDel? <Loading/> : <h1>Delete</h1> }</button>}
 
             </div>
             <div className=" my-2 mx-4">

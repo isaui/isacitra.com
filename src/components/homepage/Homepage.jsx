@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { CertificateContainer, certificationArray } from "../certificate/Certificate";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
+import CourseGreeting from "../course_greeting/CourseGreeting";
 export default function () {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -32,6 +33,7 @@ export default function () {
       <div className=" min-h-screen w-full ">
       <Greeting/>
       <ArticleSlider isLoading={loading} posts={posts} heading={'Artikel Aku'}/>
+      <CourseGreeting/>
       <CertificateContainer data={certificationArray}/>
       </div>
       

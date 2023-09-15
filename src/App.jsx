@@ -18,6 +18,7 @@ import LearnAddPage from './components/learn_page/LearnAddPage';
 import ContentLearnPage from './components/learn_page/ContentLearnPage';
 import AddSectionPage from './components/learn_page/AddSectionPage';
 import AddNotePage from './components/learn_page/AddNotePage';
+import EditNotePage from './components/learn_page/EditNotePage';
 
 
 
@@ -44,6 +45,7 @@ function App() {
             <Route path='/learn/:id' element= {<ContentLearnPage/>}></Route>
             <Route path='/learn/add' element= {<LearnAddPage/>}></Route>
             <Route path='/learn/:id/addNote' element= {<AddNotePage/>}></Route>
+            <Route path='/learn/:id/editNote' element={<EditNotePage/>}></Route>
             <Route path='*' element= {<ErrorPage/>}></Route>
     </Routes>
     </Router>

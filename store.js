@@ -3,6 +3,7 @@ import AuthReducer from './src/slice/authSlice.js';
 import storage from 'redux-persist/lib/storage';
 import { persistReducer, persistStore } from 'redux-persist';
 import thunk from "redux-thunk";
+import mapMatkulReducer from "./src/slice/mapMatkulSlice.js";
 
 const persistConfig = {
     key: 'root',
@@ -10,7 +11,8 @@ const persistConfig = {
   }
 
 const allReducers = combineReducers({
-    auth: AuthReducer
+    auth: AuthReducer,
+    matkul:mapMatkulReducer
 })
 const persistedReducers = persistReducer(persistConfig,allReducers)
 
