@@ -121,9 +121,10 @@ export default function () {
     }
     try {
         
-    const res = await axios.post("https://isacitra-com-api.vercel.app/learn/addNotes/"+ data.matkulId, {
+    const res = await axios.post("http://localhost:3001/learn/addNotes", {
       "idMatkul": data.matkulId,
       "idChapter": data.activeChapterId,
+      "idMateri": data.activeMateriId,
       "dataMateri": {"title": title, "content":updatedHtmlString, createdAt:Date.now, lastModified: Date.now,
       "categories":categories, "thumbnail":thumbnail, _id: new mongoose.Types.ObjectId(), author: user}
     });
@@ -140,6 +141,8 @@ export default function () {
     
 
     } catch (error) {
+      toast.error("Terjadi kesalahan dalam menambahkan notes", {autoClose: 2000})
+        setLoading(false)
         console.log(error)
     }
     
