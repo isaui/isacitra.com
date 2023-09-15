@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
 import { Storage } from "../../../firebase";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import mongoose from "mongoose";
+import Loading from "../loading/Loading";
 
 
 
@@ -28,6 +29,7 @@ export default function () {
     const [title, setTitle] = useState('');
     const [htmlText, setHtmlText] = useState('');
     const [thumbnail, setThumbnail] = useState('');
+    const [loading, setLoading] = useState(false)
     const [currentId, setCurrentId] = useState('');
     const [isUpdate, setIsUpdate] = useState(false);
     const [isReady, setIsReady] = useState(false);
@@ -102,6 +104,7 @@ export default function () {
   }
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true)
     const { toc, updatedHtmlString } = generateTableOfContents(htmlText)
     //console.log(htmlText)
     if(!title.trim()){
@@ -118,27 +121,17 @@ export default function () {
     }
     try {
         
-        const mataKuliah = {...data.matkul};
-        const chapter = mataKuliah.chapters.find((chapter=> chapter._id == data.activeChapter._id))
-        if(chapter){
-                const materi = chapter.materi.find((mtr => mtr._id == data.activeMateri._id));
-                if(materi){
-                    materi.notes.push({"title": title, "content":updatedHtmlString, createdAt:Date.now, lastModified: Date.now,
-                    "categories":categories, "thumbnail":thumbnail, _id: new mongoose.Types.ObjectId(), author: user})
-                    console.log('wkwk ')
-                }               
-        }
-    const res = await axios.post("https://isacitra-com-api.vercel.app/learn/edit/"+ mataKuliah._id, mataKuliah);
-    const key = `${data.matkul_id}-lastPick`;
-    localStorage.setItem(key,  {
-      materiId: data.activeMateri._id,
-      chapterId: data.activeChapter._id,
-      message:'hahhahaa'
-    } );
+    const res = await axios.post("https://isacitra-com-api.vercel.app/learn/addNotes/"+ data.matkulId, {
+      "idMatkul": data.matkulId,
+      "idChapter": data.activeChapterId,
+      "dataMateri": {"title": title, "content":updatedHtmlString, createdAt:Date.now, lastModified: Date.now,
+      "categories":categories, "thumbnail":thumbnail, _id: new mongoose.Types.ObjectId(), author: user}
+    });
+    setLoading(false)
     navigate(data.lastUrl, {
       state: {
-        materiId: data.activeMateri._id,
-        chapterId: data.activeChapter._id,
+        materiId: data.activeMateriId,
+        chapterId: data.activeChapterId,
         message:'hahhahaa'
       },
       replace:true
@@ -191,11 +184,11 @@ export default function () {
 
             </div>
             <div className=" my-2 mx-4">
-            <label htmlFor="title" class="block mb-2 text-sm font-medium text-white">Title</label>
+            <label htmlFor="title" className="block mb-2 text-sm font-medium text-white">Title</label>
             <input value={title} onChange={e => setTitle(e.target.value)}type="text" id="title" class=" bg-slate-800 focus:border  text-white  text-sm rounded-xs focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="Teori relativitas dan pembuktiannya"></input>
         </div>
         <div className=" my-2 mx-4">
-            <label htmlFor="thumbnail" class="block mb-2 text-sm font-medium text-white ">Thumbnail</label>
+            <label htmlFor="thumbnail" className="block mb-2 text-sm font-medium text-white ">Thumbnail</label>
             <ImageUpload setToUpload={handleUploadThumbnail} status={uploadStatus} setStatus={setUploadStatus}/>
         </div>
 
@@ -208,12 +201,12 @@ export default function () {
         </div>
         </div>
             <div  className="my-2 mx-4">
-            <label htmlFor="content" class="block mb-2 text-sm font-medium text-white">Content</label>
+            <label htmlFor="content" className="block mb-2 text-sm font-medium text-white">Content</label>
             <div className=" bg-slate-800   self-center rounded-lg">
             <Editor setText={setContent} initialText= {htmlText}/>
             </div>
             <div className=" my-2  flex">
-            <button  type="button" onClick={async (e) =>{await handleSubmit(e)}} className="mt-3 px-5 py-2 bg-slate-950 text-white rounded hover:bg-slate-800">{isUpdate? 'Update' : 'Post'}</button>
+            <button  type="button" onClick={async (e) =>{await handleSubmit(e)}} className="mt-3 px-5 py-2 bg-slate-950 text-white rounded hover:bg-slate-800">{!loading? <h1>Post</h1> : <Loading/> }</button>
             </div>
             {showOverlay && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
