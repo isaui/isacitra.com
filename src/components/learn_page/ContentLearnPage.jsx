@@ -779,10 +779,25 @@ export default function () {
 
         channel.subscribe('update-matkul', (message)=>{
           console.log(message)
-          if(mataKuliah !== message.data){
+          if(message.data.chapters != undefined  && mataKuliah !== message.data){
             setMataKuliah(message.data)
+            if(message.data && activeChapter && activeMateri){
+              const chapterId = activeChapter._id;
+                  const materiId = activeMateri._id;
+                    if(chapterId){
+                      const chapterSelected = message.data.chapters.find(chapter => chapter._id == chapterId)
+                      if(chapterSelected){
+                        const materiSelected = chapterSelected.materi.find(materi=> materi._id == materiId)
+                        if(materiSelected){
+                          //setActiveChapter(chapterSelected)
+                          setActiveMateri(materiSelected)
+                        }
+                      }
+                    }
+            }
           }
-        })
+          }
+        )
     
         return () => {
           channel.unsubscribe('update-matkul')
@@ -791,8 +806,7 @@ export default function () {
 
     },[])
 
- 
-
+   
 
 
     useEffect(()=>{
