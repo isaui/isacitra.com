@@ -121,7 +121,7 @@ export default function () {
     }
     try {
         
-    const res = await axios.post("http://localhost:3001/learn/addNotes", {
+    const res = await axios.post("https://isacitra-com-api.vercel.app/learn/addNotes", {
       "idMatkul": data.matkulId,
       "idChapter": data.activeChapterId,
       "idMateri": data.activeMateriId,
