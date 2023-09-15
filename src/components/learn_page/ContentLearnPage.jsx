@@ -779,6 +779,7 @@ export default function () {
 
         channel.subscribe('update-matkul', (message)=>{
           console.log(message)
+          console.log("heiii update ini!!")
           if(message.data.chapters != undefined  && mataKuliah !== message.data){
             setMataKuliah(message.data)
             if(message.data && activeChapter && activeMateri){
