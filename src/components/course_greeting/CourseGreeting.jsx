@@ -32,7 +32,7 @@ export default function(){
         </div>
         <div className="  order-1  lg:mt-0 lg:order-2 col-span-4 lg:col-span-2 flex flex-col justify-center items-center">
         <div className=" mb-1">
-        <img className=" h-76 w-auto md:h-80 lg:h-96 "src={CourseCardImg} alt="" />
+        <img className=" h-80 w-auto lg:h-96 "src={CourseCardImg} alt="" />
         </div>
         </div>
 
