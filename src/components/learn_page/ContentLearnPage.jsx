@@ -953,6 +953,9 @@ export default function () {
             setMataKuliah(message.data)
             console.log('active ch -> ', activeChapter)
             console.log('active materi - >', activeMateri)
+            if(! activeChapter || !activeMateri){
+              return
+            }
             if(message.data && activeChapter && activeMateri){
               const chapterId = activeChapter._id;
                   const materiId = activeMateri._id;
