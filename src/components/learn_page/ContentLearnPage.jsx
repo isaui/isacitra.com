@@ -991,11 +991,6 @@ export default function () {
       if(! mataKuliah) {
         return
       }
-    //  console.log(data)
-    //  console.log(location)
-     // const pickData = localStorage.getItem(id+"-lastPick")
-     // console.log(pickData, localStorage.key)
-    // console.log(data)
     var edited = false;
       if(!sekali && savedData['active-chapter'+'-'+mataKuliah._id] && savedData['active-materi'+'-'+mataKuliah._id]){
         const chapterId = savedData['active-chapter'+'-'+mataKuliah._id];
@@ -1025,10 +1020,9 @@ export default function () {
            }
           }
           setActiveMateri(materiPertama);
-
       }
       setSudahSekali(true)
-    },[mataKuliah])
+    },[mataKuliah, activeMateri])
     const toggleSidebar = () => {
         setSidebarActive(prev => !prev);
     }
