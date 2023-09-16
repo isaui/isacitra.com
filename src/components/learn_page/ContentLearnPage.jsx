@@ -996,7 +996,8 @@ export default function () {
      // const pickData = localStorage.getItem(id+"-lastPick")
      // console.log(pickData, localStorage.key)
     // console.log(data)
-      if(!sekali){
+    var edited = false;
+      if(!sekali && savedData['active-chapter'+'-'+mataKuliah._id] && savedData['active-materi'+'-'+mataKuliah._id]){
         const chapterId = savedData['active-chapter'+'-'+mataKuliah._id];
         const materiId = savedData['active-materi'+'-'+mataKuliah._id];
         if(chapterId){
@@ -1006,13 +1007,13 @@ export default function () {
             if(materiSelected){
               setActiveChapter(chapterSelected)
               setActiveMateri(materiSelected)
+              edited = true;
             }
           }
         }
         setSudahSekali(true)
-        return 
       }
-      if(! activeMateri){
+      else if(! activeMateri && ! edited){
         let materiPertama = null;
       
         for (let i = 0; i < mataKuliah.chapters.length; i++) {
