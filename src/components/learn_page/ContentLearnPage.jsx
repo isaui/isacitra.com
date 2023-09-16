@@ -996,9 +996,13 @@ export default function () {
       }
     var edited = false;
     console.log('pusing gw')
+   // console.log('ini saved data: ', savedData)
 
       try {
+        console.log('huh apasih ini error kah?')
+        console.log(savedData['active-chapter'+'-'+mataKuliah._id],'-' ,savedData['active-materi'+'-'+mataKuliah._id])
         if(!sekali && savedData['active-chapter'+'-'+mataKuliah._id] && savedData['active-materi'+'-'+mataKuliah._id]){
+          console.log('di sini !!!!')
           const chapterId = savedData['active-chapter'+'-'+mataKuliah._id];
           const materiId = savedData['active-materi'+'-'+mataKuliah._id];
           if(chapterId){
@@ -1015,9 +1019,11 @@ export default function () {
           setSudahSekali(true)
         }
   
+        //
+        
         else if(! activeMateri && ! edited){
           let materiPertama = null;
-        
+          console.log('berarti di sini dong? rute errornya mana sih dek dek')
           for (let i = 0; i < mataKuliah.chapters.length; i++) {
             const chapter = mataKuliah.chapters[i];
             if (chapter.materi.length > 0) {
@@ -1026,7 +1032,9 @@ export default function () {
                 break; // Menghentikan pencarian setelah menemukan materi pertama
              }
             }
-            setActiveMateri(materiPertama);
+            if(materiPertama){
+              setActiveMateri(materiPertama);
+            }
         }
         setSudahSekali(true)
       } catch (error) {
@@ -1034,6 +1042,8 @@ export default function () {
       }
       
     },[mataKuliah, activeMateri])
+
+
     const toggleSidebar = () => {
         setSidebarActive(prev => !prev);
     }

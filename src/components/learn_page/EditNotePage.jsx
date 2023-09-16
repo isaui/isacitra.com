@@ -45,7 +45,7 @@ export default function () {
             const note = data.note
             setTitle(note.title);
             setCategories(note.categories);
-            setThumbnail(data.thumbnail);
+            setThumbnail(note.thumbnail);
             setHtmlText(note.content);
             setCurrentId(note._id)
             setIsReady(true)
