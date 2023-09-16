@@ -992,6 +992,7 @@ export default function () {
         return
       }
     var edited = false;
+    console.log('pusing gw')
       if(!sekali && savedData['active-chapter'+'-'+mataKuliah._id] && savedData['active-materi'+'-'+mataKuliah._id]){
         const chapterId = savedData['active-chapter'+'-'+mataKuliah._id];
         const materiId = savedData['active-materi'+'-'+mataKuliah._id];
