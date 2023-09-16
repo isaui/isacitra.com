@@ -45,6 +45,17 @@ export default function () {
       }
       setCourses()
     }, [])
+    const scrollToTop = () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth' // Animasi smooth scrolling
+      });
+    };
+  
+    useEffect(() => {
+      // Panggil fungsi scrollToTop() saat komponen dimuat
+      scrollToTop();
+    }, []);
     return (
         <div className="">
         <div className=' min-h-screen flex justify-center flex-col items-center w-full'>
