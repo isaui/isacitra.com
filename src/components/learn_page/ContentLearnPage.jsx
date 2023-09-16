@@ -996,36 +996,43 @@ export default function () {
       }
     var edited = false;
     console.log('pusing gw')
-      if(!sekali && savedData['active-chapter'+'-'+mataKuliah._id] && savedData['active-materi'+'-'+mataKuliah._id]){
-        const chapterId = savedData['active-chapter'+'-'+mataKuliah._id];
-        const materiId = savedData['active-materi'+'-'+mataKuliah._id];
-        if(chapterId){
-          const chapterSelected = mataKuliah.chapters.find(chapter => chapter._id == chapterId)
-          if(chapterSelected){
-            const materiSelected = chapterSelected.materi.find(materi=> materi._id == materiId)
-            if(materiSelected){
-              setActiveChapter(chapterSelected)
-              setActiveMateri(materiSelected)
-              edited = true;
+
+      try {
+        if(!sekali && savedData['active-chapter'+'-'+mataKuliah._id] && savedData['active-materi'+'-'+mataKuliah._id]){
+          const chapterId = savedData['active-chapter'+'-'+mataKuliah._id];
+          const materiId = savedData['active-materi'+'-'+mataKuliah._id];
+          if(chapterId){
+            const chapterSelected = mataKuliah.chapters.find(chapter => chapter._id == chapterId)
+            if(chapterSelected){
+              const materiSelected = chapterSelected.materi.find(materi=> materi._id == materiId)
+              if(materiSelected){
+                setActiveChapter(chapterSelected)
+                setActiveMateri(materiSelected)
+                edited = true;
+              }
             }
           }
+          setSudahSekali(true)
+        }
+  
+        else if(! activeMateri && ! edited){
+          let materiPertama = null;
+        
+          for (let i = 0; i < mataKuliah.chapters.length; i++) {
+            const chapter = mataKuliah.chapters[i];
+            if (chapter.materi.length > 0) {
+                setActiveChapter(chapter)
+                materiPertama = chapter.materi[0]; // Mengambil materi pertama jika ada materi
+                break; // Menghentikan pencarian setelah menemukan materi pertama
+             }
+            }
+            setActiveMateri(materiPertama);
         }
         setSudahSekali(true)
+      } catch (error) {
+        console.log(error)
       }
-      else if(! activeMateri && ! edited){
-        let materiPertama = null;
       
-        for (let i = 0; i < mataKuliah.chapters.length; i++) {
-          const chapter = mataKuliah.chapters[i];
-          if (chapter.materi.length > 0) {
-              setActiveChapter(chapter)
-              materiPertama = chapter.materi[0]; // Mengambil materi pertama jika ada materi
-              break; // Menghentikan pencarian setelah menemukan materi pertama
-           }
-          }
-          setActiveMateri(materiPertama);
-      }
-      setSudahSekali(true)
     },[mataKuliah, activeMateri])
     const toggleSidebar = () => {
         setSidebarActive(prev => !prev);
