@@ -22,7 +22,7 @@ export default function(){
         <div className=" mx-4 mt-6 grid grid-cols-4 gap-2 lg:gap-8 mb-12">
             <div className=" bg-slate-800 lg:bg-opacity-0 mt-3 rounded-md lg:mt-0 bg-opacity-30 lg:order-1 order-2 pt-4 pb-3 lg:col-span-2 col-span-4 flex flex-col justify-center text-center mx-auto lg:text-left text-white w-full greeting-style">
         <div className=" font-bold"></div>
-        <h1 className="greeting-style pb-3 px-6 font-bold md:text-6xl sm:text-5xl text-4xl md:py-3">Aku Jago<span className=" text-[#00A8FF]"> Sejarah</span></h1>
+        <h1 className="greeting-style pb-3 px-6 font-bold md:text-6xl sm:text-5xl text-4xl md:py-3">Bang Catet<span className=" text-[#00A8FF]"> Bang</span></h1>
         <div className="filosofi">
         <p className=" text-justify md:text-xl sm:text-lg text-sm md:py-7 py-5 px-6">Sebagai seorang Pencatat Handal, <span>Isa Citra Buana</span>, selalu tergila-gila untuk menulis dan mencatat materi akademik. Meskipun nilainya bukan yang terbaik, tetapi dia memiliki passion untuk belajar dengan keras. <span>Kertas yang semakin mahal </span>membuat <span> dia harus memutar otaknya</span> dan menciptakan benda ini. <span>Semoga anak ini semakin rajin menulis</span>. Kunjungi catatan dan video tentang matkul yang sedang ia pelajari.</p>
         </div>
