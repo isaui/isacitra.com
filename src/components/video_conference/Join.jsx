@@ -86,6 +86,7 @@ const JoinPage = () =>{
     const [streamData, setStreamData] = useState({});
     const [rtcToken, setRtcToken] = useState({});
     const [participants,setParticipants] = useState([]);
+    const { ready, tracks } = useMicrophoneAndCameraTracks();
     const saveStreamData = (userId, streamData) => {
       // Duplikat objek streamData saat ini
       const updatedStreamData = { ...streamData };
@@ -177,8 +178,8 @@ const JoinPage = () =>{
         }
     },[ room ])
 
-    const handleUserJoin = () => {
-
+    const handleUserJoin = async (user, mediaType) => {
+      
     }
     const handleUserLeft = () => {
 
@@ -189,21 +190,52 @@ const JoinPage = () =>{
       if(!me) {
         return
       }
-      agoraClient.on("user-published", handleUserJoin);
-      agoraClient.on("user-left", handleUserLeft);
-      agoraClient.join(agoraSetting.AGORA_APP_ID, roomId, rtcToken, me._id).then((agoraUserId)=>
-      {
-       return Promise.all([AgoraRTC.createMicrophoneAndCameraTracks(), agoraUserId])
-    }).then(([tracks , agoraUserId]) =>{
-        const [audioTrack, videoTrack] = tracks;
-        agoraClient.publish(tracks)
-        setParticipants(prev => [...prev, {username:me.username,participantId:agoraUserId, videoTrack:videoTrack }])
-      }).catch(err=>{
-        console.log(err)
-      })
+
+      const init = async () => {
+        agoraClient.on("user-published", async (user, mediaType)=>{
+          await agoraClient.subscribe(user, mediaType);
+          console.log("subscribe success");
+          if(mediaType == "video"){
+            setParticipants(prev => [...prev, {
+              user:user,
+              participantId: user.uid,
+              videoTrack: user.videoTrack
+            }])
+          
+          }
+          if(mediaType == "audio"){
+            user.audioTrack?.play()
+          }
+        })
+        agoraClient.on("user-unpublished", async (user, type)=>{
+          console.log("unpublished ", user,type);
+          if (type === "audio") {
+            user.audioTrack?.stop();
+          }
+          if (type === "video") {
+            setParticipants((prevUsers) => {
+              return prevUsers.filter((data) => data.participantId !== user.uid);
+            });
+          }
+        });
+
+        agoraClient.on("user-left", (user) => {
+          console.log("leaving", user);
+          setParticipants((prevUsers) => {
+            return prevUsers.filter((data) => data.participantId !== user.uid);
+          });
+        });
+
+        await agoraClient.join(agoraSetting.AGORA_APP_ID,roomId, rtcToken, null);
+        if (tracks) await agoraClient.publish([tracks[0], tracks[1]]);
+
+      }
+    if(ready && tracks){
+      init()
+    }
       
 
-    }, [me])
+    }, [me,ready,tracks])
 
 useEffect(() => {
     
