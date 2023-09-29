@@ -105,7 +105,7 @@ const JoinPage = () =>{
         const fetchRoom = async () =>{
             setLoading(true)
             try {
-                const res = await axios.get(`http://localhost:3001/video/${roomId}`);
+                const res = await axios.get(`https://isacitra-com-api.vercel.app/video/${roomId}`);
                 setRoom(res.data.room)
                 setLoading(false)
                 console.log(res)
@@ -249,7 +249,7 @@ const hidupkanVideo = () => {
 
 const joinWithCookie = async () => {
   try {
-    const res = await axios.post('http://localhost:3001/video/addToRoomViaToken',{token: cookie});
+    const res = await axios.post('https://isacitra-com-api.vercel.app/video/addToRoomViaToken',{token: cookie});
     setRoom(res.data.room)
     setMe(res.data.participant)
     Cookie.set(`room-${roomId}-session`, res.data.token)
@@ -274,12 +274,12 @@ const submitJoin = async (username, password) =>{
     }
     if(!user){
       const guestId = new mongoose.Types.ObjectId();
-      await axios.post('http://localhost:3001/video/guest',{
+      await axios.post('https://isacitra-com-api.vercel.app/video/guest',{
               roomId:roomId,
               guestId: guestId,
               username: username,
             });
-      const res = await axios.post('http://localhost:3001/video/addToRoom', {roomId:roomId,password:password, isUser:false, participantId:guestId})
+      const res = await axios.post('https://isacitra-com-api.vercel.app/video/addToRoom', {roomId:roomId,password:password, isUser:false, participantId:guestId})
       console.log(res);
       Cookie.set(`room-${roomId}-session`, res.data.token)
       setRtcToken(res.data.rtcToken)
@@ -289,7 +289,7 @@ const submitJoin = async (username, password) =>{
       setMe(res.data.participant);
     }
     else{
-      const res = await axios.post('http://localhost:3001/video/addToRoom', {roomId:roomId,password:password, isUser:true, participantId:user._id})
+      const res = await axios.post('https://isacitra-com-api.vercel.app/video/addToRoom', {roomId:roomId,password:password, isUser:true, participantId:user._id})
       console.log(res);
       Cookie.set(`room-${roomId}-session`, res.data.token)
       setCookie(res.data.token)
