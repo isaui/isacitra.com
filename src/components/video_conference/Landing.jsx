@@ -139,7 +139,7 @@ function CreateRoomDialog({ isOpen = true, onClose = () => {} }) {
             hostKey: uuid.slice(0,6),
             status:roomInfo.status
           }
-          const room = await axios.post('http://localhost:3001/video/createRoom', data);
+          const room = await axios.post('https://isacitra-com-api.vercel.app/video/createRoom', data);
           setCreatedRoom(room.data)
           
           setLoading(false)
@@ -163,12 +163,12 @@ function CreateRoomDialog({ isOpen = true, onClose = () => {} }) {
               status:roomInfo.status
             }
             
-            const guest = await axios.post('http://localhost:3001/video/guest',{
+            const guest = await axios.post('https://isacitra-com-api.vercel.app/video/guest',{
               roomId:roomId,
               guestId: guestId,
               username: roomInfo.username,
             });
-            const room = await axios.post('http://localhost:3001/video/createRoom', data);
+            const room = await axios.post('https://isacitra-com-api.vercel.app/video/createRoom', data);
             setCreatedRoom(room.data)
             console.log(guest, room);
             setLoading(false)
