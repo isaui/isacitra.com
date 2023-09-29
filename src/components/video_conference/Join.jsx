@@ -22,6 +22,11 @@ import {
   ICameraVideoTrack,
   IMicrophoneAudioTrack,
 } from "agora-rtc-sdk-ng";
+import {
+  AgoraVideoPlayer,
+  createClient,
+  createMicrophoneAndCameraTracks,
+} from "agora-rtc-react";
 import AgoraRTC from "agora-rtc-sdk-ng";
 import {decodeToken, isExpired} from 'react-jwt'
 import Peer from 'peerjs';
@@ -41,6 +46,8 @@ const agoraSetting = {
   mode: "rtc", codec: "vp8",
 }
 }
+
+const useMicrophoneAndCameraTracks = createMicrophoneAndCameraTracks();
 
 const agoraClient = AgoraRTC.createClient({...agoraSetting.config})
 
@@ -186,56 +193,7 @@ const JoinPage = () =>{
     }
 
 // connect to others
-    useEffect(()=>{
-      if(!me) {
-        return
-      }
-
-      const init = async () => {
-        agoraClient.on("user-published", async (user, mediaType)=>{
-          await agoraClient.subscribe(user, mediaType);
-          console.log("subscribe success");
-          if(mediaType == "video"){
-            setParticipants(prev => [...prev, {
-              user:user,
-              participantId: user.uid,
-              videoTrack: user.videoTrack
-            }])
-          
-          }
-          if(mediaType == "audio"){
-            user.audioTrack?.play()
-          }
-        })
-        agoraClient.on("user-unpublished", async (user, type)=>{
-          console.log("unpublished ", user,type);
-          if (type === "audio") {
-            user.audioTrack?.stop();
-          }
-          if (type === "video") {
-            setParticipants((prevUsers) => {
-              return prevUsers.filter((data) => data.participantId !== user.uid);
-            });
-          }
-        });
-
-        agoraClient.on("user-left", (user) => {
-          console.log("leaving", user);
-          setParticipants((prevUsers) => {
-            return prevUsers.filter((data) => data.participantId !== user.uid);
-          });
-        });
-
-        await agoraClient.join(agoraSetting.AGORA_APP_ID,roomId, rtcToken, null);
-        if (tracks) await agoraClient.publish([tracks[0], tracks[1]]);
-
-      }
-    if(ready && tracks){
-      init()
-    }
-      
-
-    }, [me,ready,tracks])
+    
 
 useEffect(() => {
     
@@ -521,6 +479,60 @@ function VideoControl({ setting, isUser = false, name = "Ucok GTA" }) {
 
 
 const RoomScreen= ({userSetting={}, remoteStreamData = {}, participants = []}) => {
+
+
+const [roomParticipants,setParticipants] = useState([])
+const { ready, tracks } = useMicrophoneAndCameraTracks();
+  useEffect(()=>{
+
+    const init = async () => {
+      agoraClient.on("user-published", async (user, mediaType)=>{
+        await agoraClient.subscribe(user, mediaType);
+        console.log("subscribe success");
+        if(mediaType == "video"){
+          setParticipants(prev => [...prev, {
+            user:user,
+            participantId: user.uid,
+            videoTrack: user.videoTrack
+          }])
+        
+        }
+        if(mediaType == "audio"){
+          user.audioTrack?.play()
+        }
+      })
+      agoraClient.on("user-unpublished", async (user, type)=>{
+        console.log("unpublished ", user,type);
+        if (type === "audio") {
+          user.audioTrack?.stop();
+        }
+        if (type === "video") {
+          setParticipants((prevUsers) => {
+            return prevUsers.filter((data) => data.participantId !== user.uid);
+          });
+        }
+      });
+
+      agoraClient.on("user-left", (user) => {
+        console.log("leaving", user);
+        setParticipants((prevUsers) => {
+          return prevUsers.filter((data) => data.participantId !== user.uid);
+        });
+      });
+
+      await agoraClient.join(agoraSetting.AGORA_APP_ID,roomId, rtcToken, null);
+      if (tracks) {await agoraClient.publish([tracks[0], tracks[1]])};
+
+    }
+  if(ready && tracks){
+    init()
+  }
+    
+
+  }, [ready,tracks])
+
+
+
   useEffect(()=>{
     if(Object.keys(remoteStreamData).length > 0){
       changeLayoutMode(modes.allParticipants)
