@@ -19,6 +19,8 @@ import ContentLearnPage from './components/learn_page/ContentLearnPage';
 import AddSectionPage from './components/learn_page/AddSectionPage';
 import AddNotePage from './components/learn_page/AddNotePage';
 import EditNotePage from './components/learn_page/EditNotePage';
+import Landing from './components/video_conference/Landing';
+import JoinPage from './components/video_conference/Join';
 
 
 
@@ -42,6 +44,8 @@ function App() {
             <Route path='/projects' element= {<ProjectPage/>}></Route>
             <Route path='/search' element= {<SearchResult/>}></Route>
             <Route path='/learn' element= {<LearnPage/>}></Route>
+            <Route path='/video' element= {<Landing/>}></Route>
+            <Route path='/video/:id' element= {<JoinPage/>}></Route>
             <Route path='/learn/:id' element= {<ContentLearnPage/>}></Route>
             <Route path='/learn/add' element= {<LearnAddPage/>}></Route>
             <Route path='/learn/:id/addNote' element= {<AddNotePage/>}></Route>
