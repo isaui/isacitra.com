@@ -17,19 +17,10 @@ import mongoose, { Mongoose } from "mongoose";
 import { MdAddReaction, MdChatBubble, MdContacts, MdScreenShare, MdSend, MdSettings } from "react-icons/md";
 import Cookie from 'js-cookie';
 import {
-  ClientConfig,
-  IAgoraRTCRemoteUser,
-  ICameraVideoTrack,
-  IMicrophoneAudioTrack,
-} from "agora-rtc-sdk-ng";
-import {
-  AgoraVideoPlayer,
-  createClient,
   createMicrophoneAndCameraTracks,
 } from "agora-rtc-react";
 import AgoraRTC from "agora-rtc-sdk-ng";
 import {decodeToken, isExpired} from 'react-jwt'
-import Peer from 'peerjs';
 
 import Ably from 'ably/build/ably-webworker.min';
 
