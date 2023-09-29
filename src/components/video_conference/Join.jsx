@@ -18,6 +18,7 @@ import { MdAddReaction, MdChatBubble, MdContacts, MdScreenShare, MdSend, MdSetti
 import Cookie from 'js-cookie';
 import {
   createMicrophoneAndCameraTracks,
+  AgoraVideoPlayer
 } from "agora-rtc-react";
 import AgoraRTC from "agora-rtc-sdk-ng";
 import {decodeToken, isExpired} from 'react-jwt'
@@ -83,6 +84,7 @@ const JoinPage = () =>{
     const [currPeer, setCurrPeer] = useState(null);
     const [streamData, setStreamData] = useState({});
     const [rtcToken, setRtcToken] = useState({});
+    const [localStreams, setLocalStreams] = useState({})
     const [participants,setParticipants] = useState([]);
     const { ready, tracks } = useMicrophoneAndCameraTracks();
     const saveStreamData = (userId, streamData) => {
@@ -95,6 +97,8 @@ const JoinPage = () =>{
       // Perbarui state streamData
       setStreamData(updatedStreamData);
     };
+
+    console.log(participants)
 
     //console.log(participants)
 
@@ -182,6 +186,66 @@ const JoinPage = () =>{
     const handleUserLeft = () => {
 
     }
+
+
+    useEffect(()=>{
+      if(!me) {
+        return
+      }
+      const init = async () => {
+        agoraClient.on("user-published", async (user, mediaType)=>{
+          await agoraClient.subscribe(user, mediaType);
+          console.log("subscribe success");
+          if(mediaType == "video"){
+            setParticipants(prev => [...prev, {
+              user:user,
+              participantId: user.uid,
+              videoTrack: user.videoTrack,
+              audioTrack:user.audioTrack,
+            }])
+          
+          }
+          if(mediaType == "audio"){
+            user.audioTrack?.play()
+            
+          }
+        })
+        agoraClient.on("user-unpublished", async (user, type)=>{
+          console.log("unpublished ", user,type);
+          if (type === "audio") {
+            user.audioTrack?.stop();
+          }
+          if (type === "video") {
+            setParticipants((prevUsers) => {
+              return prevUsers.filter((data) => data.participantId !== user.uid);
+            });
+          }
+        });
+  
+        agoraClient.on("user-left", (user) => {
+          console.log("leaving", user);
+          setParticipants((prevUsers) => {
+            return prevUsers.filter((data) => data.participantId !== user.uid);
+          });
+        });
+  
+        await agoraClient.join(agoraSetting.AGORA_APP_ID,roomId, rtcToken, me._id);
+        if (tracks) {
+          await agoraClient.publish([tracks[0], tracks[1]])
+          setLocalStreams({
+            localTrack:tracks[0],
+            videoTrack:tracks[1]
+          })
+        }
+  
+      }
+    if(ready && tracks){
+      init()
+    }
+      
+  
+    }, [ready,tracks, me])
+  
 
 // connect to others
     
@@ -314,7 +378,7 @@ const userVideoSetting = {
     <div className='mx-auto min-h-screen flex justify-center items-center flex-col min-w-screen   '>
       {loading? <Loading/> :
         screen == 'room' ? <div className="mx-auto min-h-screen max-h-screen flex justify-center items-center flex-col min-w-screen max-w-screen  ">
-          <RoomScreen userSetting={userVideoSetting} remoteStreamData={streamData} participants={participants}/>
+          <RoomScreen rtcToken={rtcToken} localStreams={localStreams} userSetting={userVideoSetting} remoteStreamData={streamData} participants={participants}/>
         </div> :<div className='homepage-content  min-h-screen w-full flex flex-col my-auto items-center max-w-full'>
         {isJoinBoxOpen &&
          <div onClick={()=>{setJoinBoxOpen(false)}} className="fixed z-50 top-0 left-0 w-screen flex bg-black bg-opacity-30 flex-col justify-center items-center min-h-screen">
@@ -393,16 +457,67 @@ const Sidebar = ({isOpen, closeSidebar})=>{
   </div>
 }
 
+function CustomAgoraVideo({ audioTrack, videoTrack, isUser, name }) {
+  return (
+    <div className="flex flex-col bg-slate-950 w-full h-full rounded-lg">
+      {videoTrack ? (
+        <AgoraVideoPlayer
+          className="aspect-video object-cover rounded-t-lg"
+          style={{}}
+          videoTrack={videoTrack}
+        />
+      ) : (
+        <img src={NoUserVideo} className="aspect-video object-cover" alt="No Video" />
+      )}
+
+      <div className="w-full mx-2  py-2 flex items-center justify-between">
+        {!isUser && (
+          <div className="ml-2 flex items-center space-x-4">
+            <div>
+              {videoTrack ? (
+                <FaVideoSlash
+                  color="red"
+                  className="w-6 h-auto"
+                  // Logic to toggle video track on/off
+                />
+              ) : (
+                <FaVideo
+                  color="#00A8FF"
+                  className="w-6 h-auto"
+                  // Logic to toggle video track on/off
+                />
+              )}
+            </div>
+            <div>
+              {audioTrack ? (
+                <FaMicrophoneSlash
+                  color="red"
+                  className="w-6 h-auto"
+                  // Logic to toggle audio track on/off
+                />
+              ) : (
+                <FaMicrophone
+                  color="#00A8FF"
+                  className="w-6 h-auto"
+                  // Logic to toggle audio track on/off
+                />
+              )}
+            </div>
+          </div>
+        )}
+        <div className="truncate ml-auto">
+          <h1 className="text-white text-sm mr-4 truncate">
+            {name}
+            {isUser ? ' (Anda)' : ''}
+          </h1>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function VideoControl({ setting, isUser = false, name = "Ucok GTA" }) {
-  const {
-    isVideoEnabled,
-    isAudioEnabled,
-    matikanVideo = () => {},
-    hidupkanVideo = () => {},
-    matikanAudio = () => {},
-    hidupkanAudio = () => {},
-    mediaRef
-  } = setting;
+  
 
   return (
     <div className="flex flex-col  bg-slate-800 w-full h-full rounded-lg">
@@ -469,67 +584,22 @@ function VideoControl({ setting, isUser = false, name = "Ucok GTA" }) {
 
 
 
-const RoomScreen= ({userSetting={}, remoteStreamData = {}, participants = []}) => {
+const RoomScreen= ({userSetting={}, rtcToken, remoteStreamData = {},localStreams ,participants = []}) => {
 
 
-const [roomParticipants,setParticipants] = useState([])
-const { ready, tracks } = useMicrophoneAndCameraTracks();
-  useEffect(()=>{
-
-    const init = async () => {
-      agoraClient.on("user-published", async (user, mediaType)=>{
-        await agoraClient.subscribe(user, mediaType);
-        console.log("subscribe success");
-        if(mediaType == "video"){
-          setParticipants(prev => [...prev, {
-            user:user,
-            participantId: user.uid,
-            videoTrack: user.videoTrack
-          }])
-        
-        }
-        if(mediaType == "audio"){
-          user.audioTrack?.play()
-        }
-      })
-      agoraClient.on("user-unpublished", async (user, type)=>{
-        console.log("unpublished ", user,type);
-        if (type === "audio") {
-          user.audioTrack?.stop();
-        }
-        if (type === "video") {
-          setParticipants((prevUsers) => {
-            return prevUsers.filter((data) => data.participantId !== user.uid);
-          });
-        }
-      });
-
-      agoraClient.on("user-left", (user) => {
-        console.log("leaving", user);
-        setParticipants((prevUsers) => {
-          return prevUsers.filter((data) => data.participantId !== user.uid);
-        });
-      });
-
-      await agoraClient.join(agoraSetting.AGORA_APP_ID,roomId, rtcToken, null);
-      if (tracks) {await agoraClient.publish([tracks[0], tracks[1]])};
-
-    }
-  if(ready && tracks){
-    init()
-  }
-    
-
-  }, [ready,tracks])
-
+//const { ready, tracks } = useMicrophoneAndCameraTracks();
+ 
 
 
   useEffect(()=>{
-    if(Object.keys(remoteStreamData).length > 0){
+    if(participants.length > 0){
       changeLayoutMode(modes.allParticipants)
       console.log('ganti')
     }
-  },[remoteStreamData])
+    else{
+      changeLayoutMode(modes.onlyMe)
+    }
+  },[participants])
   const modes = {
     onlyMe: "only-me",
     screenShare: "screen-share",
@@ -550,10 +620,12 @@ const { ready, tracks } = useMicrophoneAndCameraTracks();
       case modes.onlyMe:
         return (
           <div className="w-screen flex flex-col justify-center h-full items-center max-h-full">
-            
-                {roomParticipants.map(participant=>{
-                  return <h1 key={participant.participantId}>participant.username</h1>
-                })}
+            <div className="w-[120vh] h-auto max-w-[95%] text-white">
+              <CustomAgoraVideo audioTrack={localStreams.audioTrack} 
+              videoTrack={localStreams.videoTrack} isUser={true}
+              name={"Ucok"}
+              />
+            </div>
             
           </div>
         );
@@ -561,15 +633,41 @@ const { ready, tracks } = useMicrophoneAndCameraTracks();
       case modes.screenShare:
         return <div className="w-screen flex flex-col justify-center h-full items-center max-h-full">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-4">
+        <div className="w-[120vh] h-auto max-w-[95%] text-white">
+              <CustomAgoraVideo audioTrack={localStreams.audioTrack} 
+              videoTrack={localStreams.videoTrack} isUser={true}
+              name={"Ucok"}
+              />
+        </div>
+        {participants.map((participant) => {
+          return <div className="w-[120vh] h-auto max-w-[95%] text-white">
+          <CustomAgoraVideo audioTrack={participant.audioTrack} 
+          videoTrack={participant.videoTrack} isUser={false}
+          name={"Remote"}
+          />
+    </div>
 
+        })}
         </div>
       </div>;
       case modes.allParticipants:
         return <div className="w-screen flex flex-col justify-center h-full items-center max-h-full">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-4">
-        {roomParticipants.map(participant=>{
-                  return <h1 key={participant.participantId}>participant.participantId</h1>
-                })}
+        <div className={`grid grid-cols-1  justify-center md:grid-cols-2 lg:${participants.length > 2?'grid-cols-3':'grid-cols-2'} gap-x-2 gap-y-2 mx-2 content-center	`}>
+        <div className="w-[80vh] lg:w-[100vh] mx-auto h-auto max-w-[85%] md:max-w-[95%] text-white">
+              <CustomAgoraVideo audioTrack={localStreams.audioTrack} 
+              videoTrack={localStreams.videoTrack} isUser={true}
+              name={"Ucok"}
+              />
+        </div>
+        {participants.map((participant) => {
+          return <div className="mx-auto w-[80vh] lg:w-[100vh]  h-auto max-w-[85%] md:max-w-[95%] text-white">
+          <CustomAgoraVideo audioTrack={participant.audioTrack} 
+          videoTrack={participant.videoTrack} isUser={false}
+          name={"Remote"}
+          />
+    </div>
+
+        })}
         </div>
       </div>;
       case modes.focusToOneParticipant:
