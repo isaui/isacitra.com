@@ -701,12 +701,12 @@ const RoomScreen= ({userSetting={}, rtcToken, remoteStreamData = {},localStreams
     </div>
 
     {/* Konten */}
-    <div className="w-screen grow flex flex-col  bg-[#0F2041] overflow-x-hidden">
+    <div className="w-screen flex flex-col  bg-[#0F2041] overflow-x-hidden h-[95%] max-h-[95%]">
     {renderContentBasedOnMode()}
     </div>
 
     {/* Bottom Bar */}
-    <div className="w-full min-h-[4rem]  flex items-center justify-between px-4 md:px-8 lg:px-16 py-2 bg-[#071829]">
+    <div className="w-full min-h-[4rem] fixed bottom-0 left-0  flex items-center justify-between px-4 md:px-8 lg:px-16 py-2 bg-[#071829]">
         <div>
           {userSetting.isVideoEnabled ? (
             <FaVideo onClick={userSetting.matikanVideo} color="#00A8FF" className="ml-4 w-6 h-auto" />
