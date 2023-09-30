@@ -375,9 +375,9 @@ const userVideoSetting = {
         <ToastContainer/>
         {isError? <ErrorPage statusCode={statusCode} message={errorMessage} />:<>
 
-    <div className='mx-auto min-h-screen flex justify-center items-center flex-col min-w-screen   '>
+    <div className={`mx-auto min-h-[${window.innerHeight}px] max-h-[${window.innerHeight}px] flex justify-center items-center flex-col min-w-screen`}>
       {loading? <Loading/> :
-        screen == 'room' ? <div className="mx-auto min-h-screen max-h-screen flex justify-center items-center flex-col min-w-screen max-w-screen  ">
+        screen == 'room' ? <div className="mx-auto min-h-full max-h-full flex justify-center items-center flex-col min-w-screen max-w-screen  ">
           <RoomScreen rtcToken={rtcToken} localStreams={localStreams} userSetting={userVideoSetting} remoteStreamData={streamData} participants={participants}/>
         </div> :<div className='homepage-content  min-h-screen w-full flex flex-col my-auto items-center max-w-full'>
         {isJoinBoxOpen &&
