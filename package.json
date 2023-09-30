@@ -41,6 +41,7 @@
     "passport-local-mongoose": "^8.0.0",
     "path": "^0.12.7",
     "peerjs": "^1.5.1",
+    "postcss-viewport-height-correction": "^1.1.1",
     "react": "^18.2.0",
     "react-datepicker": "^4.18.0",
     "react-dom": "^18.2.0",

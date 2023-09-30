@@ -371,13 +371,13 @@ const hidupkanAudio= () => {
 const userVideoSetting = {
   matikanAudio,hidupkanAudio,matikanVideo,hidupkanVideo,mediaRef,isAudioEnabled,isVideoEnabled
 }
-    return <div className={`max-h-[${window.innerHeight}px] bg-slate-900`}>
+    return <div className=" bg-slate-900">
         <ToastContainer/>
         {isError? <ErrorPage statusCode={statusCode} message={errorMessage} />:<>
 
-    <div className={`mx-auto min-h-[${window.innerHeight}px] max-h-[${window.innerHeight}px] flex justify-center items-center flex-col min-w-screen`}>
+    <div className='mx-auto min-h-screen flex justify-center items-center flex-col min-w-screen   '>
       {loading? <Loading/> :
-        screen == 'room' ? <div className="mx-auto min-h-full max-h-full flex justify-center items-center flex-col min-w-screen max-w-screen  ">
+        screen == 'room' ? <div className="mx-auto min-h-screen max-h-screen flex justify-center items-center flex-col min-w-screen max-w-screen  ">
           <RoomScreen rtcToken={rtcToken} localStreams={localStreams} userSetting={userVideoSetting} remoteStreamData={streamData} participants={participants}/>
         </div> :<div className='homepage-content  min-h-screen w-full flex flex-col my-auto items-center max-w-full'>
         {isJoinBoxOpen &&
@@ -588,7 +588,14 @@ const RoomScreen= ({userSetting={}, rtcToken, remoteStreamData = {},localStreams
 
 
 //const { ready, tracks } = useMicrophoneAndCameraTracks();
- 
+  
+
+  useEffect(()=>{
+    console.log(window.innerHeight);
+    console.log(window.outerHeight)
+   
+  },[])
+
 
 
   useEffect(()=>{
@@ -678,7 +685,7 @@ const RoomScreen= ({userSetting={}, rtcToken, remoteStreamData = {},localStreams
   };
 
 
-  return <div className="flex  flex-col w-screen h-screen max-h-screen ">
+  return <div className="flex bg-[#0F2041] flex-col w-screen h-screen max-h-screen ">
 
     {/* Chat Sidebar */}
     {openSidebar && <div onClick={()=>{setOpenSidebar(false)}} className="fixed top-0 left-0 z-20 flex w-screen h-screen justify-end ">
