@@ -371,7 +371,7 @@ const hidupkanAudio= () => {
 const userVideoSetting = {
   matikanAudio,hidupkanAudio,matikanVideo,hidupkanVideo,mediaRef,isAudioEnabled,isVideoEnabled
 }
-    return <div className=" bg-slate-900">
+    return <div className={`max-h-[${window.innerHeight}px] bg-slate-900`}>
         <ToastContainer/>
         {isError? <ErrorPage statusCode={statusCode} message={errorMessage} />:<>
 
