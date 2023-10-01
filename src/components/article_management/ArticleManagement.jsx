@@ -17,7 +17,7 @@ export default function ({navbarEnabled = true, footerEnabled=true}) {
     const handleDelete = async (articleId) => {
         try {
             
-                axios.delete('https://isa-citra.adaptable.app/articles/'+articleId).then((res)=>{
+                axios.delete('https://isacitra-com-api.vercel.app/articles/'+articleId).then((res)=>{
                 setPosts((prevPosts) => prevPosts.filter((post) => post._id !== articleId));
                 //console.log(res)
             })
@@ -35,7 +35,7 @@ export default function ({navbarEnabled = true, footerEnabled=true}) {
             return
         }
         //console.log('ini adalah user kamu deck, ', user)
-        axios.post('https://isa-citra.adaptable.app/articles/edit', {user:user}).then( res => {
+        axios.post('https://isacitra-com-api.vercel.app/articles/edit', {user:user}).then( res => {
           setPosts(res.data.articles)
          // console.log('Berhasil mendapatkan artikel-artikel -> ', 'jumlah artikel : ', res.data.articles.length)
           setLoading(false)

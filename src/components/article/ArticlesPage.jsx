@@ -16,7 +16,7 @@ export default function (){
     const navigate = useNavigate();
     useEffect(()=>{
         setLoading(true)
-        axios.get('https://isa-citra.adaptable.app/articles').then( res => {
+        axios.get('https://isacitra-com-api.vercel.app/articles').then( res => {
           setArticles(res.data.articles)
           setLoading(false)
 

@@ -16,7 +16,7 @@ export default function () {
     const location = useLocation();
     useEffect(()=>{
         setLoading(true)
-        axios.get('https://isa-citra.adaptable.app/').then( res => {
+        axios.get('https://isacitra-com-api.vercel.app/').then( res => {
           setPosts(res.data.topPicks)
           setLoading(false)
         }).catch(err =>{ 

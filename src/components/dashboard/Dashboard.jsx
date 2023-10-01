@@ -117,7 +117,7 @@ const ProfileSetting = () => {
         }
 
         try {
-            const res = await axios.post('https://isa-citra.adaptable.app/authentication/updateProfil',{
+            const res = await axios.post('https://isacitra-com-api.vercel.app/authentication/updateProfil',{
                 _id: user._id,
                 newData: {
                     email, username, firstName, lastName, bio, avatar:avatarFile, 

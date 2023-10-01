@@ -76,7 +76,7 @@ export default function () {
     const handleDelete = async (articleId) => {
         try {
                 if(isReady){
-                    axios.delete('https://isa-citra.adaptable.app/articles/'+articleId).then((res)=>{
+                    axios.delete('https://isacitra-com-api.vercel.app/articles/'+articleId).then((res)=>{
                 navigate(-1)
             })
                 }

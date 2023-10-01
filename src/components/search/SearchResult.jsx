@@ -24,7 +24,7 @@ export default function () { // Edit ini untuk argument jika perlu
       const searchPosts = async (searchTerm) => {
         setLoading(true)
         try {
-          const response = await axios.get('https://isa-citra.adaptable.app/articles/search', {
+          const response = await axios.get('https://isacitra-com-api.vercel.app/articles/search', {
             params: { searchTerm },
           });
       
