@@ -44,7 +44,7 @@ export default function ({navbarEnabled = true, footerEnabled=true}) {
             if(err.response.status == '401'){
                 navigate('/authentication', {state:{message:'Anda belum mendapatkan izin untuk mengaksesnya. silahkan masuk atau membuat akun baru'}})
             }
-           // console.log(err)
+            console.log(err)
         })
       }, [user])
     return <div>
