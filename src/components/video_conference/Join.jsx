@@ -84,9 +84,10 @@ const JoinPage = () =>{
     const [currPeer, setCurrPeer] = useState(null);
     const [streamData, setStreamData] = useState({});
     const [rtcToken, setRtcToken] = useState({});
-    const [localStreams, setLocalStreams] = useState({})
+    const [localStreams, setLocalStreams] = useState(null)
     const [participants,setParticipants] = useState([]);
     const { ready, tracks } = useMicrophoneAndCameraTracks();
+    const [firstTime, setFirstTime] = useState(true);
     const saveStreamData = (userId, streamData) => {
       // Duplikat objek streamData saat ini
       const updatedStreamData = { ...streamData };
@@ -180,65 +181,144 @@ const JoinPage = () =>{
         }
     },[ room ])
 
-    const handleUserJoin = async (user, mediaType) => {
-      
-    }
-    const handleUserLeft = () => {
-
-    }
-
+    useEffect(() => {
+      // perbaiki ini
+        if(me){
+          return
+        }
+        const getMediaStream = async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: isVideoEnabled,
+            audio: isAudioEnabled // Gunakan state video
+            // Gunakan state audio
+          });
+          
+          // Menghubungkan aliran media ke elemen video dan audio
+          if (mediaRef.current ) {
+            mediaRef.current.srcObject =stream;
+          }
+          setDapatIzin(true)
+        } catch (error) {
+          console.error('Error accessing media devices:', error);
+          setDapatIzin(false)
+        }
+      };
+    
+      getMediaStream();
+    }, [isAudioEnabled, isVideoEnabled, me]);
+    
+   
 
     useEffect(()=>{
       if(!me) {
         return
       }
       const init = async () => {
-        agoraClient.on("user-published", async (user, mediaType)=>{
+        // Memasang event listener ketika pengguna lain mempublikasikan media
+        agoraClient.on("user-published", async (user, mediaType) => {
           await agoraClient.subscribe(user, mediaType);
           console.log("subscribe success");
-          if(mediaType == "video"){
-            setParticipants(prev => [...prev, {
-              user:user,
-              participantId: user.uid,
-              videoTrack: user.videoTrack,
-              audioTrack:user.audioTrack,
-            }])
-          
-          }
-          if(mediaType == "audio"){
-            user.audioTrack?.play()
-            
-          }
-        })
-        agoraClient.on("user-unpublished", async (user, type)=>{
-          console.log("unpublished ", user,type);
-          if (type === "audio") {
-            user.audioTrack?.stop();
-          }
-          if (type === "video") {
-            setParticipants((prevUsers) => {
-              return prevUsers.filter((data) => data.participantId !== user.uid);
+      
+          if (mediaType === "video" || mediaType === "audio") {
+            setParticipants((prevParticipants) => {
+              // Memeriksa apakah partisipan sudah ada dalam daftar
+              const existingParticipant = prevParticipants.find(
+                (participant) => participant.participantId === user.uid
+              );
+      
+              // Jika belum ada, tambahkan partisipan baru
+              if (!existingParticipant) {
+                return [
+                  ...prevParticipants,
+                  {
+                    user: user,
+                    participantId: user.uid,
+                    data: user.dataChannels,
+                    videoTrack: user.videoTrack,
+                    audioTrack: user.audioTrack,
+                    isAudioEnabled: user.hasAudio,
+                    isVideoEnabled: user.hasVideo,
+                  },
+                ];
+              }
+      
+              // Jika sudah ada, perbarui data partisipan yang ada
+              return prevParticipants.map((participant) =>
+                participant.participantId === user.uid
+                  ? {
+                      ...participant,
+                      videoTrack:  user.videoTrack,
+                      audioTrack:  user.audioTrack ,
+                      isAudioEnabled: user.hasAudio,
+                      isVideoEnabled: user.hasVideo,
+                    }
+                  : participant
+              );
             });
           }
+      
+          if (mediaType === "audio") {
+             user.audioTrack?.play();
+          }
+          if(mediaType === "video") {
+            user.videoTrack?.play();
+          }
+
         });
-  
+      
+        // Memasang event listener ketika pengguna lain menghentikan publikasi media
+        agoraClient.on("user-unpublished", async (user, type) => {
+          console.log("unpublished ", user, type);
+        //  await agoraClient.unsubscribe(user, type)
+          if (type === "audio" && user.audioTrack) {
+           user.audioTrack.stop();
+
+          }
+          if (type === "video" && user.videoTrack) {
+            user.videoTrack.stop();
+           }
+           setParticipants((prevParticipants) => {
+            return prevParticipants.map((participant) =>
+            participant.participantId === user.uid
+              ? {
+                  ...participant,
+                  videoTrack:  user.videoTrack,
+                  audioTrack:  user.audioTrack ,
+                  isAudioEnabled: type === "audio"? false : participant.isAudioEnabled,
+                  isVideoEnabled: type === "video"? false : participant.isVideoEnabled,
+                }
+              : participant
+          );
+           })
+           
+        });
+      
+        // Memasang event listener ketika pengguna meninggalkan sesi
         agoraClient.on("user-left", (user) => {
           console.log("leaving", user);
-          setParticipants((prevUsers) => {
-            return prevUsers.filter((data) => data.participantId !== user.uid);
-          });
+          setParticipants((prevParticipants) =>
+            prevParticipants.filter((participant) => participant.participantId !== user.uid)
+          );
         });
-  
-        await agoraClient.join(agoraSetting.AGORA_APP_ID,roomId, rtcToken, me._id);
+      
+        // Bergabung ke sesi Agora dengan token dan ID yang sesuai
+        await agoraClient.join(agoraSetting.AGORA_APP_ID, roomId, rtcToken, me._id);
+      
+        // Memublikasikan trek audio dan video lokal
         if (tracks) {
-          await agoraClient.publish([tracks[0], tracks[1]])
+          await agoraClient.publish([tracks[0], tracks[1]]);
+          
+      
           setLocalStreams({
-            localTrack:tracks[0],
-            videoTrack:tracks[1]
-          })
+            audioTrack: tracks[0], // Tentukan trek audio yang sesuai
+            videoTrack: tracks[1], // Tentukan trek video yang sesuai
+          });
+      
+          setFirstTime(false);
         }
-  
-      }
+      };
+      
     if(ready && tracks){
       init()
     }
@@ -250,44 +330,32 @@ const JoinPage = () =>{
 // connect to others
     
 
-useEffect(() => {
-    
-    const getMediaStream = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: isVideoEnabled,
-        audio: isAudioEnabled // Gunakan state video
-        // Gunakan state audio
-      });
-      
-      // Menghubungkan aliran media ke elemen video dan audio
-      if (mediaRef.current ) {
-        mediaRef.current.srcObject =stream;
-      }
-      setDapatIzin(true)
-    } catch (error) {
-      console.error('Error accessing media devices:', error);
-      setDapatIzin(false)
-    }
-  };
 
-  getMediaStream();
-}, [isAudioEnabled, isVideoEnabled]);
 
-const matikanVideo = () => {
-    if(mediaRef.current){
+const matikanVideo = async () => {
+    if(mediaRef.current && !me){
        mediaRef.current.srcObject?.getVideoTracks().forEach((track) => {
         track.enabled = false;
       });
     }
+    if(me){
+      if(localStreams.videoTrack){
+        await localStreams.videoTrack.setEnabled(false);
+      }
+    }
     setIsVideoEnabled(false)
 }
 
-const hidupkanVideo = () => {
-    if(mediaRef.current){
+const hidupkanVideo = async () => {
+    if(mediaRef.current && !me){
        mediaRef.current.srcObject?.getVideoTracks().forEach((track) => {
         track.enabled = true;
       });
+    }
+    if(me){
+      if(localStreams.videoTrack){
+        await localStreams.videoTrack.setEnabled(true);
+      }
     }
     setIsVideoEnabled(true)
 }
@@ -301,6 +369,9 @@ const joinWithCookie = async () => {
     setCookie(res.data.token)
     setRtcToken(res.data.rtcToken)
     setScreen('room')
+    if(mediaRef){
+    mediaRef.current = null // mengedit ini
+    }
     console.log(res)
     toast("Berhasil bergabung ke room")
 
@@ -332,6 +403,9 @@ const submitJoin = async (username, password) =>{
       setScreen('room')
     //  setRoom(res.data.room);
       setMe(res.data.participant);
+      if(mediaRef){
+        mediaRef.current = null // mengedit ini
+        }
     }
     else{
       const res = await axios.post('https://isacitra-com-api.vercel.app/video/addToRoom', {roomId:roomId,password:password, isUser:true, participantId:user._id})
@@ -342,6 +416,9 @@ const submitJoin = async (username, password) =>{
       setScreen('room')
    //   setRoom(res.data.room)
       setMe(res.data.participant)
+      if(mediaRef){
+        mediaRef.current = null // mengedit ini
+        }
     }
     toast('Berhasil masuk ke room')
     return "success";
@@ -352,32 +429,45 @@ const submitJoin = async (username, password) =>{
   }
 }
 
-const matikanAudio= () =>{
-    if(mediaRef.current){
+const matikanAudio= async () =>{
+    if(mediaRef.current && !me){
         mediaRef.current.srcObject?.getAudioTracks().forEach((track) => {
          track.enabled = false;
        });
      }
+     if(me){
+      if(localStreams.audioTrack){
+        await localStreams.audioTrack.setEnabled(false);
+      }
+    }
      setIsAudioEnabled(false)
 }
-const hidupkanAudio= () => {
-    if(mediaRef.current){
+const hidupkanAudio= async () => {
+    if(mediaRef.current && !me){
         mediaRef.current.srcObject?.getAudioTracks().forEach((track) => {
          track.enabled = true;
        });
      }
+     if(me){
+      if(localStreams.audioTrack){
+        await localStreams.audioTrack.setEnabled(true);
+      }
+    }
      setIsAudioEnabled(true)
 }
+
+
+
+
 const userVideoSetting = {
   matikanAudio,hidupkanAudio,matikanVideo,hidupkanVideo,mediaRef,isAudioEnabled,isVideoEnabled
 }
     return <div className=" bg-slate-900">
-        <ToastContainer/>
         {isError? <ErrorPage statusCode={statusCode} message={errorMessage} />:<>
 
     <div className='mx-auto min-h-screen flex justify-center items-center flex-col min-w-screen   '>
       {loading? <Loading/> :
-        screen == 'room' ? <div className="mx-auto min-h-screen max-h-screen flex justify-center items-center flex-col min-w-screen max-w-screen  ">
+        screen == 'room' ? <div className="mx-auto min-h-screen  flex justify-center items-center flex-col min-w-screen max-w-screen  ">
           <RoomScreen rtcToken={rtcToken} localStreams={localStreams} userSetting={userVideoSetting} remoteStreamData={streamData} participants={participants}/>
         </div> :<div className='homepage-content  min-h-screen w-full flex flex-col my-auto items-center max-w-full'>
         {isJoinBoxOpen &&
@@ -441,12 +531,12 @@ const userVideoSetting = {
 
 const Sidebar = ({isOpen, closeSidebar})=>{
   
-  return <div onClick={(e)=>{e.stopPropagation()}} className={`flex flex-col min-w-[18rem] h-screen w-screen md:max-w-[30%] md:max-w-[25%] bg-slate-950 `}>
+  return <div onClick={(e)=>{e.stopPropagation()}} className={`flex flex-col min-w-[18rem] h-screen w-screen md:max-w-[40%] lg:max-w-[30%] bg-slate-950 `}>
     <div className="mx-2 my-2 flex items-center justify-between">
       <h1 className=" text-white text-2xl">CHATS</h1>
       <AiFillCloseCircle onClick={closeSidebar} color="#00A8FF" className=" w-8 h-8 "/>
     </div>
-    <div className="flex grow bg-slate-900">
+    <div className="flex grow bg-slate-800">
       <h1 className="mx-auto my-auto text-white text-sm">Belum ada pesan</h1>
     </div>
     <div className="pt-4 pb-4 md:pb-8 my-2 mx-2 min-h-[3rem] flex justify-between items-center">
@@ -457,24 +547,46 @@ const Sidebar = ({isOpen, closeSidebar})=>{
   </div>
 }
 
-function CustomAgoraVideo({ audioTrack, videoTrack, isUser, name }) {
+
+
+// i change this
+function CustomAgoraVideo({ audioTrack, videoTrack, isUser, name, isVideoEnabled=true, isAudioEnabled=true }) {
+  console.log('ini video track babi', videoTrack)
+  const videoRef = useRef(null);
+    useEffect(() => {
+      if (videoTrack && videoRef.current) {
+        // Dapatkan MediaStreamTrack dari videoTrack
+        const mediaStreamTrack = videoTrack.getMediaStreamTrack();
+  
+        // Buat MediaStream baru yang berisi MediaStreamTrack
+        const mediaStream = new MediaStream();
+        mediaStream.addTrack(mediaStreamTrack);
+  
+        // Assign MediaStream ke elemen video
+        videoRef.current.srcObject = mediaStream;
+      }
+    }, [videoTrack]);
   return (
+    
     <div className="flex flex-col bg-slate-950 w-full h-full rounded-lg">
-      {videoTrack ? (
-        <AgoraVideoPlayer
+      {isVideoEnabled && videoTrack? ( // i change this
+        <video
           className="aspect-video object-cover rounded-t-lg"
           style={{}}
-          videoTrack={videoTrack}
+          ref={videoRef}
+          autoPlay
+          playsInline
+          muted    
         />
       ) : (
-        <img src={NoUserVideo} className="aspect-video object-cover" alt="No Video" />
+        <img src={NoUserVideo} className="aspect-video object-cover rounded-t-lg" alt="No Video" />
       )}
 
       <div className="w-full mx-2  py-2 flex items-center justify-between">
         {!isUser && (
           <div className="ml-2 flex items-center space-x-4">
             <div>
-              {videoTrack ? (
+              { !isVideoEnabled ? (
                 <FaVideoSlash
                   color="red"
                   className="w-6 h-auto"
@@ -489,7 +601,69 @@ function CustomAgoraVideo({ audioTrack, videoTrack, isUser, name }) {
               )}
             </div>
             <div>
-              {audioTrack ? (
+              {!isAudioEnabled ? (
+                <FaMicrophoneSlash
+                  color="red"
+                  className="w-6 h-auto"
+                  // Logic to toggle audio track on/off
+                />
+              ) : (
+                <FaMicrophone
+                  color="#00A8FF"
+                  className="w-6 h-auto"
+                  // Logic to toggle audio track on/off
+                />
+              )}
+            </div>
+          </div>
+        )}
+        <div className="truncate ml-auto">
+          <h1 className="text-white text-sm mr-4 truncate">
+            {name}
+            {isUser ? ' (Anda)' : ''}
+          </h1>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CustomAgoraLocalVideo({ audioTrack, videoTrack, isUser, name, isVideoEnabled=true, isAudioEnabled=true }) {
+
+  
+  return (
+    
+    <div className="flex flex-col bg-slate-950 w-full h-full rounded-lg">
+      {isVideoEnabled && videoTrack? ( // i change this
+        <AgoraVideoPlayer
+          className="aspect-video object-cover rounded-t-lg"
+          style={{}} 
+          videoTrack={videoTrack}  
+        />
+      ) : (
+        <img src={NoUserVideo} className="aspect-video object-cover rounded-t-lg" alt="No Video" />
+      )}
+
+      <div className="w-full mx-2  py-2 flex items-center justify-between">
+        {!isUser && (
+          <div className="ml-2 flex items-center space-x-4">
+            <div>
+              { !isVideoEnabled ? (
+                <FaVideoSlash
+                  color="red"
+                  className="w-6 h-auto"
+                  // Logic to toggle video track on/off
+                />
+              ) : (
+                <FaVideo
+                  color="#00A8FF"
+                  className="w-6 h-auto"
+                  // Logic to toggle video track on/off
+                />
+              )}
+            </div>
+            <div>
+              {!isAudioEnabled ? (
                 <FaMicrophoneSlash
                   color="red"
                   className="w-6 h-auto"
@@ -585,19 +759,6 @@ function VideoControl({ setting, isUser = false, name = "Ucok GTA" }) {
 
 
 const RoomScreen= ({userSetting={}, rtcToken, remoteStreamData = {},localStreams ,participants = []}) => {
-
-
-//const { ready, tracks } = useMicrophoneAndCameraTracks();
-  
-
-  useEffect(()=>{
-    console.log(window.innerHeight);
-    console.log(window.outerHeight)
-   
-  },[])
-
-
-
   useEffect(()=>{
     if(participants.length > 0){
       changeLayoutMode(modes.allParticipants)
@@ -607,6 +768,7 @@ const RoomScreen= ({userSetting={}, rtcToken, remoteStreamData = {},localStreams
       changeLayoutMode(modes.onlyMe)
     }
   },[participants])
+  console.log('ini participant ->',participants);
   const modes = {
     onlyMe: "only-me",
     screenShare: "screen-share",
@@ -628,9 +790,11 @@ const RoomScreen= ({userSetting={}, rtcToken, remoteStreamData = {},localStreams
         return (
           <div className="w-screen flex flex-col justify-center h-full items-center max-h-full">
             <div className="w-[120vh] h-auto max-w-[95%] text-white">
-              <CustomAgoraVideo audioTrack={localStreams.audioTrack} 
+              <CustomAgoraLocalVideo audioTrack={localStreams.audioTrack} 
               videoTrack={localStreams.videoTrack} isUser={true}
               name={"Ucok"}
+              isAudioEnabled= {userSetting.isAudioEnabled} // atur ini
+              isVideoEnabled = {userSetting.isVideoEnabled}
               />
             </div>
             
@@ -641,42 +805,62 @@ const RoomScreen= ({userSetting={}, rtcToken, remoteStreamData = {},localStreams
         return <div className="w-screen flex flex-col justify-center h-full items-center max-h-full">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-4">
         <div className="w-[120vh] h-auto max-w-[95%] text-white">
-              <CustomAgoraVideo audioTrack={localStreams.audioTrack} 
+              <CustomAgoraLocalVideo audioTrack={localStreams.audioTrack} 
               videoTrack={localStreams.videoTrack} isUser={true}
               name={"Ucok"}
+              isAudioEnabled= {userSetting.isAudioEnabled} // atur ini
+              isVideoEnabled = {userSetting.isVideoEnabled}
               />
         </div>
-        {participants.map((participant) => {
-          return <div className="w-[120vh] h-auto max-w-[95%] text-white">
-          <CustomAgoraVideo audioTrack={participant.audioTrack} 
-          videoTrack={participant.videoTrack} isUser={false}
-          name={"Remote"}
-          />
-    </div>
-
-        })}
+        {
+          participants.map((participant)=>{
+            return <div className="w-[80vh] lg:w-[100vh] mx-auto h-auto max-w-[85%] md:max-w-[95%] text-white"
+            key={participant.participantId}>
+              <CustomAgoraVideo 
+            audioTrack={participant.audioTrack}
+            videoTrack={participant.videoTrack}
+            isUser={false}
+            name={"Belum Diberi Nama"}
+            isAudioEnabled={participant.isAudioEnabled}
+            isVideoEnabled={participant.isVideoEnabled}/>
+            </div>
+          })
+        }
         </div>
       </div>;
       case modes.allParticipants:
-        return <div className="w-screen flex flex-col justify-center h-full items-center max-h-full">
-        <div className={`grid grid-cols-1  justify-center md:grid-cols-2 lg:${participants.length > 2?'grid-cols-3':'grid-cols-2'} gap-x-2 gap-y-2 mx-2 content-center	`}>
-        <div className="w-[80vh] lg:w-[100vh] mx-auto h-auto max-w-[85%] md:max-w-[95%] text-white">
-              <CustomAgoraVideo audioTrack={localStreams.audioTrack} 
-              videoTrack={localStreams.videoTrack} isUser={true}
-              name={"Ucok"}
-              />
-        </div>
-        {participants.map((participant) => {
-          return <div className="mx-auto w-[80vh] lg:w-[100vh]  h-auto max-w-[85%] md:max-w-[95%] text-white">
-          <CustomAgoraVideo audioTrack={participant.audioTrack} 
-          videoTrack={participant.videoTrack} isUser={false}
-          name={"Remote"}
-          />
-    </div>
-
-        })}
-        </div>
-      </div>;
+        return (
+          <div className="w-screen  items-center md:mt-0 md:mb-0 flex flex-col justify-center h-full">
+            <div className={`grid h-full w-full mb-24 md:mb-20  gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-4`}>
+              <div className="w-full h-full md:w-full lg:w-full mx-auto h-auto max-w-full text-white">
+                <CustomAgoraLocalVideo
+                  audioTrack={localStreams.audioTrack}
+                  videoTrack={localStreams.videoTrack}
+                  isUser={true}
+                  name={"Ucok"}
+                  isAudioEnabled={userSetting.isAudioEnabled}
+                  isVideoEnabled={userSetting.isVideoEnabled}
+                />
+              </div>
+              {participants.map((participant) => (
+                <div
+                  className="w-full md:w-full lg:w-full  mx-auto h-auto max-w-full text-white"
+                  key={participant.participantId}
+                >
+                  <CustomAgoraVideo
+                    audioTrack={participant.audioTrack}
+                    videoTrack={participant.videoTrack}
+                    isUser={false}
+                    name={"Belum Diberi Nama"}
+                    isAudioEnabled={participant.isAudioEnabled}
+                    isVideoEnabled={participant.isVideoEnabled}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+        
       case modes.focusToOneParticipant:
         return <div></div>;
       default:
@@ -685,7 +869,8 @@ const RoomScreen= ({userSetting={}, rtcToken, remoteStreamData = {},localStreams
   };
 
 
-  return <div className="flex bg-[#0F2041] flex-col w-screen h-screen max-h-screen ">
+  return <div className="  w-screen h-full  ">
+    
 
     {/* Chat Sidebar */}
     {openSidebar && <div onClick={()=>{setOpenSidebar(false)}} className="fixed top-0 left-0 z-20 flex w-screen h-screen justify-end ">
@@ -701,12 +886,12 @@ const RoomScreen= ({userSetting={}, rtcToken, remoteStreamData = {},localStreams
     </div>
 
     {/* Konten */}
-    <div className="w-screen flex flex-col  bg-[#0F2041] overflow-x-hidden h-[95%] max-h-[95%]">
-    {renderContentBasedOnMode()}
+    <div className="  overflow-x-hidden">
+    {localStreams? renderContentBasedOnMode() : <div className="w-screen h-screen flex items-center justify-center"><Loading/></div>}
     </div>
 
     {/* Bottom Bar */}
-    <div className="w-full min-h-[4rem] fixed bottom-0 left-0  flex items-center justify-between px-4 md:px-8 lg:px-16 py-2 bg-[#071829]">
+    <div className="w-full min-h-[4rem] fixed bottom-0 left-0  flex items-center justify-between px-4 md:px-8 lg:px-16 py-2 bg-slate-800">
         <div>
           {userSetting.isVideoEnabled ? (
             <FaVideo onClick={userSetting.matikanVideo} color="#00A8FF" className="ml-4 w-6 h-auto" />
