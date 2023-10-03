@@ -479,9 +479,9 @@ const userVideoSetting = {
             <div className={` pt-12 md:pt-0 pb-4 px-6 lg:${status == 'actived'? 'col-span-2':'col-span-3'} col-span-3 flex flex-col justify-center text-center mx-auto lg:text-left text-white w-full greeting-style`}>
         
         <div className="flex mx-4 flex-col items-start">
-        <div className="flex justify-between  items-start w-full">
+        <div className="flex justify-between  items-start w-full flex-wrap">
         <h1 className="text-left  font-bold md:text-3xl  text-2xl md:pb-3">{room.title}</h1>
-        <h1 className={`mt-2 px-2 py-1 ${status == 'actived'? "bg-green-600": status == 'scheduled'?"bg-yellow-600":"bg-red-600"} text-white rounded-lg  text-sm`}>{status}</h1>
+        <h1 className={`mt-2 px-2 my-2 py-1 ${status == 'actived'? "bg-green-600": status == 'scheduled'?"bg-yellow-600":"bg-red-600"} text-white rounded-lg  text-sm`}>{status}</h1>
         </div>
         <h1 className="text-[#00A8FF]  tracking-wide md:text-lg text-base  ">Dibuat oleh {room.host.userId? room.host.userId.username : room.host.guestId.username }</h1>
         <hr className={` self-center w-full border-b-4 rounded-md ${status == 'scheduled'? "border-yellow-600": status == 'actived'?"border-green-600": "border-red-600"} my-2`}></hr>
@@ -489,7 +489,7 @@ const userVideoSetting = {
         </div>
         
         <div className="mx-4 mb-4 filosofi max-h-[14rem]  overflow-y-auto bg-slate-800 rounded-md">
-        <p className=" text-justify md:text-xl sm:text-lg text-sm md:py-7 py-3 px-6">{room.description.trim().length > 0?room.description : "Tidak ada deskripsi yang ditampilkan" }.</p>
+        <p className=" text-justify md:text-lg sm:text-base text-sm md:py-7 py-3 px-6">{room.description.trim().length > 0?room.description : "Tidak ada deskripsi yang ditampilkan" }.</p>
         </div>
         <div className={`mt-4 flex justify-center lg:justify-start px-6 ${status == 'scheduled'? 'space-x-0':'space-x-3'}`}>
             {    status =='scheduled'? <div className="w-full flex md:flex-row flex-col items-start md:items-center md:space-x-6 md:space-y-0 space-y-3 ">
@@ -547,6 +547,84 @@ const Sidebar = ({isOpen, closeSidebar})=>{
   </div>
 }
 
+
+function CustomFullScreenAgoraVideo({ audioTrack, videoTrack, isUser, name, isVideoEnabled=true, isAudioEnabled=true }) {
+  console.log('ini video track babi', videoTrack)
+  const videoRef = useRef(null);
+    useEffect(() => {
+      if (videoTrack && videoRef.current) {
+        // Dapatkan MediaStreamTrack dari videoTrack
+        const mediaStreamTrack = videoTrack.getMediaStreamTrack();
+  
+        // Buat MediaStream baru yang berisi MediaStreamTrack
+        const mediaStream = new MediaStream();
+        mediaStream.addTrack(mediaStreamTrack);
+  
+        // Assign MediaStream ke elemen video
+        videoRef.current.srcObject = mediaStream;
+      }
+    }, [videoTrack]);
+  return (
+    
+    <div className="flex flex-col bg-slate-950 w-full h-full rounded-lg">
+      {isVideoEnabled && videoTrack? ( // i change this
+        <video
+          className=" w-screen md:h-[93vh] h-[95vh] object-cover rounded-t-lg"
+          style={{}}
+          ref={videoRef}
+          autoPlay
+          playsInline
+          muted    
+        />
+      ) : (
+        <img src={NoUserVideo} className=" w-screen md:h-[93vh] h-[95vh] object-cover rounded-t-lg" alt="No Video" />
+      )}
+
+      <div className="w-full mx-2  py-2 flex items-center justify-between">
+        {!isUser && (
+          <div className="ml-2 flex items-center space-x-4">
+            <div>
+              { !isVideoEnabled ? (
+                <FaVideoSlash
+                  color="red"
+                  className="w-6 h-auto"
+                  // Logic to toggle video track on/off
+                />
+              ) : (
+                <FaVideo
+                  color="#00A8FF"
+                  className="w-6 h-auto"
+                  // Logic to toggle video track on/off
+                />
+              )}
+            </div>
+            <div>
+              {!isAudioEnabled ? (
+                <FaMicrophoneSlash
+                  color="red"
+                  className="w-6 h-auto"
+                  // Logic to toggle audio track on/off
+                />
+              ) : (
+                <FaMicrophone
+                  color="#00A8FF"
+                  className="w-6 h-auto"
+                  // Logic to toggle audio track on/off
+                />
+              )}
+            </div>
+          </div>
+        )}
+        <div className="truncate ml-auto">
+          <h1 className="text-white text-sm mr-4 truncate">
+            {name}
+            {isUser ? ' (Anda)' : ''}
+          </h1>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 
 // i change this
@@ -759,21 +837,66 @@ function VideoControl({ setting, isUser = false, name = "Ucok GTA" }) {
 
 
 const RoomScreen= ({userSetting={}, rtcToken, remoteStreamData = {},localStreams ,participants = []}) => {
+  const [showBottomNavbar, setShowBottomNavbar] = useState(false);
+  const [timeOutId, setTimeOutId] = useState(null)
   useEffect(()=>{
-    if(participants.length > 0){
+    if(participants.length == 1){
+      changeLayoutMode(modes.peerToPeer)
+    }
+    else if(participants.length > 0){
       changeLayoutMode(modes.allParticipants)
       console.log('ganti')
     }
     else{
       changeLayoutMode(modes.onlyMe)
     }
-  },[participants])
-  console.log('ini participant ->',participants);
+  },[participants]);
+
+  useEffect(()=>{
+    const handleShowBottomNavbar = () => {
+      if(timeOutId){
+        clearTimeout(timeOutId)
+      }
+      // Jika bottom navbar sudah disembunyikan, tampilkan kembali
+        //setShowBottomNavbar(false);
+        // Batalkan timer jika ada klik lain dalam 3 detik
+        // Jika belum disembunyikan, sembunyikan dan mulai timer
+        setShowBottomNavbar(true);
+       const newTimeOutId =  setTimeout(() => {
+          setShowBottomNavbar(false);
+        }, 6000);
+         // Timer selama 4 detik (4000 ms)
+         setTimeOutId(newTimeOutId);
+    };
+    handleShowBottomNavbar()
+  },[])
+
+  
+
+  const openBottomNavbar = () => {
+    const handleShowBottomNavbar = () => {
+      if(timeOutId){
+        clearTimeout(timeOutId)
+      }
+      // Jika bottom navbar sudah disembunyikan, tampilkan kembali
+        //setShowBottomNavbar(false);
+        // Batalkan timer jika ada klik lain dalam 3 detik
+        // Jika belum disembunyikan, sembunyikan dan mulai timer
+        setShowBottomNavbar(true);
+       const newTimeOutId =  setTimeout(() => {
+          setShowBottomNavbar(false);
+        }, 6000);
+         // Timer selama 4 detik (4000 ms)
+         setTimeOutId(newTimeOutId);
+    };
+    handleShowBottomNavbar()
+  }
   const modes = {
     onlyMe: "only-me",
     screenShare: "screen-share",
     allParticipants: "all-participant",
-    focusToOneParticipant: "focus-to-one-participant"
+    focusToOneParticipant: "focus-to-one-participant",
+    peerToPeer:"peer-to-peer"
   }
   const [layoutSetting, setLayoutSetting] = useState({
     'mode': modes.onlyMe,
@@ -798,6 +921,23 @@ const RoomScreen= ({userSetting={}, rtcToken, remoteStreamData = {},localStreams
               />
             </div>
             
+          </div>
+        );
+      case modes.peerToPeer:
+        return (
+          <div className="w-screen  items-center md:mt-0 md:mb-0 flex flex-col justify-center h-full">
+            {participants.map((participant)=>{
+            return <div className="w-full h-full"
+            key={participant.participantId}>
+              <CustomFullScreenAgoraVideo 
+            audioTrack={participant.audioTrack}
+            videoTrack={participant.videoTrack}
+            isUser={false}
+            name={"Belum Diberi Nama"}
+            isAudioEnabled={participant.isAudioEnabled}
+            isVideoEnabled={participant.isVideoEnabled}/>
+            </div>
+          })}
           </div>
         );
         
@@ -831,7 +971,7 @@ const RoomScreen= ({userSetting={}, rtcToken, remoteStreamData = {},localStreams
       case modes.allParticipants:
         return (
           <div className="w-screen  items-center md:mt-0 md:mb-0 flex flex-col justify-center h-full">
-            <div className={`grid h-full w-full mb-24 md:mb-20  gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-4`}>
+            <div className={`grid h-full w-full  gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-4`}>
               <div className="w-full h-full md:w-full lg:w-full mx-auto h-auto max-w-full text-white">
                 <CustomAgoraLocalVideo
                   audioTrack={localStreams.audioTrack}
@@ -869,7 +1009,9 @@ const RoomScreen= ({userSetting={}, rtcToken, remoteStreamData = {},localStreams
   };
 
 
-  return <div className="  w-screen h-full  ">
+  return <div onClick={()=>{
+    openBottomNavbar()
+  }} className="  w-screen h-full  ">
     
 
     {/* Chat Sidebar */}
@@ -891,7 +1033,7 @@ const RoomScreen= ({userSetting={}, rtcToken, remoteStreamData = {},localStreams
     </div>
 
     {/* Bottom Bar */}
-    <div className="w-full min-h-[4rem] fixed bottom-0 left-0  flex items-center justify-between px-4 md:px-8 lg:px-16 py-2 bg-slate-800">
+    { showBottomNavbar && <div className="w-full min-h-[4rem] fixed bottom-0 left-0  flex items-center justify-between px-4 md:px-8 lg:px-16 py-2 bg-slate-800">
         <div>
           {userSetting.isVideoEnabled ? (
             <FaVideo onClick={userSetting.matikanVideo} color="#00A8FF" className="ml-4 w-6 h-auto" />
@@ -909,7 +1051,7 @@ const RoomScreen= ({userSetting={}, rtcToken, remoteStreamData = {},localStreams
       <MdScreenShare color="#00A8FF" className="w-7 h-7 "/>
       <MdChatBubble color="#00A8FF" onClick={()=>{setOpenSidebar(true)}} className="w-6 h-6 "/>
       <MdAddReaction color="#00A8FF" className="w-6 h-6 "/>
-    </div>
+    </div>}
   </div>
 }
 
