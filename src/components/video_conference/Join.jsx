@@ -627,6 +627,7 @@ function CustomFullScreenAgoraVideo({ audioTrack, videoTrack, isUser, name, isVi
 }
 
 
+
 // i change this
 function CustomAgoraVideo({ audioTrack, videoTrack, isUser, name, isVideoEnabled=true, isAudioEnabled=true }) {
   console.log('ini video track babi', videoTrack)
@@ -768,6 +769,71 @@ function CustomAgoraLocalVideo({ audioTrack, videoTrack, isUser, name, isVideoEn
   );
 }
 
+
+function CustomFullScreenAgoraLocalVideo({ showControl= true,audioTrack, videoTrack, isUser, name, isVideoEnabled=true, isAudioEnabled=true }) {
+
+  
+  return (
+    
+    <div className="flex flex-col bg-slate-950 w-full h-full rounded-lg">
+      {isVideoEnabled && videoTrack? ( // i change this
+        <AgoraVideoPlayer
+          className="w-full h-full object-cover rounded-t-lg"
+          style={{}} 
+          videoTrack={videoTrack}  
+        />
+      ) : (
+        <img src={NoUserVideo} className="w-full h-full object-cover rounded-t-lg" alt="No Video" />
+      )}
+
+      {showControl && <div className="w-full mx-2  py-2 flex items-center justify-between">
+        {!isUser && (
+          <div className="ml-2 flex items-center space-x-4">
+            <div>
+              { !isVideoEnabled ? (
+                <FaVideoSlash
+                  color="red"
+                  className="w-6 h-auto"
+                  // Logic to toggle video track on/off
+                />
+              ) : (
+                <FaVideo
+                  color="#00A8FF"
+                  className="w-6 h-auto"
+                  // Logic to toggle video track on/off
+                />
+              )}
+            </div>
+            <div>
+              {!isAudioEnabled ? (
+                <FaMicrophoneSlash
+                  color="red"
+                  className="w-6 h-auto"
+                  // Logic to toggle audio track on/off
+                />
+              ) : (
+                <FaMicrophone
+                  color="#00A8FF"
+                  className="w-6 h-auto"
+                  // Logic to toggle audio track on/off
+                />
+              )}
+            </div>
+          </div>
+        )}
+        <div className="truncate ml-auto">
+          <h1 className="text-white text-sm mr-4 truncate">
+            {name}
+            {isUser ? ' (Anda)' : ''}
+          </h1>
+        </div>
+      </div>
+      }
+    </div>
+  );
+}
+
+
 function VideoControl({ setting, isUser = false, name = "Ucok GTA" }) {
   
 
@@ -839,6 +905,7 @@ function VideoControl({ setting, isUser = false, name = "Ucok GTA" }) {
 const RoomScreen= ({userSetting={}, rtcToken, remoteStreamData = {},localStreams ,participants = []}) => {
   const [showBottomNavbar, setShowBottomNavbar] = useState(false);
   const [timeOutId, setTimeOutId] = useState(null)
+  const [isLandscape, setIsLandscape] = useState(false);
   useEffect(()=>{
     if(participants.length == 1){
       changeLayoutMode(modes.peerToPeer)
@@ -851,6 +918,33 @@ const RoomScreen= ({userSetting={}, rtcToken, remoteStreamData = {},localStreams
       changeLayoutMode(modes.onlyMe)
     }
   },[participants]);
+
+  useEffect(()=>{
+    function detectOrientation() {
+      if (window.innerHeight > window.innerWidth) {
+        // Potrait mode
+        console.log('Layar dalam mode potrait');
+        setIsLandscape(false)
+      } else {
+        // Landscape mode
+        console.log('Layar dalam mode landscape');
+        setIsLandscape(true)
+      }
+    }
+    
+    // Panggil fungsi detectOrientation saat window diubah ukuran atau perangkat dirotasi
+    window.addEventListener('resize', detectOrientation);
+    
+    // Panggil fungsi detectOrientation saat halaman dimuat
+    window.addEventListener('load', detectOrientation);
+    return ()=>{
+      // Panggil fungsi detectOrientation saat window diubah ukuran atau perangkat dirotasi
+    window.removeEventListener('resize', detectOrientation);
+    
+    // Panggil fungsi detectOrientation saat halaman dimuat
+    window.removeEventListener('load', detectOrientation);
+    }
+  }, [])
 
   useEffect(()=>{
     const handleShowBottomNavbar = () => {
@@ -938,6 +1032,15 @@ const RoomScreen= ({userSetting={}, rtcToken, remoteStreamData = {},localStreams
             isVideoEnabled={participant.isVideoEnabled}/>
             </div>
           })}
+            <div className={`fixed bottom-20 right-4 w-[25vw] ${isLandscape? 'aspect-[16/10]' : 'aspect-[10/16]'}`}>
+            <CustomFullScreenAgoraLocalVideo audioTrack={localStreams.audioTrack} 
+              videoTrack={localStreams.videoTrack} isUser={true}
+              name={"Ucok"}
+              showControl={false}
+              isAudioEnabled= {userSetting.isAudioEnabled} // atur ini
+              isVideoEnabled = {userSetting.isVideoEnabled}
+              />
+            </div>
           </div>
         );
         
