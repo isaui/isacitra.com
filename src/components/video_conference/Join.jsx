@@ -530,7 +530,7 @@ const Sidebar = ({isOpen, closeSidebar})=>{
     <div className="flex grow bg-slate-800">
       <h1 className="mx-auto my-auto text-white text-sm">Belum ada pesan</h1>
     </div>
-    <div className="pt-4 pb-4 md:pb-8 my-2 mx-2 min-h-[3rem] flex justify-between items-center">
+    <div className="fixed bottom-0 left-0 my-2 mx-2 min-h-[3rem] flex justify-between items-center">
       <input type="text" className="text-white grow text-sm py-3 px-2 rounded-md outline-none bg-transparent focus:border-[#00A8FF] border-2 border-[#00A8FF]" placeholder="Masukkan pesan Anda"/>
       <MdSend color="#00A8FF" className="ml-4 w-6 h-6 "/>
     </div>
@@ -1076,7 +1076,7 @@ const RoomScreen= ({userSetting={}, me,room,  roomId ,setRoom, rtcToken, remoteS
             isVideoEnabled={participant.isVideoEnabled}/>
             </div>
           })}
-            <div className={`fixed bottom-20 right-4 w-[25vw] ${isLandscape? 'aspect-[16/10]' : 'aspect-[10/16]'}`}>
+            <div className={`fixed bottom-20 right-4 w-[25vw] max-w-[25vw] ${isLandscape? 'aspect-[16/9]' : 'aspect-[9/16]'}`}>
             <CustomFullScreenAgoraLocalVideo audioTrack={localStreams.audioTrack} 
               videoTrack={localStreams.videoTrack} isUser={true}
               name={"Ucok"}
