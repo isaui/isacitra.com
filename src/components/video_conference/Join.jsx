@@ -522,7 +522,7 @@ const userVideoSetting = {
 
 const Sidebar = ({isOpen, closeSidebar})=>{
   
-  return <div onClick={(e)=>{e.stopPropagation()}} className={`fixed bottom-0 left-0 flex flex-col min-w-[18rem] h-screen max-h-screen w-screen md:max-w-[40%] lg:max-w-[30%] bg-slate-950 `}>
+  return <div onClick={(e)=>{e.stopPropagation()}} className={`fixed pt-24 md:pt-0 bottom-0 left-0 flex flex-col min-w-[18rem] h-screen max-h-screen w-screen md:max-w-[40%] lg:max-w-[30%] bg-slate-950 `}>
     <div className="mx-2 my-2 flex items-center justify-between">
       <h1 className=" text-white text-2xl">CHATS</h1>
       <AiFillCloseCircle onClick={closeSidebar} color="#00A8FF" className=" w-8 h-8 "/>
