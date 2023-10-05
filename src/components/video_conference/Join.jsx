@@ -529,8 +529,8 @@ const Sidebar = ({isOpen, closeSidebar})=>{
       <AiFillCloseCircle onClick={closeSidebar} color="#00A8FF" className="mr-2 w-8 h-8 "/>
     </div>
     </div>
-    <div className="my-auto w-full bg-slate-800">
-      <h1 className=" my-auto mx-auto text-white text-sm">Belum ada pesan</h1>
+    <div className="my-auto w-full bg-slate-800 flex flex-col">
+      <h1 className="mx-auto text-white text-sm">Belum ada pesan</h1>
     </div>
     <div className="fixed bottom-0 left-0 w-screen">
     <div className=" h-16 flex justify-between items-center bg-slate-950  w-full min-w-[18rem] md:max-w-[40%] lg:max-w-[30%]">
