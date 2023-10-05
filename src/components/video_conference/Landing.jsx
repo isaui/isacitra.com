@@ -100,12 +100,8 @@ function CreateRoomDialog({ isOpen = true, onClose = () => {} }) {
       //console.log(roomInfo)
     };
     const handleCreate = () => {
-      if(!user){
         setCreatingHost(true)
       }
-      else{
-      handleSubmit()
-    }}
   
     const handleScheduleRoom = () => {
       // Lakukan sesuatu untuk menjadwalkan ruangan
@@ -544,7 +540,7 @@ function CreateRoomDialog({ isOpen = true, onClose = () => {} }) {
                 onClick={handleCreate}
                 className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#00A8FF] text-base font-medium text-black hover:text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
               >
-                {loading? <Loading/>:user? "Create Room" : "Create Host"}
+                {loading? <Loading/>:user == 'a'? "Create Room" : "Create Host"}
               </button>
               <button
                 type="button"
