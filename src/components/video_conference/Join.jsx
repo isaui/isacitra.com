@@ -10,11 +10,11 @@ import Scheduled from "../../assets/meet_status/scheduled.svg";
 import NoUserVideo from "../../assets/meet_status/novideo.svg";
 import ErrorPage from "../error/ErrorPage";
 import CountdownTimer from "../time_counter/TimeCounter";
-import { AiFillCloseCircle, AiFillVideoCamera } from "react-icons/ai";
+import { AiFillCloseCircle, AiFillMessage, AiFillSetting, AiFillVideoCamera, AiOutlineDotChart } from "react-icons/ai";
 import { FaMicrophone, FaMicrophoneSlash, FaUser, FaVideo, FaVideoSlash } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import mongoose, { Mongoose } from "mongoose";
-import { MdAddReaction, MdChatBubble, MdContacts, MdScreenShare, MdSend, MdSettings } from "react-icons/md";
+import { MdAddReaction, MdChatBubble, MdContacts, MdMoreVert, MdScreenShare, MdSend, MdSettings } from "react-icons/md";
 import Cookie from 'js-cookie';
 import {
   createMicrophoneAndCameraTracks,
@@ -88,21 +88,8 @@ const JoinPage = () =>{
     const [participants,setParticipants] = useState([]);
     const { ready, tracks } = useMicrophoneAndCameraTracks();
     const [firstTime, setFirstTime] = useState(true);
-    const saveStreamData = (userId, streamData) => {
-      // Duplikat objek streamData saat ini
-      const updatedStreamData = { ...streamData };
-      
-      // Simpan stream dengan kunci userId
-      updatedStreamData[userId] = streamData;
-      
-      // Perbarui state streamData
-      setStreamData(updatedStreamData);
-    };
-
-    console.log(participants)
-
     //console.log(participants)
-
+    console.log('apa isinya? ',room)
 
     useEffect(()=>{
         
@@ -134,18 +121,20 @@ const JoinPage = () =>{
     }, [])
 
     useEffect(()=>{
+      console.log("subscribe terhadap perubahan real-time...")
       roomChannel.subscribe('update-room', (message)=>{
         if(!message.data){
           console.log("Data kosong sehingga tidak ada yang perlu dikerjakan")
           return
         }
+      console.log("room terupdate-> ",message.data)
+
        const {room,roomId:remoteRoomId} = message.data;
        if(roomId != remoteRoomId){
         console.log("room yang diupdate bukan room saat ini")
         return
        }
        setRoom(room);
-
       })
       return () => {
         roomChannel.unsubscribe('update-room');
@@ -208,6 +197,17 @@ const JoinPage = () =>{
       getMediaStream();
     }, [isAudioEnabled, isVideoEnabled, me]);
     
+    useEffect(()=>{
+      const cleanUpUser = async () => {
+        const res = await axios.post('http://localhost:3001/video/removeFromRoom', {"roomId":roomId, "participantId": me? me._id : 'x'})
+        // edit this
+      }
+      window.addEventListener('unload', cleanUpUser)
+      //window.addEventListener('')
+      return () => {
+        window.removeEventListener('unload', cleanUpUser)
+      }
+    },[])
    
 
     useEffect(()=>{
@@ -295,13 +295,18 @@ const JoinPage = () =>{
         });
       
         // Memasang event listener ketika pengguna meninggalkan sesi
-        agoraClient.on("user-left", (user) => {
-          console.log("leaving", user);
+        agoraClient.on("user-left", async (user) => {
+          console.log("leaving ", user.uid);
           setParticipants((prevParticipants) =>
             prevParticipants.filter((participant) => participant.participantId !== user.uid)
           );
+          const res = await axios.post('http://localhost:3001/video/removeFromRoom', {"roomId":roomId, "participantId": user.uid})
+          //roomChannel.unsubscribe('update-room');
+          //edit this
+          console.log("RES DISINI")
+          console.log("ADA YG LEFT")
+         // 
         });
-      
         // Bergabung ke sesi Agora dengan token dan ID yang sesuai
         await agoraClient.join(agoraSetting.AGORA_APP_ID, roomId, rtcToken, me._id);
       
@@ -388,7 +393,6 @@ const submitJoin = async (username, password) =>{
       toast.error("Maaf nama tidak boleh kosong")
       return "failed"
     }
-    if(!user){
       const guestId = new mongoose.Types.ObjectId();
       await axios.post('https://isacitra-com-api.vercel.app/video/guest',{
               roomId:roomId,
@@ -406,20 +410,7 @@ const submitJoin = async (username, password) =>{
       if(mediaRef){
         mediaRef.current = null // mengedit ini
         }
-    }
-    else{
-      const res = await axios.post('https://isacitra-com-api.vercel.app/video/addToRoom', {roomId:roomId,password:password, isUser:true, participantId:user._id})
-      console.log(res);
-      Cookie.set(`room-${roomId}-session`, res.data.token)
-      setCookie(res.data.token)
-      setRtcToken(res.data.rtcToken)
-      setScreen('room')
-   //   setRoom(res.data.room)
-      setMe(res.data.participant)
-      if(mediaRef){
-        mediaRef.current = null // mengedit ini
-        }
-    }
+    
     toast('Berhasil masuk ke room')
     return "success";
   } catch (error) {
@@ -468,7 +459,7 @@ const userVideoSetting = {
     <div className='mx-auto min-h-screen flex justify-center items-center flex-col min-w-screen   '>
       {loading? <Loading/> :
         screen == 'room' ? <div className="mx-auto min-h-screen  flex justify-center items-center flex-col min-w-screen max-w-screen  ">
-          <RoomScreen rtcToken={rtcToken} localStreams={localStreams} userSetting={userVideoSetting} remoteStreamData={streamData} participants={participants}/>
+          <RoomScreen me={me} room={room} roomId={roomId} setRoom={setRoom} rtcToken={rtcToken} localStreams={localStreams} userSetting={userVideoSetting} remoteStreamData={streamData} participants={participants}/>
         </div> :<div className='homepage-content  min-h-screen w-full flex flex-col my-auto items-center max-w-full'>
         {isJoinBoxOpen &&
          <div onClick={()=>{setJoinBoxOpen(false)}} className="fixed z-50 top-0 left-0 w-screen flex bg-black bg-opacity-30 flex-col justify-center items-center min-h-screen">
@@ -542,6 +533,55 @@ const Sidebar = ({isOpen, closeSidebar})=>{
     <div className="pt-4 pb-4 md:pb-8 my-2 mx-2 min-h-[3rem] flex justify-between items-center">
       <input type="text" className="text-white grow text-sm py-3 px-2 rounded-md outline-none bg-transparent focus:border-[#00A8FF] border-2 border-[#00A8FF]" placeholder="Masukkan pesan Anda"/>
       <MdSend color="#00A8FF" className="ml-4 w-6 h-6 "/>
+    </div>
+
+  </div>
+}
+
+const ParticipantsSidebar = ({room, isOpen, closeSidebar, me, participants=[]})=>{
+  
+  return <div onClick={(e)=>{e.stopPropagation()}} className={`flex flex-col min-w-[18rem] h-screen w-screen md:max-w-[40%] lg:max-w-[30%] bg-slate-950 `}>
+    <div className="mx-2 my-2 flex items-center justify-between">
+      <h1 className=" text-white text-2xl">Participants</h1>
+      <AiFillCloseCircle onClick={closeSidebar} color="#00A8FF" className=" w-8 h-8 "/>
+    </div>
+    <div className="flex flex-col bg-slate-900">
+      <div className= {`mb-auto text-white text-sm w-full py-4  flex items-center`}>
+        <div  className={`ml-2 bg-teal-700  w-12 h-12 flex items-center justify-center rounded-full`}>
+           {me.username[0]}
+        </div>
+        <div className="ml-4 flex flex-col items-start space-y-1">
+        <h1 className=" text-sm break-words">
+          {me? me.username : '...'} {'(Anda)'}
+        </h1>
+        <div className="text-white bg-blue-400 px-2 py-1 rounded-md text-xs">
+          Guest
+        </div>
+        </div>
+
+      </div>
+      {participants.map((participant)=>{
+        const data = room.participants[participant.participantId];
+        return (
+          <div className= {`mb-auto text-white text-sm w-full py-4  flex items-center`}>
+        <div  className={`ml-2 bg-teal-700  w-12 h-12 flex items-center justify-center rounded-full`}>
+           {data? data.guestId.username[0] : '?' }
+        </div>
+        <div className="ml-4 flex flex-col items-start space-y-1">
+        <h1 className=" text-sm break-words">
+          {data? data.guestId.username : '...'} 
+        </h1>
+        <div className="text-white bg-blue-400 px-2 py-1 rounded-md text-xs">
+          Guest
+        </div>
+        </div>
+        <div className="flex ml-auto mr-4 items-center space-x-2">
+          <AiFillMessage color="white" className="w-8 h-8"/>
+          <MdMoreVert color="white" className="w-8 h-8"/>
+        </div>
+        </div>
+        )
+      })}
     </div>
 
   </div>
@@ -902,7 +942,7 @@ function VideoControl({ setting, isUser = false, name = "Ucok GTA" }) {
 
 
 
-const RoomScreen= ({userSetting={}, rtcToken, remoteStreamData = {},localStreams ,participants = []}) => {
+const RoomScreen= ({userSetting={}, me,room,  roomId ,setRoom, rtcToken, remoteStreamData = {},localStreams ,participants = []}) => {
   const [showBottomNavbar, setShowBottomNavbar] = useState(false);
   const [timeOutId, setTimeOutId] = useState(null)
   const [isLandscape, setIsLandscape] = useState(false);
@@ -918,6 +958,9 @@ const RoomScreen= ({userSetting={}, rtcToken, remoteStreamData = {},localStreams
       changeLayoutMode(modes.onlyMe)
     }
   },[participants]);
+
+
+  
 
   useEffect(()=>{
     function detectOrientation() {
@@ -996,6 +1039,7 @@ const RoomScreen= ({userSetting={}, rtcToken, remoteStreamData = {},localStreams
     'mode': modes.onlyMe,
   }) 
   const [openSidebar, setOpenSidebar] = useState(false)
+  const [openParticipantsSidebar, setOpenParticipantsSidebar] = useState(false);
 
   const changeLayoutMode = (newMode) => {
     setLayoutSetting({ mode: newMode });
@@ -1037,7 +1081,7 @@ const RoomScreen= ({userSetting={}, rtcToken, remoteStreamData = {},localStreams
               videoTrack={localStreams.videoTrack} isUser={true}
               name={"Ucok"}
               showControl={false}
-              isAudioEnabled= {userSetting.isAudioEnabled} // atur ini
+              isAudioEnabled= {userSetting.isAudioEnabled} 
               isVideoEnabled = {userSetting.isVideoEnabled}
               />
             </div>
@@ -1114,24 +1158,30 @@ const RoomScreen= ({userSetting={}, rtcToken, remoteStreamData = {},localStreams
 
   return <div onClick={()=>{
     openBottomNavbar()
-  }} className="  w-screen h-full  ">
+  }} className="flex flex-col  w-screen h-screen ">
     
 
     {/* Chat Sidebar */}
     {openSidebar && <div onClick={()=>{setOpenSidebar(false)}} className="fixed top-0 left-0 z-20 flex w-screen h-screen justify-end ">
       { <Sidebar  isOpen={openSidebar} closeSidebar={()=>{setOpenSidebar(false)}}/>}
     </div>}
+    {openParticipantsSidebar && <div onClick={()=>{setOpenParticipantsSidebar(false)}} className="fixed top-0 left-0 z-20 flex w-screen h-screen justify-end ">
+      { <ParticipantsSidebar room={room} participants={participants} me={me} isOpen={openParticipantsSidebar} closeSidebar={()=>{setOpenParticipantsSidebar(false)}}/>}
+    </div>}
 
     {/* Setting & Participants*/}
     <div className="px-2 py-2 rounded-md z-10 bg-slate-800 fixed top-2 left-2">
       <MdSettings color="#00A8FF" className=" w-6 h-6 "/>
     </div>
-    <div className="px-2 py-2 z-10  rounded-md bg-slate-800 fixed top-2 right-2">
+    <div onClick={(e)=>{
+        e.stopPropagation();
+        setOpenParticipantsSidebar(true)
+    }} className="px-2 py-2 z-10  rounded-md bg-slate-800 fixed top-2 right-2">
       <FaUser color="#00A8FF" className=" w-6 h-6 "/>
+      <div className="absolute bg-slate-950 rounded-full w-5 h-5 flex items-center justify-center text-white top-0 right-0">{participants? participants.length + 1 : 1}</div>
     </div>
-
     {/* Konten */}
-    <div className="  overflow-x-hidden">
+    <div className=" my-auto  overflow-x-hidden">
     {localStreams? renderContentBasedOnMode() : <div className="w-screen h-screen flex items-center justify-center"><Loading/></div>}
     </div>
 

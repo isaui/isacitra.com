@@ -121,30 +121,6 @@ function CreateRoomDialog({ isOpen = true, onClose = () => {} }) {
     const handleSubmit = async ()=> {
       try {
         setLoading(true)
-        if(user){
-          // I will do it later
-          const uuid = uuidv4();
-          const roomId = new mongoose.Types.ObjectId();
-          const data = {
-            roomId: roomId,
-            title: roomInfo.title,
-            description: roomInfo.description,
-            password: roomInfo.password,
-            host: {
-              userId: user._id,
-              guestId: null,
-              participantType: "user"
-            },
-            scheduledTime: roomInfo.status == "actived"? new Date() : new Date(roomInfo.schedule),
-            hostKey: uuid.slice(0,6),
-            status:roomInfo.status
-          }
-          const room = await axios.post('https://isacitra-com-api.vercel.app/video/createRoom', data);
-          setCreatedRoom(room.data)
-          
-          setLoading(false)
-          setResult(true)
-        }else{
             const uuid = uuidv4();
             const roomId = new mongoose.Types.ObjectId();
             const guestId = new mongoose.Types.ObjectId();
@@ -173,7 +149,6 @@ function CreateRoomDialog({ isOpen = true, onClose = () => {} }) {
             console.log(guest, room);
             setLoading(false)
             setResult(true)
-        }
         toast.success("Berhasil membuat room",{autoClose:2000})
       } catch (error) {
         setLoading(false)
