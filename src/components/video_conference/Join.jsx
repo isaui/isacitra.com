@@ -522,7 +522,7 @@ const userVideoSetting = {
 
 const Sidebar = ({isOpen, closeSidebar})=>{
   
-  return <div onClick={(e)=>{e.stopPropagation()}} className={`flex flex-col min-w-[18rem] h-screen w-screen md:max-w-[40%] lg:max-w-[30%] bg-slate-950 `}>
+  return <div onClick={(e)=>{e.stopPropagation()}} className={`fixed bottom-0 left-0 flex flex-col min-w-[18rem] h-screen w-screen md:max-w-[40%] lg:max-w-[30%] bg-slate-950 `}>
     <div className="mx-2 my-2 flex items-center justify-between">
       <h1 className=" text-white text-2xl">CHATS</h1>
       <AiFillCloseCircle onClick={closeSidebar} color="#00A8FF" className=" w-8 h-8 "/>
@@ -530,7 +530,7 @@ const Sidebar = ({isOpen, closeSidebar})=>{
     <div className="flex grow bg-slate-800">
       <h1 className="mx-auto my-auto text-white text-sm">Belum ada pesan</h1>
     </div>
-    <div className="fixed bottom-0 left-0 my-2 mx-2 min-h-[3rem] flex justify-between items-center">
+    <div className=" my-2 mx-2 min-h-[3rem] flex justify-between items-center">
       <input type="text" className="text-white grow text-sm py-3 px-2 rounded-md outline-none bg-transparent focus:border-[#00A8FF] border-2 border-[#00A8FF]" placeholder="Masukkan pesan Anda"/>
       <MdSend color="#00A8FF" className="ml-4 w-6 h-6 "/>
     </div>
