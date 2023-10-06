@@ -361,6 +361,10 @@ const JoinPage = () =>{
          // 
         });
 
+        agoraClient.on("user-joined", async(user)=>{
+          console.log('ada yang join: ',user)
+        })
+
         // Bergabung ke sesi Agora dengan token dan ID yang sesuai
         await agoraClient.join(agoraSetting.AGORA_APP_ID, roomId, rtcToken, me._id);
       
@@ -679,12 +683,12 @@ const Sidebar = ({isOpen, closeSidebar, onSelect, options, selectedValue, room, 
 }
 const ParticipantsSidebar = ({room, setSelectedOptionChat, isOpen, closeSidebar, me, participants=[], openChatSidebar})=>{
   
-  return <div onClick={(e)=>{e.stopPropagation()}} className={`flex flex-col min-w-[18rem] h-screen w-screen md:max-w-[40%] lg:max-w-[30%] bg-slate-950 `}>
-    <div className="mx-2 my-2 flex items-center justify-between">
-      <h1 className=" text-white text-2xl">Participants</h1>
-      <AiFillCloseCircle onClick={closeSidebar} color="#00A8FF" className=" w-8 h-8 "/>
+  return <div onClick={(e)=>{e.stopPropagation()}} className={`flex flex-col min-w-[18rem] relative h-screen w-screen md:max-w-[40%] lg:max-w-[30%] bg-slate-950 `}>
+    <div className=" absolute right-0 top-0  my-2 flex items-center justify-between w-full">
+      <h1 className=" ml-2 text-white text-2xl">Participants</h1>
+      <AiFillCloseCircle onClick={closeSidebar} color="#00A8FF" className="mr-2 w-8 h-8 "/>
     </div>
-    <div className="flex flex-col bg-slate-900">
+    <div className="mt-16 flex flex-col bg-slate-900 overflow-y-auto">
       <div className= {`mb-auto text-white text-sm w-full py-4  flex items-center`}>
         <div  className={`ml-2 bg-teal-700  w-12 h-12 flex items-center justify-center rounded-full`}>
            {me.username[0]}
