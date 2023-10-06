@@ -13,7 +13,7 @@ import CountdownTimer from "../time_counter/TimeCounter";
 import { AiFillCloseCircle, AiFillMessage, AiFillSetting, AiFillVideoCamera, AiOutlineDotChart } from "react-icons/ai";
 import { FaMicrophone, FaMicrophoneSlash, FaUser, FaVideo, FaVideoSlash } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
-import mongoose, { Mongoose } from "mongoose";
+import mongoose, { Mongoose, set } from "mongoose";
 import { MdAddReaction, MdChatBubble, MdContacts, MdMoreVert, MdScreenShare, MdSend, MdSettings } from "react-icons/md";
 import Cookie from 'js-cookie';
 import {
@@ -88,8 +88,13 @@ const JoinPage = () =>{
     const [participants,setParticipants] = useState([]);
     const { ready, tracks } = useMicrophoneAndCameraTracks();
     const [firstTime, setFirstTime] = useState(true);
+    const [notifier, setNotifier] = useState(false);
     //console.log(participants)
     console.log('apa isinya? ',room)
+
+    const notify = () =>{
+      setNotifier(prev => !prev);
+    }
 
     useEffect(()=>{
         
@@ -208,6 +213,34 @@ const JoinPage = () =>{
         window.removeEventListener('unload', cleanUpUser)
       }
     },[])
+
+    useEffect(()=>{
+      if(participants){
+        const newParticipants = [...participants];
+        newParticipants.sort((first, second)=>{
+          const isFirstAudioEnabled = first.isAudioEnabled? 1 : 0;
+          const isFirstVideoEnabled = first.isVideoEnabled? 1 : 0;
+
+          const isSecondAudioEnabled = second.isAudioEnabled? 1 : 0;
+          const isSecondVideoEnabled = second.isVideoEnabled? 1 : 0;
+
+          const firstVal = isFirstAudioEnabled + isFirstVideoEnabled;
+          const secondVal = isSecondAudioEnabled + isSecondVideoEnabled;
+          if(firstVal > secondVal){
+            return -1;
+          }
+          else if(firstVal < secondVal){
+            return 1;
+          }
+          return 0;
+          
+        })
+    
+        setParticipants(newParticipants) 
+   }
+    },[notifier])
+
+
    
 
     useEffect(()=>{
@@ -264,7 +297,7 @@ const JoinPage = () =>{
           if(mediaType === "video") {
             user.videoTrack?.play();
           }
-
+          notify()
         });
       
         // Memasang event listener ketika pengguna lain menghentikan publikasi media
@@ -291,7 +324,7 @@ const JoinPage = () =>{
               : participant
           );
            })
-           
+           notify()
         });
       
         // Memasang event listener ketika pengguna meninggalkan sesi
@@ -305,6 +338,7 @@ const JoinPage = () =>{
           //edit this
           console.log("RES DISINI")
           console.log("ADA YG LEFT")
+          notify()
          // 
         });
         // Bergabung ke sesi Agora dengan token dan ID yang sesuai
