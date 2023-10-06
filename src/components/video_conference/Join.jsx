@@ -81,7 +81,6 @@ const JoinPage = () =>{
     const [screen, setScreen] = useState('lobby');
     const [me, setMe] = useState(null)
     const [cookie, setCookie] = useState(null);
-    const [currPeer, setCurrPeer] = useState(null);
     const [streamData, setStreamData] = useState({});
     const [rtcToken, setRtcToken] = useState({});
     const [localStreams, setLocalStreams] = useState(null)
@@ -89,13 +88,12 @@ const JoinPage = () =>{
     const { ready, tracks } = useMicrophoneAndCameraTracks();
     const [firstTime, setFirstTime] = useState(true);
     const [notifier, setNotifier] = useState(false);
+    const [selectedOptionChat, setSelectedOptionChat] = useState('all');
     //console.log(participants)
-    console.log('apa isinya? ',room)
-
+    //console.log('apa isinya? ',room)
     const notify = () =>{
       setNotifier(prev => !prev);
     }
-
     useEffect(()=>{
         
         const fetchRoom = async () =>{
@@ -239,10 +237,6 @@ const JoinPage = () =>{
         setParticipants(newParticipants) 
    }
     },[notifier])
-
-
-   
-
     useEffect(()=>{
       if(!me) {
         return
@@ -364,12 +358,6 @@ const JoinPage = () =>{
       
   
     }, [ready,tracks, me])
-  
-
-// connect to others
-    
-
-
 
 const matikanVideo = async () => {
     if(mediaRef.current && !me){
@@ -480,9 +468,9 @@ const hidupkanAudio= async () => {
     }
      setIsAudioEnabled(true)
 }
-
-
-
+const onSelectChat = (id) => {
+  setSelectedOptionChat(id)
+}
 
 const userVideoSetting = {
   matikanAudio,hidupkanAudio,matikanVideo,hidupkanVideo,mediaRef,isAudioEnabled,isVideoEnabled
@@ -493,7 +481,7 @@ const userVideoSetting = {
     <div className='mx-auto min-h-screen flex justify-center items-center flex-col min-w-screen   '>
       {loading? <Loading/> :
         screen == 'room' ? <div className="mx-auto min-h-screen  flex justify-center items-center flex-col min-w-screen max-w-screen  ">
-          <RoomScreen me={me} room={room} roomId={roomId} setRoom={setRoom} rtcToken={rtcToken} localStreams={localStreams} userSetting={userVideoSetting} remoteStreamData={streamData} participants={participants}/>
+          <RoomScreen onSelectChat={onSelectChat} chatOptions={['all', ...participants.map((participant)=> participant.participantId)]} selectedChatValue={selectedOptionChat} me={me} room={room} roomId={roomId} setRoom={setRoom} rtcToken={rtcToken} localStreams={localStreams} userSetting={userVideoSetting} remoteStreamData={streamData} participants={participants}/>
         </div> :<div className='homepage-content  min-h-screen w-full flex flex-col my-auto items-center max-w-full'>
         {isJoinBoxOpen &&
          <div onClick={()=>{setJoinBoxOpen(false)}} className="fixed z-50 top-0 left-0 w-screen flex bg-black bg-opacity-30 flex-col justify-center items-center min-h-screen">
@@ -554,29 +542,55 @@ const userVideoSetting = {
 </div>
 }
 
-const Sidebar = ({isOpen, closeSidebar})=>{
-  
-  return <div onClick={(e)=>{e.stopPropagation()}} className={`fixed  bottom-0 left-0 flex flex-col min-w-[18rem] h-screen max-h-screen w-screen md:max-w-[40%] lg:max-w-[30%] bg-slate-800 `}>
-    <div className="fixed top-0 left-0 w-screen">
-    <div className=" bg-slate-950 h-16 flex items-center justify-between w-full min-w-[18rem] md:max-w-[40%] lg:max-w-[30%]">
+const Sidebar = ({isOpen, closeSidebar, onSelect, options, selectedValue, room, me})=>{
+  const [loading, setLoading] = useState(false);
+  const [pesan, setPesan] = useState('');
+  const submitMessage= async () => {
+    if(pesan.trim().length == 0){
+      toast.error("Maaf pesan Anda masih kosong", {autoClose:2000})
+    }
+    setLoading(true)
+    try {
+      const res = await  axios.post('https://isacitra-com-api.vercel.app/video/addCommentToRoom', {roomId:room._id, senderId:me._id, receiverId: selectedValue, message: pesan});
+      toast("Berhasil mengirim pesan", {autoClose:2000})
+      console.log('ini room kmoeh',res.data)
+    } catch (error) {
+      console.log(error)
+      toast.error("gagal mengirim pesan", {autoClose:2000})
+    }
+    setLoading(false)
+  }
+  const handleChangePesan = async (e) => {
+    setPesan(e.target.value);
+    
+  }
+
+  return <div onClick={(e)=>{e.stopPropagation()}} className={`fixed  bottom-0 left-0 flex flex-col min-w-[18rem] h-screen max-h-screen w-screen md:max-w-[40%] lg:max-w-[30%] bg-blue-900 `}>
+    <div className="fixed flex flex-col top-0 left-0 w-screen">
+      <ToastContainer/>
+    <div className=" bg-neutral-950 h-16 flex items-center justify-between w-full min-w-[18rem] md:max-w-[40%] lg:max-w-[30%]">
       <h1 className="ml-2 text-white text-2xl">CHATS</h1>
       <AiFillCloseCircle onClick={closeSidebar} color="#00A8FF" className="mr-2 w-8 h-8 "/>
     </div>
+    <div className="w-full min-w-[18rem] md:max-w-[40%] lg:max-w-[30%] flex justify-end items-center  py-2 px-2">
+      <DropdownChat onSelect={onSelect} options={options} selectedValue={selectedValue} room={room} />
     </div>
-    <div className="my-auto w-full bg-slate-800 flex flex-col">
+    </div>
+    <div className="my-auto w-full bg-blue-900 flex flex-col">
       <h1 className="mx-auto text-white text-sm">Belum ada pesan</h1>
     </div>
     <div className="fixed bottom-0 left-0 w-screen">
-    <div className=" h-16 flex justify-between items-center bg-slate-950  w-full min-w-[18rem] md:max-w-[40%] lg:max-w-[30%]">
-      <input type="text" className="text-white grow text-sm py-3 px-2 rounded-md outline-none bg-transparent focus:border-[#00A8FF] border-2 border-[#00A8FF]" placeholder="Masukkan pesan Anda"/>
-      <MdSend color="#00A8FF" className="ml-4 w-6 h-6 "/>
+    <div className=" px-2 h-16 flex justify-between items-center bg-neutral-950  w-full min-w-[18rem] md:max-w-[40%] lg:max-w-[30%]">
+      <input value={pesan} onChange={handleChangePesan} type="text" className="text-white grow text-sm py-3 px-2 rounded-md outline-none bg-transparent focus:border-[#00A8FF] border-2 border-[#00A8FF]" placeholder="Masukkan pesan Anda"/>
+      <div onClick={submitMessage}>
+      {loading? <Loading/> : <MdSend color="#00A8FF" className="ml-4 w-6 h-6 "/>}
+      </div>
     </div>
     </div>
     
 
   </div>
 }
-
 const ParticipantsSidebar = ({room, isOpen, closeSidebar, me, participants=[]})=>{
   
   return <div onClick={(e)=>{e.stopPropagation()}} className={`flex flex-col min-w-[18rem] h-screen w-screen md:max-w-[40%] lg:max-w-[30%] bg-slate-950 `}>
@@ -625,10 +639,8 @@ const ParticipantsSidebar = ({room, isOpen, closeSidebar, me, participants=[]})=
 
   </div>
 }
-
-
 function CustomFullScreenAgoraVideo({ audioTrack, videoTrack, isUser, name, isVideoEnabled=true, isAudioEnabled=true }) {
-  console.log('ini video track babi', videoTrack)
+
   const videoRef = useRef(null);
     useEffect(() => {
       if (videoTrack && videoRef.current) {
@@ -704,12 +716,8 @@ function CustomFullScreenAgoraVideo({ audioTrack, videoTrack, isUser, name, isVi
     </div>
   );
 }
-
-
-
 // i change this
 function CustomAgoraVideo({ audioTrack, videoTrack, isUser, name, isVideoEnabled=true, isAudioEnabled=true }) {
-  console.log('ini video track babi', videoTrack)
   const videoRef = useRef(null);
     useEffect(() => {
       if (videoTrack && videoRef.current) {
@@ -981,7 +989,7 @@ function VideoControl({ setting, isUser = false, name = "Ucok GTA" }) {
 
 
 
-const RoomScreen= ({userSetting={}, me,room,  roomId ,setRoom, rtcToken, remoteStreamData = {},localStreams ,participants = []}) => {
+const RoomScreen= ({userSetting={}, me,room, onSelectChat, selectedChatValue, chatOptions,roomId ,setRoom, rtcToken, remoteStreamData = {},localStreams ,participants = []}) => {
   const [showBottomNavbar, setShowBottomNavbar] = useState(false);
   const [timeOutId, setTimeOutId] = useState(null)
   const [isLandscape, setIsLandscape] = useState(false);
@@ -997,10 +1005,6 @@ const RoomScreen= ({userSetting={}, me,room,  roomId ,setRoom, rtcToken, remoteS
       changeLayoutMode(modes.onlyMe)
     }
   },[participants]);
-
-
-  
-
   useEffect(()=>{
     function detectOrientation() {
       if (window.innerHeight > window.innerWidth) {
@@ -1027,7 +1031,6 @@ const RoomScreen= ({userSetting={}, me,room,  roomId ,setRoom, rtcToken, remoteS
     window.removeEventListener('load', detectOrientation);
     }
   }, [])
-
   useEffect(()=>{
     const handleShowBottomNavbar = () => {
       if(timeOutId){
@@ -1046,9 +1049,6 @@ const RoomScreen= ({userSetting={}, me,room,  roomId ,setRoom, rtcToken, remoteS
     };
     handleShowBottomNavbar()
   },[])
-
-  
-
   const openBottomNavbar = () => {
     const handleShowBottomNavbar = () => {
       if(timeOutId){
@@ -1083,7 +1083,6 @@ const RoomScreen= ({userSetting={}, me,room,  roomId ,setRoom, rtcToken, remoteS
   const changeLayoutMode = (newMode) => {
     setLayoutSetting({ mode: newMode });
   };
-
   const renderContentBasedOnMode = () => {
     switch (layoutSetting.mode) {
       case modes.onlyMe:
@@ -1193,8 +1192,6 @@ const RoomScreen= ({userSetting={}, me,room,  roomId ,setRoom, rtcToken, remoteS
         return <div>Tampilan default</div>;
     }
   };
-
-
   return <div onClick={()=>{
     openBottomNavbar()
   }} className="flex flex-col  w-screen h-screen ">
@@ -1202,7 +1199,7 @@ const RoomScreen= ({userSetting={}, me,room,  roomId ,setRoom, rtcToken, remoteS
 
     {/* Chat Sidebar */}
     {openSidebar && <div onClick={()=>{setOpenSidebar(false)}} className="fixed top-0 left-0 z-20 flex w-screen h-screen justify-end ">
-      { <Sidebar  isOpen={openSidebar} closeSidebar={()=>{setOpenSidebar(false)}}/>}
+      { <Sidebar room={room} me={me} onSelect={onSelectChat} options={chatOptions} selectedValue={selectedChatValue} isOpen={openSidebar} closeSidebar={()=>{setOpenSidebar(false)}}/>}
     </div>}
     {openParticipantsSidebar && <div onClick={()=>{setOpenParticipantsSidebar(false)}} className="fixed top-0 left-0 z-20 flex w-screen h-screen justify-end ">
       { <ParticipantsSidebar room={room} participants={participants} me={me} isOpen={openParticipantsSidebar} closeSidebar={()=>{setOpenParticipantsSidebar(false)}}/>}
@@ -1246,8 +1243,6 @@ const RoomScreen= ({userSetting={}, me,room,  roomId ,setRoom, rtcToken, remoteS
     </div>}
   </div>
 }
-
-
 const JoinBox = ({closeBox=()=>{}, submitJoin= async(username,password)=>{
   return "success"
 } }) =>{
@@ -1368,5 +1363,85 @@ const JoinBox = ({closeBox=()=>{}, submitJoin= async(username,password)=>{
     </div>
   </div>
 }   
+const DropdownChat = ({ onSelect, options=[], selectedValue, room}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  console.log('ini optionnya',options)
+  console.log('ini roomnya', room)
+  //const [selectedValue, setSelectedValue] = useState(options[0].label);
+  const dropdownRef = useRef(null)
+
+  useEffect(() => {
+    // Tambahkan event listener ketika komponen sudah ter-mount
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // Hapus event listener ketika komponen akan di-unmount
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleClickOutside = (event) => {
+    //console.log('here')
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setIsOpen(false);
+    }
+  };
+
+  return (
+    <div className="relative inline-block text-left" ref={dropdownRef}>
+      <button
+        onClick={toggleDropdown}
+        type="button"
+        className="inline-flex justify-center w-full rounded-md border border-gray-700 shadow-sm px-4 py-2 bg-gray-800 text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
+        id="options-menu"
+        aria-haspopup="true"
+        aria-expanded="true"
+      >
+        {selectedValue == 'all'? 'Semua' : room? room.participants[selectedValue].guestId.username : 'loading...'}
+        <svg
+          className="-mr-1 ml-2 h-5 w-5"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            fillRule="evenodd"
+            d="M6.293 6.293a1 1 0 011.414 0L10 8.586l2.293-2.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+            clipRule="evenodd"
+          />
+        </svg>
+      </button>
+
+      {isOpen && (
+        <div
+          className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5"
+          role="menu"
+          aria-orientation="vertical"
+          aria-labelledby="options-menu"
+        >
+          <div className="py-1" role="none">
+            {options.map((option) => (
+              <button
+                key={option}
+                onClick={() => {
+                  onSelect(option);
+                  setIsOpen(false)
+                }}
+                className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
+                role="menuitem"
+              >
+                {option == 'all'? 'Semua' : room? room.participants[option].guestId.username ?? 'loading...': "loading..." }
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default JoinPage;
