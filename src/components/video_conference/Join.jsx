@@ -8,6 +8,7 @@ import Loading from "../loading/Loading";
 import LandingImage from "../../assets/new_meet/zoomcreate.svg";
 import Scheduled from "../../assets/meet_status/scheduled.svg";
 import NoUserVideo from "../../assets/meet_status/novideo.svg";
+import Error from '../../assets/error/error.svg'
 import ErrorPage from "../error/ErrorPage";
 import CountdownTimer from "../time_counter/TimeCounter";
 import { AiFillCloseCircle, AiFillMessage, AiFillSetting, AiFillVideoCamera, AiOutlineDotChart } from "react-icons/ai";
@@ -89,8 +90,21 @@ const JoinPage = () =>{
     const [firstTime, setFirstTime] = useState(true);
     const [notifier, setNotifier] = useState(false);
     const [selectedOptionChat, setSelectedOptionChat] = useState('all');
+    const [unreadMessages, setUnreadMessages] = useState(0);
+    const [isPermissionGranted, setIsPermissionGranted] = useState(false);
     //console.log(participants)
     //console.log('apa isinya? ',room)
+    const requestPermission = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+        setIsPermissionGranted(true)
+        // Izin diberikan, lanjutkan dengan penggunaan mikrofon dan kamera.
+      } catch (error) {
+        // Izin ditolak atau terjadi kesalahan, tangani sesuai kebutuhan Anda.
+        setIsPermissionGranted(false)
+      }
+    }
+
     const notify = () =>{
       setNotifier(prev => !prev);
     }
@@ -132,12 +146,17 @@ const JoinPage = () =>{
         }
       console.log("room terupdate-> ",message.data)
 
-       const {room,roomId:remoteRoomId} = message.data;
+       const {room:newRoom,roomId:remoteRoomId} = message.data;
        if(roomId != remoteRoomId){
         console.log("room yang diupdate bukan room saat ini")
         return
        }
-       setRoom(room);
+       const prevRoom = room;
+       const unreadMessagesCounter = newRoom.chats.length - (prevRoom == null ? 0 : prevRoom.chats.length);
+       if(newRoom.chats[newRoom.chats.length - 1].sender != (!me? '': me._id)){
+        setUnreadMessages(prev => unreadMessagesCounter  + prev)
+       }
+       setRoom(newRoom);
       })
       return () => {
         roomChannel.unsubscribe('update-room');
@@ -191,9 +210,11 @@ const JoinPage = () =>{
             mediaRef.current.srcObject =stream;
           }
           setDapatIzin(true)
+          setIsPermissionGranted(true)
         } catch (error) {
           console.error('Error accessing media devices:', error);
           setDapatIzin(false)
+          setIsPermissionGranted(false)
         }
       };
     
@@ -241,6 +262,10 @@ const JoinPage = () =>{
       if(!me) {
         return
       }
+      if(! isPermissionGranted){
+        requestPermission()
+      }
+      
       const init = async () => {
         // Memasang event listener ketika pengguna lain mempublikasikan media
         agoraClient.on("user-published", async (user, mediaType) => {
@@ -335,6 +360,7 @@ const JoinPage = () =>{
           notify()
          // 
         });
+
         // Bergabung ke sesi Agora dengan token dan ID yang sesuai
         await agoraClient.join(agoraSetting.AGORA_APP_ID, roomId, rtcToken, me._id);
       
@@ -353,11 +379,12 @@ const JoinPage = () =>{
       };
       
     if(ready && tracks){
+      setIsPermissionGranted(true)
       init()
     }
       
   
-    }, [ready,tracks, me])
+    }, [ready,tracks, me, isPermissionGranted])
 
 const matikanVideo = async () => {
     if(mediaRef.current && !me){
@@ -412,7 +439,7 @@ const joinWithCookie = async () => {
 const submitJoin = async (username, password) =>{
   try {
     if(username.trim().length == 0){
-      toast.error("Maaf nama tidak boleh kosong")
+      toast.error("Maaf nama tidak boleh kosong", {autoClose:2000})
       return "failed"
     }
       const guestId = new mongoose.Types.ObjectId();
@@ -437,7 +464,7 @@ const submitJoin = async (username, password) =>{
     return "success";
   } catch (error) {
     console.log(error)
-    toast.error(error.response.data.message)
+    toast.error('Maaf, password yang Anda masukkan tidak benar', {autoClose:2000})
     return "failed";
   }
 }
@@ -476,12 +503,12 @@ const userVideoSetting = {
   matikanAudio,hidupkanAudio,matikanVideo,hidupkanVideo,mediaRef,isAudioEnabled,isVideoEnabled
 }
     return <div className=" bg-slate-900">
-        {isError? <ErrorPage statusCode={statusCode} message={errorMessage} />:<>
-
+        {isError? <ErrorPage statusCode={statusCode} message={errorMessage} /> : <>
+    <ToastContainer/>
     <div className='mx-auto min-h-screen flex justify-center items-center flex-col min-w-screen   '>
       {loading? <Loading/> :
         screen == 'room' ? <div className="mx-auto min-h-screen  flex justify-center items-center flex-col min-w-screen max-w-screen  ">
-          <RoomScreen onSelectChat={onSelectChat} chatOptions={['all', ...participants.map((participant)=> participant.participantId)]} selectedChatValue={selectedOptionChat} me={me} room={room} roomId={roomId} setRoom={setRoom} rtcToken={rtcToken} localStreams={localStreams} userSetting={userVideoSetting} remoteStreamData={streamData} participants={participants}/>
+          <RoomScreen isPermissionGranted={isPermissionGranted} onSelectChat={onSelectChat} setUnreadMessages={setUnreadMessages} unreadMessages={unreadMessages} chatOptions={['all', ...participants.map((participant)=> participant.participantId)]} selectedChatValue={selectedOptionChat} me={me} room={room} roomId={roomId} setRoom={setRoom} rtcToken={rtcToken} localStreams={localStreams} userSetting={userVideoSetting} remoteStreamData={streamData} participants={participants}/>
         </div> :<div className='homepage-content  min-h-screen w-full flex flex-col my-auto items-center max-w-full'>
         {isJoinBoxOpen &&
          <div onClick={()=>{setJoinBoxOpen(false)}} className="fixed z-50 top-0 left-0 w-screen flex bg-black bg-opacity-30 flex-col justify-center items-center min-h-screen">
@@ -541,18 +568,47 @@ const userVideoSetting = {
     {screen == 'lobby'&& <Footer/>}</>}
 </div>
 }
+function formatTimestampToWIB(timestamp) {
+  const options = {
+    hour: "numeric",
+    minute: "numeric",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "Asia/Jakarta", // Atur zona waktu ke Waktu Indonesia Barat (WIB)
+  };
 
-const Sidebar = ({isOpen, closeSidebar, onSelect, options, selectedValue, room, me})=>{
+  return new Intl.DateTimeFormat("id-ID", options).format(new Date(timestamp));
+}
+
+const Sidebar = ({isOpen, closeSidebar, onSelect, options, selectedValue, room, me, })=>{
   const [loading, setLoading] = useState(false);
   const [pesan, setPesan] = useState('');
+  const [filteredChats, setFilteredChats] = useState([]);
+  useEffect(()=>{
+    if(!room){
+      return
+    }
+    const chats = room.chats;
+    if(selectedValue == 'all'){
+      const selectedChats = chats.filter((chat)=> (chat.receiver == null || chat.receiver == "all"));
+      setFilteredChats(selectedChats);
+    }
+    else{
+      const selectedChats = chats.filter((chat)=>((chat.sender == me._id || chat.sender == selectedValue) && 
+      (chat.receiver == me._id  || chat.receiver == selectedValue)))
+      setFilteredChats(selectedChats)
+    }
+  }, [room, selectedValue])
   const submitMessage= async () => {
     if(pesan.trim().length == 0){
-      toast.error("Maaf pesan Anda masih kosong", {autoClose:2000})
+      return toast.error("Maaf pesan Anda masih kosong", {autoClose:2000})
     }
     setLoading(true)
     try {
       const res = await  axios.post('https://isacitra-com-api.vercel.app/video/addCommentToRoom', {roomId:room._id, senderId:me._id, receiverId: selectedValue, message: pesan});
       toast("Berhasil mengirim pesan", {autoClose:2000})
+      setPesan('')
       console.log('ini room kmoeh',res.data)
     } catch (error) {
       console.log(error)
@@ -565,24 +621,54 @@ const Sidebar = ({isOpen, closeSidebar, onSelect, options, selectedValue, room, 
     
   }
 
-  return <div onClick={(e)=>{e.stopPropagation()}} className={`fixed  bottom-0 left-0 flex flex-col min-w-[18rem] h-screen max-h-screen w-screen md:max-w-[40%] lg:max-w-[30%] bg-blue-900 `}>
-    <div className="fixed flex flex-col top-0 left-0 w-screen">
+  return <div onClick={(e)=>{e.stopPropagation()}} className={`fixed  bottom-0 left-0 flex flex-col min-w-[18rem] h-screen max-h-screen w-screen md:max-w-[40%] lg:max-w-[30%] bg-neutral-900 `}>
+    <div className="fixed flex  z-10 flex-col top-0 left-0 w-screen min-w-[18rem] md:max-w-[40%] lg:max-w-[30%]">
       <ToastContainer/>
-    <div className=" bg-neutral-950 h-16 flex items-center justify-between w-full min-w-[18rem] md:max-w-[40%] lg:max-w-[30%]">
-      <h1 className="ml-2 text-white text-2xl">CHATS</h1>
-      <AiFillCloseCircle onClick={closeSidebar} color="#00A8FF" className="mr-2 w-8 h-8 "/>
-    </div>
-    <div className="w-full min-w-[18rem] md:max-w-[40%] lg:max-w-[30%] flex justify-end items-center  py-2 px-2">
+    <div className=" bg-neutral-950 h-16 flex items-center  w-full">
+      <h1 className="ml-2 text-white text-2xl mr-auto">CHATS</h1>
       <DropdownChat onSelect={onSelect} options={options} selectedValue={selectedValue} room={room} />
+      <AiFillCloseCircle onClick={closeSidebar} color="#00A8FF" className="ml-2 mr-2 w-8 h-8 "/>
     </div>
     </div>
-    <div className="my-auto w-full bg-blue-900 flex flex-col">
-      <h1 className="mx-auto text-white text-sm">Belum ada pesan</h1>
+    <div className={`${filteredChats.length > 0 ? 'mt-20 mb-20' : 'my-auto'} w-full flex flex-col overflow-y-auto`}>
+      {filteredChats.length  == 0? <h1 className="mx-auto text-white text-sm">Belum ada pesan</h1>:
+        <div className=" w-full flex flex-col items-center justify-start">
+          {
+            filteredChats.map((chat)=>{
+              if(chat.sender == me._id){
+                return <div className="w-full flex flex-col text-white">
+                <h1 className="text-sm ml-auto mr-2 my-1 break-words text-teal-400">
+                  Anda
+                </h1>
+                <div className="max-w-[90%] bg-teal-800 mb-1 text-sm break-words  rounded-lg px-2 py-2 ml-auto mr-1">
+                {chat.message}
+              </div>
+              <div className="mb-2 breaks-word mr-2 text-xs text-teal-200 ml-auto">
+                {formatTimestampToWIB(chat.createdAt)}
+              </div>
+              </div>
+              }
+
+              return <div className="w-full flex flex-col text-white">
+                <h1 className="text-sm mr-auto ml-2 my-1 break-word text-blue-500">
+                  {room? room.participants[chat.sender]? room.participants[chat.sender].guestId.username : 'loading...' : 'loading...'}
+                </h1>
+                <div className="max-w-[90%] bg-slate-800 mb-1 text-sm break-words  rounded-lg px-2 py-2 mr-auto ml-1">
+                {chat.message} 
+              </div>
+              <div className="mb-2 breaks-word ml-2 text-xs text-blue-300 mr-auto">
+                {formatTimestampToWIB(chat.createdAt)}
+              </div>
+              </div>
+            })
+          }
+        </div>
+      }
     </div>
-    <div className="fixed bottom-0 left-0 w-screen">
-    <div className=" px-2 h-16 flex justify-between items-center bg-neutral-950  w-full min-w-[18rem] md:max-w-[40%] lg:max-w-[30%]">
+    <div className="fixed -z-10 bottom-0 left-0 w-full min-w-[18rem] md:max-w-[40%] lg:max-w-[30%]">
+    <div className=" px-2 h-16 flex justify-between items-center bg-neutral-950  w-full ">
       <input value={pesan} onChange={handleChangePesan} type="text" className="text-white grow text-sm py-3 px-2 rounded-md outline-none bg-transparent focus:border-[#00A8FF] border-2 border-[#00A8FF]" placeholder="Masukkan pesan Anda"/>
-      <div onClick={submitMessage}>
+      <div className="ml-2" onClick={submitMessage}>
       {loading? <Loading/> : <MdSend color="#00A8FF" className="ml-4 w-6 h-6 "/>}
       </div>
     </div>
@@ -591,7 +677,7 @@ const Sidebar = ({isOpen, closeSidebar, onSelect, options, selectedValue, room, 
 
   </div>
 }
-const ParticipantsSidebar = ({room, isOpen, closeSidebar, me, participants=[]})=>{
+const ParticipantsSidebar = ({room, setSelectedOptionChat, isOpen, closeSidebar, me, participants=[], openChatSidebar})=>{
   
   return <div onClick={(e)=>{e.stopPropagation()}} className={`flex flex-col min-w-[18rem] h-screen w-screen md:max-w-[40%] lg:max-w-[30%] bg-slate-950 `}>
     <div className="mx-2 my-2 flex items-center justify-between">
@@ -629,7 +715,10 @@ const ParticipantsSidebar = ({room, isOpen, closeSidebar, me, participants=[]})=
         </div>
         </div>
         <div className="flex ml-auto mr-4 items-center space-x-2">
-          <AiFillMessage color="white" className="w-8 h-8"/>
+          <AiFillMessage onClick={()=>{
+            setSelectedOptionChat(participant.participantId)
+            openChatSidebar()
+          }} color="white" className="w-8 h-8"/>
           <MdMoreVert color="white" className="w-8 h-8"/>
         </div>
         </div>
@@ -989,7 +1078,7 @@ function VideoControl({ setting, isUser = false, name = "Ucok GTA" }) {
 
 
 
-const RoomScreen= ({userSetting={}, me,room, onSelectChat, selectedChatValue, chatOptions,roomId ,setRoom, rtcToken, remoteStreamData = {},localStreams ,participants = []}) => {
+const RoomScreen= ({userSetting={},isPermissionGranted,unreadMessages,setUnreadMessages,me,room, onSelectChat, selectedChatValue, chatOptions,roomId ,setRoom, rtcToken, remoteStreamData = {},localStreams ,participants = []}) => {
   const [showBottomNavbar, setShowBottomNavbar] = useState(false);
   const [timeOutId, setTimeOutId] = useState(null)
   const [isLandscape, setIsLandscape] = useState(false);
@@ -1091,7 +1180,7 @@ const RoomScreen= ({userSetting={}, me,room, onSelectChat, selectedChatValue, ch
             <div className="w-[120vh] h-auto max-w-[95%] text-white">
               <CustomAgoraLocalVideo audioTrack={localStreams.audioTrack} 
               videoTrack={localStreams.videoTrack} isUser={true}
-              name={"Ucok"}
+              name={me.username}
               isAudioEnabled= {userSetting.isAudioEnabled} // atur ini
               isVideoEnabled = {userSetting.isVideoEnabled}
               />
@@ -1109,7 +1198,7 @@ const RoomScreen= ({userSetting={}, me,room, onSelectChat, selectedChatValue, ch
             audioTrack={participant.audioTrack}
             videoTrack={participant.videoTrack}
             isUser={false}
-            name={"Belum Diberi Nama"}
+            name={room? room.participants[participant.participantId]? room.participants[participant.participantId].guestId.username : 'loading...' : 'loading...'}
             isAudioEnabled={participant.isAudioEnabled}
             isVideoEnabled={participant.isVideoEnabled}/>
             </div>
@@ -1117,7 +1206,7 @@ const RoomScreen= ({userSetting={}, me,room, onSelectChat, selectedChatValue, ch
             <div className={`fixed bottom-20 right-4 w-[25vw] max-w-[25vw] ${isLandscape? 'aspect-[16/9]' : 'aspect-[9/16]'}`}>
             <CustomFullScreenAgoraLocalVideo audioTrack={localStreams.audioTrack} 
               videoTrack={localStreams.videoTrack} isUser={true}
-              name={"Ucok"}
+              name={me.username}
               showControl={false}
               isAudioEnabled= {userSetting.isAudioEnabled} 
               isVideoEnabled = {userSetting.isVideoEnabled}
@@ -1145,7 +1234,7 @@ const RoomScreen= ({userSetting={}, me,room, onSelectChat, selectedChatValue, ch
             audioTrack={participant.audioTrack}
             videoTrack={participant.videoTrack}
             isUser={false}
-            name={"Belum Diberi Nama"}
+            name={room? room.participants[participant.participantId]? room.participants[participant.participantId].guestId.username : 'loading...' : 'loading...'}
             isAudioEnabled={participant.isAudioEnabled}
             isVideoEnabled={participant.isVideoEnabled}/>
             </div>
@@ -1162,7 +1251,7 @@ const RoomScreen= ({userSetting={}, me,room, onSelectChat, selectedChatValue, ch
                   audioTrack={localStreams.audioTrack}
                   videoTrack={localStreams.videoTrack}
                   isUser={true}
-                  name={"Ucok"}
+                  name={me.username}
                   isAudioEnabled={userSetting.isAudioEnabled}
                   isVideoEnabled={userSetting.isVideoEnabled}
                 />
@@ -1176,7 +1265,7 @@ const RoomScreen= ({userSetting={}, me,room, onSelectChat, selectedChatValue, ch
                     audioTrack={participant.audioTrack}
                     videoTrack={participant.videoTrack}
                     isUser={false}
-                    name={"Belum Diberi Nama"}
+                    name={room? room.participants[participant.participantId]? room.participants[participant.participantId].guestId.username : 'loading...' : 'loading...'}
                     isAudioEnabled={participant.isAudioEnabled}
                     isVideoEnabled={participant.isVideoEnabled}
                   />
@@ -1202,7 +1291,12 @@ const RoomScreen= ({userSetting={}, me,room, onSelectChat, selectedChatValue, ch
       { <Sidebar room={room} me={me} onSelect={onSelectChat} options={chatOptions} selectedValue={selectedChatValue} isOpen={openSidebar} closeSidebar={()=>{setOpenSidebar(false)}}/>}
     </div>}
     {openParticipantsSidebar && <div onClick={()=>{setOpenParticipantsSidebar(false)}} className="fixed top-0 left-0 z-20 flex w-screen h-screen justify-end ">
-      { <ParticipantsSidebar room={room} participants={participants} me={me} isOpen={openParticipantsSidebar} closeSidebar={()=>{setOpenParticipantsSidebar(false)}}/>}
+      { <ParticipantsSidebar openChatSidebar={()=>{
+        setOpenParticipantsSidebar(false)
+        setOpenSidebar(true)
+      }}  
+      setSelectedOptionChat={onSelectChat}
+      room={room} participants={participants} me={me} isOpen={openParticipantsSidebar} closeSidebar={()=>{setOpenParticipantsSidebar(false)}}/>}
     </div>}
 
     {/* Setting & Participants*/}
@@ -1218,7 +1312,19 @@ const RoomScreen= ({userSetting={}, me,room, onSelectChat, selectedChatValue, ch
     </div>
     {/* Konten */}
     <div className=" my-auto  overflow-x-hidden">
-    {localStreams? renderContentBasedOnMode() : <div className="w-screen h-screen flex items-center justify-center"><Loading/></div>}
+    {!isPermissionGranted? 
+    <div className="flex items-center my-auto h-full">
+    <div className=" my-auto h-full flex justify-center items-center mx-auto md:flex-row flex-col-reverse">
+    <div className="mx-8">
+    <h1 className=" text-red-400 lg:text-5xl md:text-4xl text-3xl mx-auto md:text-left text-center mt-3">Izin Ditolak</h1>
+    <p className=" text-gray-200 lg:text-2xl md:text-2xl text-lg text-center md:text-left"> Akses kamera dan mikrofon ditolak. <br></br>Dapatkan akses dan reload halaman ini</p>
+    </div>
+    <div className="">
+        <img className= " lg:min-h-[200px] lg:h-[210px] md:min-h-[180px] md:h-[190px] h-[180px]"src={Error} alt="" />
+    </div>
+    </div>
+</div>
+    :localStreams? renderContentBasedOnMode() : <div className="w-screen h-screen flex items-center justify-center"><Loading/></div>}
     </div>
 
     {/* Bottom Bar */}
@@ -1238,18 +1344,31 @@ const RoomScreen= ({userSetting={}, me,room, onSelectChat, selectedChatValue, ch
           )}
         </div>
       <MdScreenShare color="#00A8FF" className="w-7 h-7 "/>
-      <MdChatBubble color="#00A8FF" onClick={()=>{setOpenSidebar(true)}} className="w-6 h-6 "/>
+      <div className="relative"  onClick={()=>{
+        setOpenSidebar(true);
+        setUnreadMessages(0)
+        }} >
+      <MdChatBubble color="#00A8FF" className="w-7 h-7 "/>
+      {unreadMessages > 0 && (
+    <div className="absolute bg-slate-950 rounded-full w-5 h-5 flex items-center justify-center text-white top-0 -right-1">
+      {unreadMessages}
+    </div>
+  )}
+      </div>
       <MdAddReaction color="#00A8FF" className="w-6 h-6 "/>
     </div>}
   </div>
 }
-const JoinBox = ({closeBox=()=>{}, submitJoin= async(username,password)=>{
+const JoinBox = ({closeBox=()=>{},   submitJoin= async(username,password)=>{
   return "success"
 } }) =>{
+
+
   const [joinInfo, setJoinInfo] = useState({
    'password':'',
    'username':'',
   })
+  const [loading, setLoading] = useState(false)
   const updateJoinInfo = (key, value) => {
    // Clone objek joinInfo saat ini untuk menghindari mutasi langsung
    const updatedJoinInfo = { ...joinInfo };
@@ -1344,14 +1463,17 @@ const JoinBox = ({closeBox=()=>{}, submitJoin= async(username,password)=>{
       <button
         type="button"
         onClick={async ()=>{
+          setLoading(true)
           const res = await submitJoin(joinInfo.username, joinInfo.password);
+          setLoading(false)
           if(res == "success"){
             closeBox()
           }
+
         }}
         className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#00A8FF] text-base font-medium text-black hover:text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
       >
-        Join
+        {loading? <Loading/> : 'Join'}
       </button>
       <button
         type="button"
