@@ -12,10 +12,10 @@ import Error from '../../assets/error/error.svg'
 import ErrorPage from "../error/ErrorPage";
 import CountdownTimer from "../time_counter/TimeCounter";
 import { AiFillCloseCircle, AiFillMessage, AiFillSetting, AiFillVideoCamera, AiOutlineDotChart } from "react-icons/ai";
-import { FaMicrophone, FaMicrophoneSlash, FaUser, FaVideo, FaVideoSlash } from "react-icons/fa";
+import { FaMicrophone, FaMicrophoneSlash, FaRegWindowClose, FaRegWindowMinimize, FaUser, FaVideo, FaVideoSlash } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import mongoose, { Mongoose, set } from "mongoose";
-import { MdAddReaction, MdChatBubble, MdContacts, MdMoreVert, MdScreenShare, MdSend, MdSettings } from "react-icons/md";
+import { MdAddReaction, MdChatBubble, MdContacts, MdMoreVert, MdOutlineExpand, MdOutlineExpandCircleDown, MdOutlineExpandLess, MdOutlineExpandMore, MdScreenShare, MdSend, MdSettings } from "react-icons/md";
 import Cookie from 'js-cookie';
 import {
   createMicrophoneAndCameraTracks,
@@ -85,6 +85,8 @@ const JoinPage = () =>{
     const [cookie, setCookie] = useState(null);
     const [streamData, setStreamData] = useState({});
     const [rtcToken, setRtcToken] = useState({});
+    const [screenrtcToken, setScreenRtcToken] = useState({});
+
     const [localStreams, setLocalStreams] = useState(null)
     const [participants,setParticipants] = useState([]);
     const { ready, tracks } = useMicrophoneAndCameraTracks();
@@ -93,6 +95,57 @@ const JoinPage = () =>{
     const [selectedOptionChat, setSelectedOptionChat] = useState('all');
     const [unreadMessages, setUnreadMessages] = useState(0);
     const [isPermissionGranted, setIsPermissionGranted] = useState(false);
+    const [isShareScreen, setIsShareScreen] = useState(false);
+    const [screenStream, setScreenStream] = useState(null);
+    const [remoteScreenStream, setRemoteScreenStream] = useState(null);
+    const [screenClient, setScreenClient] = useState(null)
+
+    const handleStartShareScreen = async () =>{
+      console.log('mencoba share screen....')
+      if(remoteScreenStream){
+        return toast.error('Maaf, pengguna lain sedang membagikan layarnya', {autoClose:2000})
+      }
+      const shareScreenClient = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
+      try {
+        
+        await shareScreenClient.join(agoraSetting.AGORA_APP_ID, roomId, screenrtcToken, me._id+"-screenshare");
+        const newScreenStream = await AgoraRTC.createScreenVideoTrack();
+        await shareScreenClient.publish(newScreenStream);
+        setScreenStream(newScreenStream);
+        setIsShareScreen(true)
+        setScreenClient(shareScreenClient)
+      } catch (error) {
+        console.log(error)
+        await shareScreenClient.leave()
+        toast.error('Maaf, terjadi kesalahan dalam membagikan layar', {autoClose:2000})
+      }
+    }
+
+    const handleCloseShareScreen = async () =>{
+      try {
+        if(screenStream){
+          await screenStream.close()
+          setScreenStream(null)
+        }
+        if(screenClient){
+          await screenClient.leave()
+          setScreenClient(null)
+        }
+        setIsShareScreen(false)
+        toast.success('Berhasil menghentikan pembagian layar', {autoClose:2000})
+      } catch (error) {
+        console.log(error)
+        toast.error('Maaf, terjadi kesalahan dalam memnghentikan pembagian layar', {autoClose:2000})
+      }
+    }
+
+    const userScreenStreamConfig = {
+      isShareScreen: isShareScreen,
+      screenStream: screenStream,
+      screenClient: screenClient,
+      remoteScreenStream: remoteScreenStream
+    }
+
     //console.log(participants)
     //console.log('apa isinya? ',room)
     const requestPermission = async () => {
@@ -272,6 +325,12 @@ const JoinPage = () =>{
         agoraClient.on("user-published", async (user, mediaType) => {
           await agoraClient.subscribe(user, mediaType);
           console.log("subscribe success");
+          if(user.uid.toString().endsWith("-screenshare")){
+            setRemoteScreenStream(user.videoTrack)
+            setIsShareScreen(true)
+            user.videoTrack?.play()
+            return;
+          }
       
           if (mediaType === "video" || mediaType === "audio") {
             setParticipants((prevParticipants) => {
@@ -324,6 +383,14 @@ const JoinPage = () =>{
         agoraClient.on("user-unpublished", async (user, type) => {
           console.log("unpublished ", user, type);
         //  await agoraClient.unsubscribe(user, type)
+        
+        if(user.uid.toString().endsWith("-screenshare")){
+          setRemoteScreenStream(null)
+          setIsShareScreen(false)
+          user.videoTrack?.stop()
+          return;
+        }
+
           if (type === "audio" && user.audioTrack) {
            user.audioTrack.stop();
 
@@ -350,14 +417,28 @@ const JoinPage = () =>{
         // Memasang event listener ketika pengguna meninggalkan sesi
         agoraClient.on("user-left", async (user) => {
           console.log("leaving ", user.uid);
+          if(user.uid.toString().endsWith("-screenshare")){
+            setRemoteScreenStream(null)
+            setIsShareScreen(false)
+            user.videoTrack?.stop()
+            user.leave()
+            return;
+          }
           setParticipants((prevParticipants) =>
             prevParticipants.filter((participant) => participant.participantId !== user.uid)
           );
           notify();
+          user.leave()
         });
 
         agoraClient.on("user-joined", async(user)=>{
           console.log('join: ',user)
+          if(user.uid.toString().endsWith("-screenshare")){
+            setRemoteScreenStream(user.videoTrack)
+            setIsShareScreen(true)
+            user.videoTrack?.play()
+            return;
+          }
           setParticipants((prevParticipants) => {
             // Memeriksa apakah partisipan sudah ada dalam daftar
             const existingParticipant = prevParticipants.find(
@@ -475,6 +556,7 @@ const joinWithCookie = async () => {
     Cookie.set(`room-${roomId}-session`, res.data.token)
     setCookie(res.data.token)
     setRtcToken(res.data.rtcToken)
+    setScreenRtcToken(res.data.screenRtcToken)
     setScreen('room')
     if(mediaRef){
     mediaRef.current = null // mengedit ini
@@ -505,6 +587,7 @@ const submitJoin = async (username, password) =>{
       console.log(res);
       Cookie.set(`room-${roomId}-session`, res.data.token)
       setRtcToken(res.data.rtcToken)
+      setScreenRtcToken(res.data.screenRtcToken)
       setCookie(res.data.token)
       setScreen('room')
     //  setRoom(res.data.room);
@@ -561,7 +644,7 @@ const userVideoSetting = {
     <div className='mx-auto min-h-screen flex justify-center items-center flex-col min-w-screen   '>
       {loading? <Loading/> :
         screen == 'room' ? <div className="mx-auto min-h-screen  flex justify-center items-center flex-col min-w-screen max-w-screen  ">
-          <RoomScreen isPermissionGranted={isPermissionGranted} onSelectChat={onSelectChat} setUnreadMessages={setUnreadMessages} unreadMessages={unreadMessages} chatOptions={['all', ...participants.map((participant)=> participant.participantId)]} selectedChatValue={selectedOptionChat} me={me} room={room} roomId={roomId} setRoom={setRoom} rtcToken={rtcToken} localStreams={localStreams} userSetting={userVideoSetting} remoteStreamData={streamData} participants={participants}/>
+          <RoomScreen startScreenStream={handleStartShareScreen} stopScreenStream={handleCloseShareScreen} isShareScreen={isShareScreen} screenStream={screenStream} remoteScreenStream={remoteScreenStream} screenStreamSetting={userScreenStreamConfig} isPermissionGranted={isPermissionGranted} onSelectChat={onSelectChat} setUnreadMessages={setUnreadMessages} unreadMessages={unreadMessages} chatOptions={['all', ...participants.map((participant)=> participant.participantId)]} selectedChatValue={selectedOptionChat} me={me} room={room} roomId={roomId} setRoom={setRoom} rtcToken={rtcToken} localStreams={localStreams} userSetting={userVideoSetting} remoteStreamData={streamData} participants={participants}/>
         </div> :<div className='homepage-content  min-h-screen w-full flex flex-col my-auto items-center max-w-full'>
         {isJoinBoxOpen &&
          <div onClick={()=>{setJoinBoxOpen(false)}} className="fixed z-50 top-0 left-0 w-screen flex bg-black bg-opacity-30 flex-col justify-center items-center min-h-screen">
@@ -781,7 +864,7 @@ const ParticipantsSidebar = ({room, setSelectedOptionChat, isOpen, closeSidebar,
 
   </div>
 }
-function CustomFullScreenAgoraVideo({ audioTrack, videoTrack, isUser, name, isVideoEnabled=true, isAudioEnabled=true }) {
+function CustomFullScreenAgoraVideo({showControl=true, audioTrack, videoTrack, isUser, name, isVideoEnabled=true, isAudioEnabled=true }) {
 
   const videoRef = useRef(null);
     useEffect(() => {
@@ -814,7 +897,7 @@ function CustomFullScreenAgoraVideo({ audioTrack, videoTrack, isUser, name, isVi
       )}
 
       <div className="w-full mx-2  py-2 flex items-center justify-between">
-        {!isUser && (
+        {(!isUser && showControl )&& (
           <div className="ml-2 flex items-center space-x-4">
             <div>
               { !isVideoEnabled ? (
@@ -1131,12 +1214,16 @@ function VideoControl({ setting, isUser = false, name = "Ucok GTA" }) {
 
 
 
-const RoomScreen= ({userSetting={},isPermissionGranted,unreadMessages,setUnreadMessages,me,room, onSelectChat, selectedChatValue, chatOptions,roomId ,setRoom, rtcToken, remoteStreamData = {},localStreams ,participants = []}) => {
+const RoomScreen= ({screenStreamSetting={},startScreenStream, stopScreenStream,isShareScreen,remoteScreenStream,screenStream,userSetting={},isPermissionGranted,unreadMessages,setUnreadMessages,me,room, onSelectChat, selectedChatValue, chatOptions,roomId ,setRoom, rtcToken, remoteStreamData = {},localStreams ,participants = []}) => {
   const [showBottomNavbar, setShowBottomNavbar] = useState(false);
   const [timeOutId, setTimeOutId] = useState(null)
   const [isLandscape, setIsLandscape] = useState(false);
+  const [expandMiniVideo, setExpandMiniVideo] = useState(true);
   useEffect(()=>{
-    if(participants.length == 1){
+    if(isShareScreen && (screenStream || remoteScreenStream)){
+      changeLayoutMode(modes.screenShare)
+    }
+    else if(participants.length == 1){
       changeLayoutMode(modes.peerToPeer)
     }
     else if(participants.length > 0){
@@ -1146,7 +1233,7 @@ const RoomScreen= ({userSetting={},isPermissionGranted,unreadMessages,setUnreadM
     else{
       changeLayoutMode(modes.onlyMe)
     }
-  },[participants]);
+  },[participants, isShareScreen, remoteScreenStream, screenStream]);
   useEffect(()=>{
     function detectOrientation() {
       if (window.innerHeight > window.innerWidth) {
@@ -1269,31 +1356,68 @@ const RoomScreen= ({userSetting={},isPermissionGranted,unreadMessages,setUnreadM
         );
         
       case modes.screenShare:
-        return <div className="w-screen flex flex-col justify-center h-full items-center max-h-full">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-4">
-        <div className="w-[120vh] h-auto max-w-[95%] text-white">
-              <CustomAgoraLocalVideo audioTrack={localStreams.audioTrack} 
+        return <div className="w-screen flex flex-col  justify-center h-full items-center max-h-full">
+
+        <div className="fixed z-10 flex flex-col space-y-1 max-h-[80vh]  rounded-md  bg-slate-950 items-center top-20 right-4 px-1 py-2">
+          { expandMiniVideo && <div onClick={()=> {
+            console.log('kena tap')
+          }} className="w-full   flex flex-col ">
+            <MdOutlineExpandLess onClick={()=>{
+              console.log('perkecil video')
+              setExpandMiniVideo(false)
+            }} color="white" className="ml-auto mr-1 w-6 h-6 "/>
+          </div> }
+
+          { !expandMiniVideo && <div onClick={()=> {
+            console.log('kena tap')
+          }} className="w-full  flex flex-col ">
+            <MdOutlineExpandMore onClick={()=>{
+              console.log('perkecil video')
+              setExpandMiniVideo(true)
+            }} color="white" className="ml-auto  w-6 h-6 "/>
+          </div> }
+
+          <div className="flex flex-col items-center space-y-1 overflow-y-auto">
+          {expandMiniVideo && <div className={` bottom-20 right-4 border-4 border-teal-700 min-w-[25vw] w-[25vw] max-w-[25vw] ${isLandscape? 'aspect-[16/9]' : 'aspect-[9/16]'}`}>
+            <CustomFullScreenAgoraLocalVideo audioTrack={localStreams.audioTrack} 
               videoTrack={localStreams.videoTrack} isUser={true}
-              name={"Ucok"}
-              isAudioEnabled= {userSetting.isAudioEnabled} // atur ini
+              name={''}
+              showControl={false}
+              isAudioEnabled= {userSetting.isAudioEnabled} 
               isVideoEnabled = {userSetting.isVideoEnabled}
               />
-        </div>
-        {
-          participants.map((participant)=>{
-            return <div className="w-[80vh] lg:w-[100vh] mx-auto h-auto max-w-[85%] md:max-w-[95%] text-white"
-            key={participant.participantId}>
-              <CustomAgoraVideo 
-            audioTrack={participant.audioTrack}
-            videoTrack={participant.videoTrack}
-            isUser={false}
-            name={room? room.participants[participant.participantId]? room.participants[participant.participantId].guestId.username : 'loading...' : 'loading...'}
-            isAudioEnabled={participant.isAudioEnabled}
-            isVideoEnabled={participant.isVideoEnabled}/>
+            </div>}
+          {expandMiniVideo && participants.map((participant)=>{
+            
+            return (
+              <div className={` bottom-20 right-4 border-4 border-blue-700 min-w-[25vw] w-[25vw] max-w-[25vw] ${isLandscape? 'aspect-[16/9]' : 'aspect-[9/16]'}`}>
+            <CustomFullScreenAgoraLocalVideo audioTrack={participant.audioTrack} 
+              videoTrack={participant.videoTrack} isUser={false}
+              name={''}
+              showControl={false}
+              isAudioEnabled= {participant.isAudioEnabled} 
+              isVideoEnabled = {participant.isVideoEnabled}
+              />
             </div>
-          })
-        }
+            )
+            
+          })}
+          </div>
+
+          
         </div>
+            <div className="w-full h-full"
+            key={'abcdefg'}>
+              <CustomFullScreenAgoraVideo 
+            audioTrack={null}
+            videoTrack={screenStream? screenStream : remoteScreenStream}
+            isUser={false}
+            name={'Screen Share'}
+            showControl={false}
+            isAudioEnabled={true}
+            isVideoEnabled={true}/>
+            </div>
+        
       </div>;
       case modes.allParticipants:
         return (
@@ -1396,7 +1520,11 @@ const RoomScreen= ({userSetting={},isPermissionGranted,unreadMessages,setUnreadM
             <FaMicrophoneSlash onClick={userSetting.hidupkanAudio} color="red" className="ml-4 w-6 h-auto" />
           )}
         </div>
-      <MdScreenShare color="#00A8FF" className="w-7 h-7 "/>
+      {isShareScreen && screenStream? <div onClick={()=>{
+        stopScreenStream()
+      }} className="flex items-center justify-center p-2 bg-teal-700"> <MdScreenShare color="#00A8FF" className="w-7 h-7 "/></div> : <MdScreenShare onClick={()=>{
+        startScreenStream()
+      }} color="#00A8FF" className="w-7 h-7 "/>}
       <div className="relative"  onClick={()=>{
         setOpenSidebar(true);
         setUnreadMessages(0)
