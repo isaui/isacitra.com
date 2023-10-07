@@ -343,7 +343,7 @@ const JoinPage = () =>{
               : participant
           );
            })
-           notify()
+           notify();
         });
       
         // Memasang event listener ketika pengguna meninggalkan sesi
@@ -352,17 +352,54 @@ const JoinPage = () =>{
           setParticipants((prevParticipants) =>
             prevParticipants.filter((participant) => participant.participantId !== user.uid)
           );
-          const res = await axios.post('http://localhost:3001/video/removeFromRoom', {"roomId":roomId, "participantId": user.uid})
-          //roomChannel.unsubscribe('update-room');
-          //edit this
-          console.log("RES DISINI")
-          console.log("ADA YG LEFT")
-          notify()
-         // 
+          notify();
         });
 
         agoraClient.on("user-joined", async(user)=>{
-          console.log('ada yang join: ',user)
+          console.log('join: ',user)
+          setParticipants((prevParticipants) => {
+            // Memeriksa apakah partisipan sudah ada dalam daftar
+            const existingParticipant = prevParticipants.find(
+              (participant) => participant.participantId === user.uid
+            );
+    
+            // Jika belum ada, tambahkan partisipan baru
+            if (!existingParticipant) {
+              return [
+                ...prevParticipants,
+                {
+                  user: user,
+                  participantId: user.uid,
+                  data: user.dataChannels,
+                  videoTrack: user.videoTrack,
+                  audioTrack: user.audioTrack,
+                  isAudioEnabled: user.hasAudio,
+                  isVideoEnabled: user.hasVideo,
+                },
+              ];
+            }
+    
+            // Jika sudah ada, perbarui data partisipan yang ada
+            return prevParticipants.map((participant) =>
+              participant.participantId === user.uid
+                ? {
+                    ...participant,
+                    videoTrack:  user.videoTrack,
+                    audioTrack:  user.audioTrack ,
+                    isAudioEnabled: user.hasAudio,
+                    isVideoEnabled: user.hasVideo,
+                  }
+                : participant
+            );
+          });
+          notify();
+        })
+
+        agoraClient.on('user-info-updated', async(user)=>{
+          console.log('user info updated ',user)
+        })
+        agoraClient.on('published-user-list', async (user)=>{
+          console.log('published user list ',user)
         })
 
         // Bergabung ke sesi Agora dengan token dan ID yang sesuai
@@ -377,14 +414,25 @@ const JoinPage = () =>{
             audioTrack: tracks[0], // Tentukan trek audio yang sesuai
             videoTrack: tracks[1], // Tentukan trek video yang sesuai
           });
-      
-          setFirstTime(false);
         }
       };
       
     if(ready && tracks){
       setIsPermissionGranted(true)
       init()
+      if(isAudioEnabled){
+        hidupkanAudio()
+      }
+      else{
+        matikanAudio()
+      }
+      if(isVideoEnabled){
+        hidupkanVideo()
+      }
+      else{
+        matikanVideo()
+      }
+      
     }
       
   
