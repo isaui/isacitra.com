@@ -9,6 +9,7 @@ import { CertificateContainer, certificationArray } from "../certificate/Certifi
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import CourseGreeting from "../course_greeting/CourseGreeting";
+import VideoGreeting from "../greeting/VideoGreeting.jsx"
 export default function () {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -34,6 +35,7 @@ export default function () {
       <Greeting/>
       <ArticleSlider isLoading={loading} posts={posts} heading={'Artikel Aku'}/>
       <CourseGreeting/>
+      <VideoGreeting/>
       <CertificateContainer data={certificationArray}/>
       </div>
       
