@@ -3,7 +3,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 import Footer from "../footer/Footer";
-import { useParams } from 'react-router-dom';
+import { useNavigation, useParams } from 'react-router-dom';
 import Loading from "../loading/Loading";
 import LandingImage from "../../assets/new_meet/zoomcreate.svg";
 import Scheduled from "../../assets/meet_status/scheduled.svg";
@@ -12,7 +12,7 @@ import Error from '../../assets/error/error.svg'
 import ErrorPage from "../error/ErrorPage";
 import CountdownTimer from "../time_counter/TimeCounter";
 import { AiFillCloseCircle, AiFillMessage, AiFillSetting, AiFillVideoCamera, AiOutlineDotChart } from "react-icons/ai";
-import { FaMicrophone, FaMicrophoneSlash, FaRegWindowClose, FaRegWindowMinimize, FaUser, FaVideo, FaVideoSlash } from "react-icons/fa";
+import { FaDoorOpen, FaMicrophone, FaMicrophoneSlash, FaRegWindowClose, FaRegWindowMinimize, FaUser, FaVideo, FaVideoSlash } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import mongoose, { Mongoose, set } from "mongoose";
 import { MdAddReaction, MdChatBubble, MdContacts, MdMoreVert, MdOutlineExpand, MdOutlineExpandCircleDown, MdOutlineExpandLess, MdOutlineExpandMore, MdScreenShare, MdSend, MdSettings } from "react-icons/md";
@@ -1230,6 +1230,7 @@ const RoomScreen= ({screenStreamSetting={},startScreenStream, stopScreenStream,i
   const [timeOutId, setTimeOutId] = useState(null)
   const [isLandscape, setIsLandscape] = useState(false);
   const [expandMiniVideo, setExpandMiniVideo] = useState(true);
+  const navigate = useNavigation()
   useEffect(()=>{
     if(isShareScreen && (screenStream || remoteScreenStream)){
       changeLayoutMode(modes.screenShare)
@@ -1488,8 +1489,13 @@ const RoomScreen= ({screenStreamSetting={},startScreenStream, stopScreenStream,i
     </div>}
 
     {/* Setting & Participants*/}
-    <div className="px-2 py-2 rounded-md z-10 bg-slate-800 fixed top-2 left-2">
-      <MdSettings color="#00A8FF" className=" w-6 h-6 "/>
+    <div onClick={async (e)=>{
+      e.stopPropagation()
+      await agoraClient.leave()
+      navigate('/video');
+      
+    }} className="px-2 py-2 rounded-md z-10 bg-slate-800 fixed top-2 left-2">
+      <FaDoorOpen color="#00A8FF" className=" w-6 h-6 "/>
     </div>
     <div onClick={(e)=>{
         e.stopPropagation();
