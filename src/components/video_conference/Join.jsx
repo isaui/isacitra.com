@@ -501,19 +501,21 @@ const JoinPage = () =>{
       
     if(ready && tracks){
       setIsPermissionGranted(true)
-      init()
-      if(isAudioEnabled){
-        hidupkanAudio()
-      }
-      else{
-        matikanAudio()
-      }
-      if(isVideoEnabled){
-        hidupkanVideo()
-      }
-      else{
-        matikanVideo()
-      }
+      init().then((res)=>{
+        if(isAudioEnabled){
+          hidupkanAudio()
+        }
+        else{
+          matikanAudio()
+        }
+        if(isVideoEnabled){
+          hidupkanVideo()
+        }
+        else{
+          matikanVideo()
+        }
+      })
+      
       
     }
       
