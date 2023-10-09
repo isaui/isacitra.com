@@ -1492,7 +1492,7 @@ const RoomScreen= ({screenStreamSetting={},startScreenStream, stopScreenStream,i
     <div onClick={async (e)=>{
       e.stopPropagation()
       await agoraClient.leave()
-      navigate('/video');
+      navigate('/video', {replace:true});
       
     }} className="px-2 py-2 rounded-md z-10 bg-slate-800 fixed top-2 left-2">
       <FaDoorOpen color="#00A8FF" className=" w-6 h-6 "/>
