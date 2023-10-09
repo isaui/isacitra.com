@@ -99,6 +99,7 @@ const JoinPage = () =>{
     const [screenStream, setScreenStream] = useState(null);
     const [remoteScreenStream, setRemoteScreenStream] = useState(null);
     const [screenClient, setScreenClient] = useState(null)
+    const [setup,setSetup] = useState(false)
 
     const handleStartShareScreen = async () =>{
       console.log('mencoba share screen....')
@@ -312,6 +313,25 @@ const JoinPage = () =>{
         setParticipants(newParticipants) 
    }
     },[notifier])
+
+    useEffect(()=>{
+      if(setup){
+        if(isVideoEnabled){
+          hidupkanVideo()
+        }
+        else{
+          matikanVideo()
+        }
+        if(isAudioEnabled){
+          hidupkanAudio()
+        }
+        else{
+          matikanAudio()
+        }
+        
+      }
+      setSetup(false)
+    },[setup] )
     useEffect(()=>{
       if(!me) {
         return
@@ -502,18 +522,7 @@ const JoinPage = () =>{
     if(ready && tracks){
       setIsPermissionGranted(true)
       init().then((res)=>{
-        if(isAudioEnabled){
-          hidupkanAudio()
-        }
-        else{
-          matikanAudio()
-        }
-        if(isVideoEnabled){
-          hidupkanVideo()
-        }
-        else{
-          matikanVideo()
-        }
+       setSetup(true)
       })
       
       
