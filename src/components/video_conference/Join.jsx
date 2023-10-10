@@ -3,7 +3,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 import Footer from "../footer/Footer";
-import { useNavigation, useParams } from 'react-router-dom';
+import { useNavigate, useNavigation, useParams } from 'react-router-dom';
 import Loading from "../loading/Loading";
 import LandingImage from "../../assets/new_meet/zoomcreate.svg";
 import Scheduled from "../../assets/meet_status/scheduled.svg";
@@ -203,11 +203,11 @@ const JoinPage = () =>{
 
        const {room:newRoom,roomId:remoteRoomId} = message.data;
        if(roomId != remoteRoomId){
-        console.log("room yang diupdate bukan room saat ini")
+        console.log("room yang diupdate bukan room saat ini") // (chat.receiver == (me._id??'abcdefghijklmn'))
         return
        }
        const prevRoom = room;
-       const unreadMessagesCounter = newRoom.chats.length - (prevRoom == null ? 0 : prevRoom.chats.length);
+       const unreadMessagesCounter = newRoom.chats.filter((chat)=> (chat.receiver == null || chat.receiver == "all" || chat.receiver == (me._id??'abcdefghijklmn') )).length - (prevRoom == null ? 0 : prevRoom.chats.filter((chat)=> (chat.receiver == null || chat.receiver == "all" || chat.receiver == (me._id??'abcdefghijklmn') )).length);
        if(newRoom.chats[newRoom.chats.length - 1].sender != (!me? '': me._id)){
         setUnreadMessages(prev => unreadMessagesCounter  + prev)
        }
@@ -1230,7 +1230,7 @@ const RoomScreen= ({screenStreamSetting={},startScreenStream, stopScreenStream,i
   const [timeOutId, setTimeOutId] = useState(null)
   const [isLandscape, setIsLandscape] = useState(false);
   const [expandMiniVideo, setExpandMiniVideo] = useState(true);
-  const navigate = useNavigation()
+  const navigate = useNavigate()
   useEffect(()=>{
     if(isShareScreen && (screenStream || remoteScreenStream)){
       changeLayoutMode(modes.screenShare)
@@ -1495,7 +1495,7 @@ const RoomScreen= ({screenStreamSetting={},startScreenStream, stopScreenStream,i
       navigate('/video', {replace:true});
       
     }} className="px-2 py-2 rounded-md z-10 bg-slate-800 fixed top-2 left-2">
-      <FaDoorOpen color="#00A8FF" className=" w-6 h-6 "/>
+      <FaDoorOpen color="red" className=" w-6 h-6 "/>
     </div>
     <div onClick={(e)=>{
         e.stopPropagation();
