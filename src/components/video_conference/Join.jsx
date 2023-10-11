@@ -215,7 +215,7 @@ const JoinPage = () =>{
         return
        }
        const prevRoom = room;
-       const unreadMessagesCounter = newRoom.chats.filter((chat)=> (chat.receiver == null || chat.receiver == "all" || ( checkIsUserExist(chat.sender) && chat.receiver == (me._id??'abcdefghijklmn')) )).length - (prevRoom == null ? 0 : prevRoom.chats.filter((chat)=> (chat.receiver == null || chat.receiver == "all" || ( checkIsUserExist(chat.sender) && chat.receiver == (me._id??'abcdefghijklmn')) )).length);
+       const unreadMessagesCounter = newRoom.chats.filter((chat)=> ((chat.receiver == null && chat.sender !== me._id )|| (chat.receiver == "all" && chat.sender !== me._id) || ( checkIsUserExist(chat.sender) && chat.receiver == (me._id??'abcdefghijklmn')) )).length - (prevRoom == null ? 0 : prevRoom.chats.filter((chat)=> ((chat.receiver == null && chat.sender !== me._id )|| (chat.receiver == "all" && chat.sender !== me._id) || ( checkIsUserExist(chat.sender) && chat.receiver == (me._id??'abcdefghijklmn')) )).length);
        if(newRoom.chats[newRoom.chats.length - 1].sender != (!me? '': me._id)){
         setUnreadMessages(prev => unreadMessagesCounter  + prev)
        }
