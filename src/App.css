@@ -97,7 +97,6 @@ body{
 }
 .article img {
   @apply w-full;
-  @apply aspect-video;
   @apply md:mx-auto;
   @apply my-3;
   @apply rounded-lg;
