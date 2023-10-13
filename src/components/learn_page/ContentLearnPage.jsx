@@ -760,8 +760,8 @@ const NotesPage = ({matkul, activeMateri, activeChapter }) => {
             <hr className="border-2 border-[#1D5B79] my-2 rounded-full" />
         </div>
         {
-            note.thumbnail.trim() !== '' && <div className="w-full article px-6 md:px-3 mx-auto text-[#9ca3af] my-4">
-            {note.thumbnail != '' && <><img  className='article rounded-lg 'src={note.thumbnail} alt="" /></>}
+            note.thumbnail.trim() !== '' && <div className="w-full  px-6 md:px-3 mx-auto text-[#9ca3af] my-4">
+            {note.thumbnail != '' && <><img  className='my-3 w-full h-auto rounded-lg 'src={note.thumbnail} alt="" /></>}
         </div>
         }
         
