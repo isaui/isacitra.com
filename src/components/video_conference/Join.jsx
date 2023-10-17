@@ -213,6 +213,7 @@ const JoinPage = () =>{
 
     //console.log(participants)
     //console.log('apa isinya? ',room)
+    
     const requestPermission = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
@@ -279,12 +280,12 @@ const JoinPage = () =>{
         return
        }
        const prevRoom = room;
-       const unreadMessagesCounter = newRoom.chats.filter((chat)=> ((chat.receiver == null && chat.sender !== me._id )|| (chat.receiver == "all" && chat.sender !== me._id) || ( checkIsUserExist(chat.sender) && chat.receiver == (me._id??'abcdefghijklmn')) )).length - (prevRoom == null ? 0 : prevRoom.chats.filter((chat)=> ((chat.receiver == null && chat.sender !== me._id )|| (chat.receiver == "all" && chat.sender !== me._id) || ( checkIsUserExist(chat.sender) && chat.receiver == (me._id??'abcdefghijklmn')) )).length);
+       const unreadMessagesCounter = newRoom.chats.filter((chat)=> ((chat.receiver == null && chat.sender != me?._id  )|| (chat.receiver == "all" && chat.sender !== me?._id) || ( checkIsUserExist(chat.sender) && chat.receiver == (me._id??'abcdefghijklmn')) )).length - (prevRoom == null ? 0 : prevRoom.chats.filter((chat)=> ((chat.receiver == null && chat.sender != me?._id )|| (chat.receiver == "all" && chat.sender !== me?._id) || ( checkIsUserExist(chat.sender) && chat.receiver == (me?._id??'abcdefghijklmn')) )).length);
        try {
         
         if(newRoom.chats.length >= 1){
           if(newRoom.chats[newRoom.chats.length - 1].sender != (!me? '': me._id)){
-            setUnreadMessages(prev => unreadMessagesCounter  + prev)
+            setUnreadMessages(prev => unreadMessagesCounter)
            }
         }
        } catch (error) {
@@ -353,17 +354,6 @@ const JoinPage = () =>{
       getMediaStream();
     }, [isAudioEnabled, isVideoEnabled, me, updatePermissionStatus]);
     
-    useEffect(()=>{
-      const cleanUpUser = async () => {
-        const res = await axios.post('http://localhost:3001/video/removeFromRoom', {"roomId":roomId, "participantId": me? me._id : 'x'})
-        // edit this
-      }
-      window.addEventListener('unload', cleanUpUser)
-      //window.addEventListener('')
-      return () => {
-        window.removeEventListener('unload', cleanUpUser)
-      }
-    },[])
 
     useEffect(()=>{
       if(participants){
@@ -412,16 +402,14 @@ const JoinPage = () =>{
       setSetup(false)
     },[setup] )
     useEffect(()=>{
+      if(! isPermissionGranted){
+        requestPermission()
+      }
       if(!me) {
         return
       }
       
       console.log('start my journey...')
-     // console.log('ready ? ', ready);
-     // console.log('tracks ?', tracks)
-      if(! isPermissionGranted){
-        requestPermission()
-      }
       
       const init = async () => {
         //await agoraClient.leave()
@@ -600,6 +588,7 @@ const JoinPage = () =>{
         } catch (error) {
           console.log(error)
         }
+        
         let videoTrack = null;
         try {
           videoTrack = await AgoraRTC.createCameraVideoTrack();
@@ -608,16 +597,20 @@ const JoinPage = () =>{
         } catch (error) {
           console.log(error)
         }
+        
         try {
           console.log('ini audio track: ' , audioTrack);
           console.log('ini video track: ', videoTrack);
-          await agoraClient.publish(audioTrack, videoTrack);
+          console.log('Ini audio saya: ', audioTrack, ' Ini video saya: ', videoTrack)
+          await agoraClient.publish(audioTrack);
+          await agoraClient.publish(videoTrack);
           setLocalStreams({
             audioTrack: audioTrack,
             videoTrack: videoTrack
           })
           console.log('aku disini kawannn')
         } catch (error) {
+          console.log('WADUH ERROR BRO')
           console.log(error)
         }
         // Memublikasikan trek audio dan video lokal
@@ -664,7 +657,7 @@ const matikanVideo = async () => {
     }
     setIsVideoEnabled(false)
   //  setUpdatePermissionStatus(prev => !prev);
-  publishController(me, 'VIDEO', false)
+    publishController(me, 'VIDEO', false)
 }
 
 const hidupkanVideo = async () => {
@@ -753,7 +746,7 @@ const matikanAudio= async () =>{
     }
      setIsAudioEnabled(false)
     // setUpdatePermissionStatus(prev => !prev);
-    publishController(me, 'AUDIO', false)
+   publishController(me, 'AUDIO', false)
 }
 const publishController = async (isJoined, type, action) =>{
   if(!isJoined){
@@ -800,7 +793,7 @@ const hidupkanAudio= async () => {
     }
      setIsAudioEnabled(true)
     // setUpdatePermissionStatus(prev => !prev);
-    publishController(me, 'AUDIO', true)
+   publishController(me, 'AUDIO', true)
 }
 const onSelectChat = (id) => {
   setSelectedOptionChat(id)
@@ -1426,6 +1419,7 @@ const RoomScreen= ({setUpdatePermissionStatus,setIsPermissionGranted,screenStrea
   const [expandMiniVideo, setExpandMiniVideo] = useState(true);
   const [isReactionModalOpen, setReactionModalOpen] = useState(false)
   const navigate = useNavigate()
+  console.log('ini aku: ',me)
   const getCameraPermission = async () => {
     if(isPermissionGranted){
       return
