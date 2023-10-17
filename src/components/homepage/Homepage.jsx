@@ -35,7 +35,9 @@ export default function () {
       <Greeting/>
       <ArticleSlider isLoading={loading} posts={posts} heading={'Artikel Aku'}/>
       <CourseGreeting/>
+      <hr className="mx-auto border border-[#0a88ff] opacity-20 border-spacing-1 border-dashed w-[100vw] max-w-[1240px]"/>
       <VideoGreeting/>
+      <hr className="mb-12 mt-6 mx-auto border border-[#0a88ff] opacity-20 border-spacing-1 border-dashed w-[100vw] max-w-[1240px]"/>
       <CertificateContainer data={certificationArray}/>
       </div>
       
