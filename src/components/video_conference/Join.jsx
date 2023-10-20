@@ -128,6 +128,175 @@ const ReactionPopUp = ({onClose,room, me, setRoom}) => {
   );
 }
 
+const LocalSettingDropDown = ({userId, onClose ,setLocalMutedParticipantsAudio,setLocalMutedParticipantsVideo ,localMutedParticipantsAudio, localMutedParticipantsVideo,participants,setParticipants }) => {
+  const dropdownRef = useRef(null);
+  const handleClickOutside = (event) => {
+    //console.log('here')
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      onClose();
+    }
+  };
+
+  
+  const muteAudio = async (userId) => {
+    //console.log(participants)
+    const newParticipants = [...participants]
+    const targetUser = newParticipants.find(participant => participant.participantId == userId);
+    if(!targetUser){
+        return toast.error('Terjadi kesalahan dalam me-mute audio', {autoClose:2000});
+    }
+    //console.log('ini dia remoteUser: ', agoraClient.remoteUsers)
+    const userToMute = agoraClient.remoteUsers.find(user => user.uid == userId) ?? targetUser.user;
+    if(userToMute && targetUser){
+      try {
+        await agoraClient.unsubscribe(userToMute, "audio")
+        targetUser.audioTrack = null;
+        setParticipants(newParticipants);
+        setLocalMutedParticipantsAudio(prev => [...prev, userId])
+        return toast.success('Berhasil me-mute audio', {autoClose:2000})
+      } catch (error) {
+        console.log("error", error)
+        return toast.error('Terjadi kesalahan dalam me-mute audio', {autoClose:2000});
+      }
+    }
+  }
+
+ const unMuteAudio =  async (userId) => {
+    const newParticipants = [...participants]
+    const targetUser = newParticipants.find(participant => participant.participantId == userId);
+    if(!targetUser){
+        return toast.error('Terjadi kesalahan dalam unmute audio', {autoClose:2000});
+    }
+    const userToUnMute = agoraClient.remoteUsers.find(user => user.uid == userId) ?? targetUser.user;
+    if(userToUnMute && targetUser){
+      try {
+        const res = await agoraClient.subscribe(userToUnMute, "audio");
+        if(res){
+          targetUser.audioTrack = res;
+          setParticipants(newParticipants);
+          setLocalMutedParticipantsAudio(prev => prev.filter(id => id != userId));
+          return toast.success('Berhasil unmute audio', {autoClose:2000})
+        }
+        return toast.error('Terjadi kesalahan dalam unmute audio', {autoClose:2000});
+
+      } catch (error) {
+        console.log("error", error)
+        return toast.error('Terjadi kesalahan dalam unmute audio', {autoClose:2000});
+      }
+    }
+  }
+
+  const muteVideo = async (userId) => {
+    //console.log(participants)
+    const newParticipants = [...participants]
+    const targetUser = newParticipants.find(participant => participant.participantId == userId);
+    if(!targetUser){
+        return toast.error('Terjadi kesalahan dalam me-mute video', {autoClose:2000});
+    }
+    console.log('ini dia remoteUser: ', agoraClient.remoteUsers)
+    const userToMute = agoraClient.remoteUsers.find(user => user.uid == userId) ?? targetUser.user;
+    if(userToMute && targetUser){
+      try {
+        await agoraClient.unsubscribe(userToMute, "video")
+        targetUser.videoTrack = null;
+        setParticipants(newParticipants);
+        setLocalMutedParticipantsVideo(prev => [...prev, userId])
+        return toast.success('Berhasil me-mute video', {autoClose:2000})
+      } catch (error) {
+        console.log("error", error)
+        return toast.error('Terjadi kesalahan dalam me-mute video', {autoClose:2000});
+      }
+    }
+  }
+
+  const unMuteVideo = async (userId) => {
+    const newParticipants = [...participants]
+    const targetUser = newParticipants.find(participant => participant.participantId == userId);
+    if(!targetUser){
+        return toast.error('Terjadi kesalahan dalam unmute video', {autoClose:2000});
+    }
+    const userToUnMute = agoraClient.remoteUsers.find(user => user.uid == userId) ?? targetUser.user;
+    if(userToUnMute && targetUser){
+      try {
+        const res = await agoraClient.subscribe(userToUnMute, "video");
+        if(res){
+          targetUser.videoTrack = res;
+          setParticipants(newParticipants);
+          setLocalMutedParticipantsVideo(prev => prev.filter(id => id != userId));
+          return toast.success('Berhasil unmute video', {autoClose:2000})
+        }
+        return toast.error('Terjadi kesalahan dalam unmute video', {autoClose:2000});
+
+      } catch (error) {
+        console.log("error", error)
+        return toast.error('Terjadi kesalahan dalam unmute video', {autoClose:2000});
+      }
+    }
+  }
+
+  
+  
+  useEffect(() => {
+    // Tambahkan event listener ketika komponen sudah ter-mount
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // Hapus event listener ketika komponen akan di-unmount
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+  const findParticipantInList = (userId, mode) => {
+    if(mode == 'VIDEO'){
+      const find = localMutedParticipantsVideo.find((id)=> id === userId);
+      if(!find){
+        return false;
+      }
+      return true;
+    }
+    else if(mode == 'AUDIO'){
+      const find = localMutedParticipantsAudio.find((id)=> id === userId);
+      if(!find){
+        return false;
+      }
+      return true;
+    }
+  }
+  return (
+    <div
+          className="origin-top-right absolute right-0 mt-4 w-40 rounded-md shadow-lg bg-blue-950 ring-1 ring-black ring-opacity-5"
+          role="menu"
+          ref={dropdownRef}
+          aria-orientation="vertical"
+          aria-labelledby="user-dropdown"
+        >
+          <div className="py-1" role="none">
+            <button
+             role="menuitem"
+             onClick={()=>{
+              if(!findParticipantInList(userId, 'AUDIO')){
+                return muteAudio(userId)
+              }
+              return unMuteAudio(userId)
+             }}
+             className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">
+              <h1>{findParticipantInList(userId, 'AUDIO')? 'Unmute audio' : 'Mute audio'}</h1>
+            </button>
+            <button
+             role="menuitem"
+             onClick={()=>{
+              if(!findParticipantInList(userId, 'VIDEO')){
+                return muteVideo(userId)
+              }
+              return unMuteVideo(userId)
+             }}
+             className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">
+              <h1>{findParticipantInList(userId, 'VIDEO')? 'Unmute video' : 'Mute video'}</h1>
+            </button>
+          </div>
+        </div>
+  )
+}
+
 const JoinPage = () =>{
     const {id:roomId} = useParams();
     const user = useSelector((state) => state.auth.user);
@@ -164,6 +333,9 @@ const JoinPage = () =>{
     const [setup,setSetup] = useState(false)
     const [isCameraGranted, setCameraGranted] = useState(false);
     const [isAudioGranted, setAudioGranted] = useState(false);
+
+    const [localMutedParticipantsAudio, setLocalMutedParticipantsAudio] = useState([]);
+    const [localMutedParticipantsVideo, setLocalMutedParticipantsVideo] = useState([]);
 
     const handleStartShareScreen = async () =>{
       console.log('mencoba share screen....')
@@ -210,6 +382,7 @@ const JoinPage = () =>{
       screenClient: screenClient,
       remoteScreenStream: remoteScreenStream
     }
+
 
     //console.log(participants)
     //console.log('apa isinya? ',room)
@@ -596,14 +769,23 @@ const JoinPage = () =>{
           setCameraGranted(true)
         } catch (error) {
           console.log(error)
+          console.log('gw error disini bener dehh')
         }
         
         try {
           console.log('ini audio track: ' , audioTrack);
           console.log('ini video track: ', videoTrack);
           console.log('Ini audio saya: ', audioTrack, ' Ini video saya: ', videoTrack)
-          await agoraClient.publish(audioTrack);
-          await agoraClient.publish(videoTrack);
+          try {
+            await agoraClient.publish(audioTrack);
+          } catch (error) {
+            console.log('Terdapat kesalahan dalam melakukan publish terhadap audio')
+          }
+          try {
+            await agoraClient.publish(videoTrack);
+          } catch (error) {
+            console.log('Terdapat kesalahan dalam melakukan publish terhadap video')
+          }
           setLocalStreams({
             audioTrack: audioTrack,
             videoTrack: videoTrack
@@ -755,10 +937,14 @@ const publishController = async (isJoined, type, action) =>{
   if(localStreams == null){
     return
   }
+
   if(type ===  'VIDEO'){
     const videoStream = localStreams.videoTrack;
     if(action && !videoStream ){
       try {
+      //if(agoraClient.connectionState !== 'CONNECTED'){
+        //await agoraClient.join(agoraSetting.AGORA_APP_ID, roomId, rtcToken, me._id);
+       // }
        const vd = await AgoraRTC.createCameraVideoTrack();
         await  agoraClient.publish(vd)
         setLocalStreams( {audioTrack:localStreams.audioTrack,videoTrack:vd})
@@ -771,6 +957,9 @@ const publishController = async (isJoined, type, action) =>{
     const audioStream = localStreams.audioTrack;
     if(action && !audioStream ){
       try {
+        //if(agoraClient.connectionState !== 'CONNECTED'){
+        //  await agoraClient.join(agoraSetting.AGORA_APP_ID, roomId, rtcToken, me._id);
+         // }
        const mc = await AgoraRTC.createMicrophoneAudioTrack();
         await  agoraClient.publish(mc)
         setLocalStreams( {videoTrack:localStreams.videoTrack,audioTrack:mc})
@@ -809,7 +998,13 @@ const userVideoSetting = {
     <div className='mx-auto min-h-screen flex justify-center items-center flex-col min-w-screen   '>
       {loading? <Loading/> :
         screen == 'room' ? <div className="mx-auto min-h-screen  flex justify-center items-center flex-col min-w-screen max-w-screen  ">
-          <RoomScreen setUpdatePermissionStatus={setUpdatePermissionStatus} setIsPermissionGranted={setIsPermissionGranted} startScreenStream={handleStartShareScreen} stopScreenStream={handleCloseShareScreen} isShareScreen={isShareScreen} screenStream={screenStream} remoteScreenStream={remoteScreenStream} screenStreamSetting={userScreenStreamConfig} isPermissionGranted={isPermissionGranted} onSelectChat={onSelectChat} setUnreadMessages={setUnreadMessages} unreadMessages={unreadMessages} chatOptions={['all', ...participants.map((participant)=> participant.participantId)]} selectedChatValue={selectedOptionChat} me={me} room={room} roomId={roomId} setRoom={setRoom} rtcToken={rtcToken} localStreams={localStreams} userSetting={userVideoSetting} remoteStreamData={streamData} participants={participants}/>
+          <RoomScreen
+          setParticipants={setParticipants}
+          setLocalMutedParticipantsAudio={setLocalMutedParticipantsAudio}
+          setLocalMutedParticipantsVideo={setLocalMutedParticipantsVideo}
+          localMutedParticipantsAudio={localMutedParticipantsAudio}
+          localMutedParticipantsVideo={localMutedParticipantsVideo}
+          setUpdatePermissionStatus={setUpdatePermissionStatus} setIsPermissionGranted={setIsPermissionGranted} startScreenStream={handleStartShareScreen} stopScreenStream={handleCloseShareScreen} isShareScreen={isShareScreen} screenStream={screenStream} remoteScreenStream={remoteScreenStream} screenStreamSetting={userScreenStreamConfig} isPermissionGranted={isPermissionGranted} onSelectChat={onSelectChat} setUnreadMessages={setUnreadMessages} unreadMessages={unreadMessages} chatOptions={['all', ...participants.map((participant)=> participant.participantId)]} selectedChatValue={selectedOptionChat} me={me} room={room} roomId={roomId} setRoom={setRoom} rtcToken={rtcToken} localStreams={localStreams} userSetting={userVideoSetting} remoteStreamData={streamData} participants={participants}/>
         </div> :<div className='homepage-content  min-h-screen w-full flex flex-col my-auto items-center max-w-full'>
         {isJoinBoxOpen &&
          <div onClick={()=>{setJoinBoxOpen(false)}} className="fixed z-50 top-0 left-0 w-screen flex bg-black bg-opacity-30 flex-col justify-center items-center min-h-screen">
@@ -978,15 +1173,15 @@ const Sidebar = ({isOpen, closeSidebar, onSelect, options, selectedValue, room, 
 
   </div>
 }
-const ParticipantsSidebar = ({room, setSelectedOptionChat, isOpen, closeSidebar, me, participants=[], openChatSidebar})=>{
-  
+const ParticipantsSidebar = ({room, setParticipants,localMutedParticipantsAudio,localMutedParticipantsVideo,setLocalMutedParticipantsAudio,setLocalMutedParticipantsVideo,setSelectedOptionChat, isOpen, closeSidebar, me, participants=[], openChatSidebar})=>{
+
   return <div onClick={(e)=>{e.stopPropagation()}} className={`flex flex-col min-w-[18rem] relative h-screen w-screen md:max-w-[40%] lg:max-w-[30%] bg-slate-950 `}>
     <div className=" absolute right-0 top-0  my-2 flex items-center justify-between w-full">
       <h1 className=" ml-2 text-white text-2xl">Participants</h1>
       <AiFillCloseCircle onClick={closeSidebar} color="#00A8FF" className="mr-2 w-8 h-8 "/>
     </div>
-    <div className="mt-16 flex flex-col bg-slate-900 overflow-y-auto">
-      <div className= {`mb-auto text-white text-sm w-full py-4  flex items-center`}>
+    <div className="mt-16 flex flex-col bg-slate-900 h-full overflow-y-auto">
+      <div className= {` text-white text-sm w-full py-4  flex items-center`}>
         <div  className={`ml-2 bg-teal-700  w-12 h-12 flex items-center justify-center rounded-full`}>
            {me.username[0]}
         </div>
@@ -1003,32 +1198,68 @@ const ParticipantsSidebar = ({room, setSelectedOptionChat, isOpen, closeSidebar,
       {participants.map((participant)=>{
         const data = room.participants[participant.participantId];
         return (
-          <div className= {`mb-auto text-white text-sm w-full py-4  flex items-center`}>
-        <div  className={`ml-2 bg-teal-700  w-12 h-12 flex items-center justify-center rounded-full`}>
-           {data? data.guestId.username[0] : '?' }
-        </div>
-        <div className="ml-4 flex flex-col items-start space-y-1">
-        <h1 className=" text-sm break-words">
-          {data? data.guestId.username : '...'} 
-        </h1>
-        <div className="text-white bg-blue-400 px-2 py-1 rounded-md text-xs">
-          Guest
-        </div>
-        </div>
-        <div className="flex ml-auto mr-4 items-center space-x-2">
-          <AiFillMessage onClick={()=>{
-            setSelectedOptionChat(participant.participantId)
-            openChatSidebar()
-          }} color="white" className="w-8 h-8"/>
-          <MdMoreVert color="white" className="w-8 h-8"/>
-        </div>
-        </div>
+          <ParticipantSetting key={data? data.guestId : 'abcdefghijklmn'} 
+          data={data}
+          setLocalMutedParticipantsAudio={setLocalMutedParticipantsAudio}
+          setLocalMutedParticipantsVideo={setLocalMutedParticipantsVideo}
+          setSelectedOptionChat={setSelectedOptionChat}
+          openChatSidebar={openChatSidebar}
+          participant={participant}
+          participants={participants}
+          localMutedParticipantsAudio={localMutedParticipantsAudio}
+          localMutedParticipantsVideo={localMutedParticipantsVideo}
+          setParticipants={setParticipants}
+          />
         )
       })}
     </div>
 
   </div>
 }
+
+const ParticipantSetting = ({data, setSelectedOptionChat, openChatSidebar, participant, participants, setParticipants,
+localMutedParticipantsAudio, localMutedParticipantsVideo,
+setLocalMutedParticipantsAudio,setLocalMutedParticipantsVideo})=>{
+  const [isMutedSettingOpen,setIsMutedSettingOpen] = useState(false);
+  return ( 
+  <div className= {`mb-auto text-white text-sm w-full py-4  flex items-center`}>
+  <div  className={`ml-2 bg-teal-700  w-12 h-12 flex items-center justify-center rounded-full`}>
+     {data? data.guestId.username[0] : '?' }
+  </div>
+  <div className="ml-4 flex flex-col items-start space-y-1">
+  <h1 className=" text-sm break-words">
+    {data? data.guestId.username : '...'} 
+  </h1>
+  <div className="text-white bg-blue-400 px-2 py-1 rounded-md text-xs">
+    Guest
+  </div>
+  </div>
+  <div className="relative flex ml-auto mr-4 items-center space-x-2">
+    { isMutedSettingOpen && 
+    <div className="absolute top-0 right-0 z-20">
+      <LocalSettingDropDown 
+    userId={participant? participant.participantId : 'undefined'}
+    onClose={()=>{setIsMutedSettingOpen(false)}}
+    participants={participants}
+    setLocalMutedParticipantsAudio={setLocalMutedParticipantsAudio}
+    setLocalMutedParticipantsVideo={setLocalMutedParticipantsVideo}
+    localMutedParticipantsAudio={localMutedParticipantsAudio}
+    localMutedParticipantsVideo={localMutedParticipantsVideo}
+    setParticipants={setParticipants}
+     />
+    </div>}
+    <AiFillMessage onClick={()=>{
+      setSelectedOptionChat(participant.participantId)
+      openChatSidebar()
+    }} color="white" className="w-8 h-8"/>
+    <MdMoreVert onClick={()=>{
+      setIsMutedSettingOpen(true);
+    }} color="white" className="w-8 h-8"/>
+  </div>
+  </div> )
+
+}
+
 function CustomFullScreenAgoraVideo({showControl=true, audioTrack, videoTrack, isUser, name, isVideoEnabled=true, isAudioEnabled=true }) {
 
   const videoRef = useRef(null);
@@ -1412,7 +1643,7 @@ const getPermission = async () => {
 }
 
 
-const RoomScreen= ({setUpdatePermissionStatus,setIsPermissionGranted,screenStreamSetting={},startScreenStream, stopScreenStream,isShareScreen,remoteScreenStream,screenStream,userSetting={},isPermissionGranted,unreadMessages,setUnreadMessages,me,room, onSelectChat, selectedChatValue, chatOptions,roomId ,setRoom, rtcToken, remoteStreamData = {},localStreams ,participants = []}) => {
+const RoomScreen= ({setParticipants,setLocalMutedParticipantsAudio,setLocalMutedParticipantsVideo,localMutedParticipantsAudio,localMutedParticipantsVideo,setUpdatePermissionStatus,setIsPermissionGranted,screenStreamSetting={},startScreenStream, stopScreenStream,isShareScreen,remoteScreenStream,screenStream,userSetting={},isPermissionGranted,unreadMessages,setUnreadMessages,me,room, onSelectChat, selectedChatValue, chatOptions,roomId ,setRoom, rtcToken, remoteStreamData = {},localStreams ,participants = []}) => {
   const [showBottomNavbar, setShowBottomNavbar] = useState(false);
   const [timeOutId, setTimeOutId] = useState(null)
   const [isLandscape, setIsLandscape] = useState(false);
@@ -1789,6 +2020,11 @@ const RoomScreen= ({setUpdatePermissionStatus,setIsPermissionGranted,screenStrea
         setOpenParticipantsSidebar(false)
         setOpenSidebar(true)
       }}  
+      setParticipants={setParticipants}
+      setLocalMutedParticipantsAudio={setLocalMutedParticipantsAudio}
+      setLocalMutedParticipantsVideo={setLocalMutedParticipantsVideo}
+      localMutedParticipantsAudio={localMutedParticipantsAudio}
+      localMutedParticipantsVideo={localMutedParticipantsVideo}
       setSelectedOptionChat={onSelectChat}
       room={room} participants={participants} me={me} isOpen={openParticipantsSidebar} closeSidebar={()=>{setOpenParticipantsSidebar(false)}}/>}
     </div>}
