@@ -799,6 +799,7 @@ const JoinPage = () =>{
         if(agoraClient.connectionState !== 'CONNECTED'){
           try {
             const res = await agoraClient.join(agoraSetting.AGORA_APP_ID, roomId, rtcToken, me._id);
+            setIsPermissionGranted(true)
             console.log('aku join ', res)
           } catch (error) {
             console.log(error)
