@@ -336,6 +336,8 @@ const JoinPage = () =>{
 
     const [localMutedParticipantsAudio, setLocalMutedParticipantsAudio] = useState([]);
     const [localMutedParticipantsVideo, setLocalMutedParticipantsVideo] = useState([]);
+    console.log('ini list banned video ', localMutedParticipantsVideo)
+    console.log('ini list banned audio ', localMutedParticipantsAudio)
 
     const handleStartShareScreen = async () =>{
       console.log('mencoba share screen....')
@@ -556,6 +558,27 @@ const JoinPage = () =>{
    }
     },[notifier])
 
+    const findParticipantInList = (userId, mode) => {
+      
+      console.log('ini userId terkait ', userId)
+      if(mode == 'VIDEO'){
+        const find = localMutedParticipantsVideo.find((id)=> id === userId);
+        if(!find){
+          return false;
+        }
+        return true;
+      }
+      else if(mode == 'AUDIO'){
+        const find = localMutedParticipantsAudio.find((id)=> id === userId);
+        if(!find){
+          return false;
+        }
+        return true;
+      }
+    }
+
+    
+
     useEffect(()=>{
       if(setup){
         if(isVideoEnabled){
@@ -596,6 +619,8 @@ const JoinPage = () =>{
             user.videoTrack?.play()
             return;
           }
+
+          console.log('SINI SINI SINI')
       
           if (mediaType === "video" || mediaType === "audio") {
             setParticipants((prevParticipants) => {
@@ -612,7 +637,7 @@ const JoinPage = () =>{
                     user: user,
                     participantId: user.uid,
                     data: user.dataChannels,
-                    videoTrack: user.videoTrack,
+                    videoTrack:  user.videoTrack,
                     audioTrack: user.audioTrack,
                     isAudioEnabled: user.hasAudio,
                     isVideoEnabled: user.hasVideo,
@@ -625,8 +650,8 @@ const JoinPage = () =>{
                 participant.participantId === user.uid
                   ? {
                       ...participant,
-                      videoTrack:  user.videoTrack,
-                      audioTrack:  user.audioTrack ,
+                      videoTrack:   user.videoTrack,
+                      audioTrack:  user.audioTrack,
                       isAudioEnabled: user.hasAudio,
                       isVideoEnabled: user.hasVideo,
                     }
@@ -636,10 +661,14 @@ const JoinPage = () =>{
           }
       
           if (mediaType === "audio") {
-             user.audioTrack?.play();
+            if(!findParticipantInList(user.uid, 'AUDIO')){
+              await user.audioTrack?.play();
+            }
           }
           if(mediaType === "video") {
-            user.videoTrack?.play();
+            if(!findParticipantInList(user.uid, 'VIDEO')){
+              await user.videoTrack?.play();
+            }
           }
           notify()
         });
@@ -744,9 +773,11 @@ const JoinPage = () =>{
 
         agoraClient.on('user-info-updated', async(user)=>{
           console.log('user info updated ',user)
+          notify()
         })
         agoraClient.on('published-user-list', async (user)=>{
           console.log('published user list ',user)
+          notify()
         })
 
         // Bergabung ke sesi Agora dengan token dan ID yang sesuai
@@ -824,7 +855,73 @@ const JoinPage = () =>{
   
     }, [me, updatePermissionStatus])
 
+useEffect(()=>{
+  if(!me){
+    return
+  }
+  agoraClient.on("user-published", async (user, mediaType) => {
+    await agoraClient.subscribe(user, mediaType);
+    console.log("subscribe success");
+    if(user.uid.toString().endsWith("-screenshare")){
+      setRemoteScreenStream(user.videoTrack)
+      setIsShareScreen(true)
+      user.videoTrack?.play()
+      return;
+    }
 
+    console.log('SINI SINI SINI')
+
+    if (mediaType === "video" || mediaType === "audio") {
+      setParticipants((prevParticipants) => {
+        // Memeriksa apakah partisipan sudah ada dalam daftar
+        const existingParticipant = prevParticipants.find(
+          (participant) => participant.participantId === user.uid
+        );
+
+        // Jika belum ada, tambahkan partisipan baru
+        if (!existingParticipant) {
+          return [
+            ...prevParticipants,
+            {
+              user: user,
+              participantId: user.uid,
+              data: user.dataChannels,
+              videoTrack: findParticipantInList(user.uid, 'VIDEO')? null : user.videoTrack,
+              audioTrack: findParticipantInList(user.uid, 'AUDIO')? null :user.audioTrack,
+              isAudioEnabled: user.hasAudio,
+              isVideoEnabled: user.hasVideo,
+            },
+          ];
+        }
+
+        // Jika sudah ada, perbarui data partisipan yang ada
+        return prevParticipants.map((participant) =>
+          participant.participantId === user.uid
+            ? {
+                ...participant,
+                videoTrack: findParticipantInList(user.uid, 'VIDEO')? null : user.videoTrack,
+                audioTrack: findParticipantInList(user.uid, 'AUDIO')? null :user.audioTrack,
+                isAudioEnabled: user.hasAudio,
+                isVideoEnabled: user.hasVideo,
+              }
+            : participant
+        );
+      });
+    }
+
+    if (mediaType === "audio") {
+      if(!findParticipantInList(user.uid, 'AUDIO')){
+        await user.audioTrack?.play();
+      }
+    }
+    if(mediaType === "video") {
+      if(!findParticipantInList(user.uid, 'VIDEO')){
+        await user.videoTrack?.play();
+      }
+    }
+    notify()
+  });
+},[me,localMutedParticipantsAudio,localMutedParticipantsVideo])
 
 const matikanVideo = async () => {
     if(mediaRef.current && !me){
@@ -1650,7 +1747,7 @@ const RoomScreen= ({setParticipants,setLocalMutedParticipantsAudio,setLocalMuted
   const [expandMiniVideo, setExpandMiniVideo] = useState(true);
   const [isReactionModalOpen, setReactionModalOpen] = useState(false)
   const navigate = useNavigate()
-  console.log('ini aku: ',me)
+  //console.log('ini aku: ',me)
   const getCameraPermission = async () => {
     if(isPermissionGranted){
       return
@@ -1796,7 +1893,7 @@ const RoomScreen= ({setParticipants,setLocalMutedParticipantsAudio,setLocalMuted
             return <div className="text-white"></div>;
       }
     }
-    console.log(layoutSetting.mode)
+   // console.log(layoutSetting.mode)
     //console.log(room.participants[me._id].reaction)
     switch (layoutSetting.mode) {
       case modes.onlyMe:
