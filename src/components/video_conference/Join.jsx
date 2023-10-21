@@ -128,6 +128,20 @@ const ReactionPopUp = ({onClose,room, me, setRoom}) => {
   );
 }
 
+const LoadingOverlay = () => {
+  return (
+    <div id="loadingOverlay" className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-20">
+   
+    <div  role="status" className="bg-white bg-opacity-50 rounded-lg p-4 shadow-lg flex justify-center items-center">
+        <svg aria-hidden="true" className="w-10 h-10  text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+        </svg>
+    </div>
+</div>
+  )
+}
+
 const LocalSettingDropDown = ({userId, onClose ,setLocalMutedParticipantsAudio,setLocalMutedParticipantsVideo ,localMutedParticipantsAudio, localMutedParticipantsVideo,participants,setParticipants }) => {
   const dropdownRef = useRef(null);
   const handleClickOutside = (event) => {
@@ -333,6 +347,7 @@ const JoinPage = () =>{
     const [setup,setSetup] = useState(false)
     const [isCameraGranted, setCameraGranted] = useState(false);
     const [isAudioGranted, setAudioGranted] = useState(false);
+    const [loadingOverlayState, setLoadingOverlayState] = useState(false);
 
     const [localMutedParticipantsAudio, setLocalMutedParticipantsAudio] = useState([]);
     const [localMutedParticipantsVideo, setLocalMutedParticipantsVideo] = useState([]);
@@ -782,7 +797,17 @@ const JoinPage = () =>{
 
         // Bergabung ke sesi Agora dengan token dan ID yang sesuai
         if(agoraClient.connectionState !== 'CONNECTED'){
-        await agoraClient.join(agoraSetting.AGORA_APP_ID, roomId, rtcToken, me._id);
+          try {
+            const res = await agoraClient.join(agoraSetting.AGORA_APP_ID, roomId, rtcToken, me._id);
+            console.log('aku join ', res)
+          } catch (error) {
+            console.log(error)
+            toast.error('Unauthorized. Sudah ada yang menggunakan previlege ini',{autoClose:2000});
+            setErrorMessage('Maaf akses ini sedang digunakan user lain');
+            setError(true)
+            setStatusCode('401')
+          }
+        
         }
         let audioTrack = null;
         try {
@@ -1042,11 +1067,14 @@ const publishController = async (isJoined, type, action) =>{
       //if(agoraClient.connectionState !== 'CONNECTED'){
         //await agoraClient.join(agoraSetting.AGORA_APP_ID, roomId, rtcToken, me._id);
        // }
+       setLoadingOverlayState(true)
        const vd = await AgoraRTC.createCameraVideoTrack();
         await  agoraClient.publish(vd)
         setLocalStreams( {audioTrack:localStreams.audioTrack,videoTrack:vd})
+        setLoadingOverlayState(false)
       } catch (error) {
         console.log(error)
+        setLoadingOverlayState(false)
       }
     }
   }
@@ -1057,11 +1085,14 @@ const publishController = async (isJoined, type, action) =>{
         //if(agoraClient.connectionState !== 'CONNECTED'){
         //  await agoraClient.join(agoraSetting.AGORA_APP_ID, roomId, rtcToken, me._id);
          // }
+       setLoadingOverlayState(true)
        const mc = await AgoraRTC.createMicrophoneAudioTrack();
         await  agoraClient.publish(mc)
         setLocalStreams( {videoTrack:localStreams.videoTrack,audioTrack:mc})
+        setLoadingOverlayState(false)
       } catch (error) {
         console.log(error)
+        setLoadingOverlayState(false)
       }
     }
   }
@@ -1093,9 +1124,10 @@ const userVideoSetting = {
         {isError? <ErrorPage statusCode={statusCode} message={errorMessage} /> : <>
     <ToastContainer/>
     <div className='mx-auto min-h-screen flex justify-center items-center flex-col min-w-screen   '>
-      {loading? <Loading/> :
+      {loading? <LoadingOverlay/> :
         screen == 'room' ? <div className="mx-auto min-h-screen  flex justify-center items-center flex-col min-w-screen max-w-screen  ">
           <RoomScreen
+          loadingOverlayState={loadingOverlayState}
           setParticipants={setParticipants}
           setLocalMutedParticipantsAudio={setLocalMutedParticipantsAudio}
           setLocalMutedParticipantsVideo={setLocalMutedParticipantsVideo}
@@ -1277,7 +1309,7 @@ const ParticipantsSidebar = ({room, setParticipants,localMutedParticipantsAudio,
       <h1 className=" ml-2 text-white text-2xl">Participants</h1>
       <AiFillCloseCircle onClick={closeSidebar} color="#00A8FF" className="mr-2 w-8 h-8 "/>
     </div>
-    <div className="mt-16 flex flex-col bg-slate-900 h-full overflow-y-auto">
+    <div className="mt-16 flex flex-col bg-neutral-900 h-full overflow-y-auto">
       <div className= {` text-white text-sm w-full py-4  flex items-center`}>
         <div  className={`ml-2 bg-teal-700  w-12 h-12 flex items-center justify-center rounded-full`}>
            {me.username[0]}
@@ -1740,7 +1772,7 @@ const getPermission = async () => {
 }
 
 
-const RoomScreen= ({setParticipants,setLocalMutedParticipantsAudio,setLocalMutedParticipantsVideo,localMutedParticipantsAudio,localMutedParticipantsVideo,setUpdatePermissionStatus,setIsPermissionGranted,screenStreamSetting={},startScreenStream, stopScreenStream,isShareScreen,remoteScreenStream,screenStream,userSetting={},isPermissionGranted,unreadMessages,setUnreadMessages,me,room, onSelectChat, selectedChatValue, chatOptions,roomId ,setRoom, rtcToken, remoteStreamData = {},localStreams ,participants = []}) => {
+const RoomScreen= ({setParticipants,loadingOverlayState,setLocalMutedParticipantsAudio,setLocalMutedParticipantsVideo,localMutedParticipantsAudio,localMutedParticipantsVideo,setUpdatePermissionStatus,setIsPermissionGranted,screenStreamSetting={},startScreenStream, stopScreenStream,isShareScreen,remoteScreenStream,screenStream,userSetting={},isPermissionGranted,unreadMessages,setUnreadMessages,me,room, onSelectChat, selectedChatValue, chatOptions,roomId ,setRoom, rtcToken, remoteStreamData = {},localStreams ,participants = []}) => {
   const [showBottomNavbar, setShowBottomNavbar] = useState(false);
   const [timeOutId, setTimeOutId] = useState(null)
   const [isLandscape, setIsLandscape] = useState(false);
@@ -2104,7 +2136,7 @@ const RoomScreen= ({setParticipants,setLocalMutedParticipantsAudio,setLocalMuted
   return <div onClick={()=>{
     openBottomNavbar()
   }} className="flex flex-col  w-screen h-screen ">
-    
+    {loadingOverlayState && <LoadingOverlay/>}
     {!isPermissionGranted && <AccessPopUp notifier={()=>{
       setUpdatePermissionStatus(prev=> !prev)
     }}/>}
@@ -2158,7 +2190,7 @@ const RoomScreen= ({setParticipants,setLocalMutedParticipantsAudio,setLocalMuted
     </div>
     </div>
 </div>
-    :localStreams? renderContentBasedOnMode() : <div className="w-screen h-screen flex items-center justify-center"><Loading/></div>}
+    :localStreams? renderContentBasedOnMode() : <div className="w-screen h-screen flex items-center justify-center"><LoadingOverlay/></div>}
     </div>
 
     {/* Bottom Bar */}
