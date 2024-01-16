@@ -1,2 +1,2 @@
-const BASE_URL = 'http://localhost:3001'
+const BASE_URL = 'https://isacitra-com-api.vercel.app'
 export default BASE_URL

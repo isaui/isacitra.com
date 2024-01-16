@@ -94,7 +94,7 @@ export default function () {
             thumbnail:thumbnail,
             author:user
           };
-          await axios.post('https://isa-citra.adaptable.app/learn', data)
+          await axios.post('https://isacitra-com-api.vercel.app/learn', data)
           toast.success('Berhasil menambahkan mata kuliah', {
             autoClose: 2000,
           })
