@@ -16,11 +16,11 @@ import Dashboard from './components/dashboard/Dashboard';
 import LearnPage from './components/learn_page/LearnPage';
 import LearnAddPage from './components/learn_page/LearnAddPage';
 import ContentLearnPage from './components/learn_page/ContentLearnPage';
-import AddSectionPage from './components/learn_page/AddSectionPage';
 import AddNotePage from './components/learn_page/AddNotePage';
 import EditNotePage from './components/learn_page/EditNotePage';
 import Landing from './components/video_conference/Landing';
 import JoinPage from './components/video_conference/Join';
+import CalendarPage from './modules/calender/pages/CalendarPage';
 
 
 
@@ -34,10 +34,12 @@ function App() {
             <Route path='/' element={< Homepage />}></Route>
             <Route path='/articles' element= {<ArticlesPage/>}>
             </Route>
+
             <Route path='/articles/new' element= {<PostPage/>}></Route>
             <Route path='/articles/edit' element= {<ArticleManagement/>}></Route>
             <Route path='/articles/:id' element= {<Article/>}></Route>
             <Route path='/articles/:id/edit' element= {<PostPage/>}></Route>
+            <Route path='/jadwal' element = {<CalendarPage/>}></Route>
             
             <Route path='/authentication' element= {<AuthenticationPage/>}></Route>
             <Route path='/dashboard' element= {<Dashboard/>}></Route>
