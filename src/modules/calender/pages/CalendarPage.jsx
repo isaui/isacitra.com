@@ -14,6 +14,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { v4 as uuidv4 } from 'uuid';
 import axios from "axios";
 import BASE_URL from "../../../api/base_url";
+import { useSelector } from "react-redux";
 
 
 
@@ -107,7 +108,7 @@ const formatDate = (inputDate) => {
 const CalendarPage = () => {
     const [selectedSection, setSelectedSection] = useState('Events')
 
-
+    const user = useSelector((state) => state.auth.user)
     const [events, setEvents] = useState({});
     const [dates, setDates] = useState({});
     const [sessions, setSessions] = useState({});
@@ -123,7 +124,7 @@ const CalendarPage = () => {
     
    // const [rawNpm, setRawNpm] = useState('')
 
-    const section = ['Events', 'Your Booking', 'Admin'];
+    const section = !user ? ['Events', 'Your Booking'] :  ['Events', 'Your Booking', 'Admin'];
 
 
     const fetchData = async () => {
