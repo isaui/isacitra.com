@@ -14,26 +14,22 @@ import 'react-toastify/dist/ReactToastify.css';
 import { v4 as uuidv4 } from 'uuid';
 import axios from "axios";
 import BASE_URL from "../../../api/base_url";
+
+
+
 //import query from "../../../../postgres/query";
 function formatISO8601ToHHMM(iso8601DateTime) {
-    const dateObj = new Date(iso8601DateTime);
-    const hours = String(dateObj.getHours()).padStart(2, '0');
-    const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+    const isoStringWithUTC = iso8601DateTime.includes('Z') ? iso8601DateTime : iso8601DateTime + 'Z';
+
+    const dateObj = new Date(isoStringWithUTC);
+    dateObj.setUTCHours(dateObj.getUTCHours() + 14);
+    const hours = String(dateObj.getUTCHours()).padStart(2, '0');
+    const minutes = String(dateObj.getUTCMinutes()).padStart(2, '0');
     const formattedTime = `${hours}:${minutes}`;
   
     return formattedTime;
   }
-const compareDates = (date1, date2) => {
-    const year1 = date1.getFullYear();
-    const month1 = date1.getMonth();
-    const day1 = date1.getDate();
-  
-    const year2 = date2.getFullYear();
-    const month2 = date2.getMonth();
-    const day2 = date2.getDate();
-  
-    return year1 === year2 && month1 === month2 && day1 === day2;
-  };
+
 
 const formatDate = (inputDate) => {
     // Buat objek Date dari string tanggal
@@ -58,14 +54,22 @@ const formatDate = (inputDate) => {
     return formattedDate;
   };
 
+  function convertISOToGMTMinus7(isoString) {
+    const date = new Date(isoString);
+    
+    // Mengurangkan offset waktu GMT-7
+    date.setHours(date.getHours() - 7);
+    
+    // Menghasilkan string dengan zona waktu GMT-7
+    return date.toISOString();
+}
+
   function toTimestamp(timeStr, dateStr) {
     // Dapatkan string datetime dalam format ISO 8601
     const iso8601DateTime = `${dateStr}T${timeStr}:00Z`;
-  
-    // Buat objek Date dari string iso8601DateTime
 
-  
-    return iso8601DateTime;
+  //  console.log(convertISOToJakartaTime(iso8601DateTime))
+    return convertISOToGMTMinus7(iso8601DateTime);
   }
 
   const formatDateToString = (dateObject) => {
@@ -184,7 +188,7 @@ const CalendarPage = () => {
                     dateId: demoSessionDateId,
                     startTime: startTime,
                     endTime: endTime,
-                    isAvailable: bookingDemoId == null ? true : bookingDemoStatus != 'active' ? true: false
+                    //isAvailable: sessionMap[sessionId] && sessionMap[sessionId] == true? true :  bookingDemoStatus != 'active' ? true: false
                 }
                 
             }
@@ -208,6 +212,8 @@ const CalendarPage = () => {
         setSessions(sessionMap)
         setDates(dateMap)
         setBooking(bookingDemo)
+        setSelectedEvent(null)
+        setSelectedDate(null)
     }
 
     const synchronizeData = () => {
@@ -242,7 +248,9 @@ const CalendarPage = () => {
 
         const res = Object.values(dates).find(dt => areDateStringEqual(dt.date, selectedDate.toISOString()) && dt.eventId == selectedEvent.id);
         if(res){
-            const filteredTime = Object.values(sessions).filter(session => session.dateId == res.id && session.isAvailable == true);
+            const filteredTime = Object.values(sessions).filter(session => session.dateId == res.id && 
+                Object.values(booking).filter(book => (book.status == 'active' || book.status == 'completed')&& 
+                session.id == book.demoSessionId).length == 0);
             setFilterTime(filteredTime)
         }
         else{
@@ -259,7 +267,7 @@ const CalendarPage = () => {
     },[selectedEvent])
 
     const handleTextFieldChange = () => {
-        const textFieldValue = textFieldRef.current.value;
+        //const textFieldValue = textFieldRef.current.value;
         // Lakukan sesuatu dengan nilai sementara
       //  console.log(textFieldValue);
       };
@@ -307,10 +315,19 @@ const CalendarPage = () => {
                     queryString: query
                 })
                 console.log(res)
+                try {
+                    await axios.post(BASE_URL+'/postgres/schedule-email', {
+                        id: bookingDemoId,
+                        taskType: 'NOTIFY'
+                    })
+                } catch (error) {
+                    console.log(error)
+                }
                 toast.success('Berhasil membooking demo')
                 fireFetch()
                 
             } catch (error) {
+                fireFetch()
                 console.log(error.response.data.message)
                 toast.error(error.response.data.message)
             }
@@ -401,7 +418,7 @@ const CalendarPage = () => {
                 {
                     selectedSection == 'Your Booking' &&  Object.values(booking).filter(book => book.npm == npm).length == 0  &&
                     <div
-                        className="w-full flex flex-col min-h-[12rem] items-center justify-center bg-slate-950 text-white rounded-md"
+                        className="w-full flex flex-col min-h-[12rem] mt-2 items-center justify-center bg-slate-950 text-white rounded-md"
                         >
                             <h1>Kamu Belum Ngapa-Ngapain</h1>
                         </div>
@@ -430,14 +447,25 @@ const CalendarPage = () => {
                         return orderA - orderB;
                       }).map((book)=>{
                     return <BookingCard key={book.bookingDemoId} props={{
-                    time: `${formatISO8601ToHHMM(book.startTime)} - ${formatISO8601ToHHMM(book.endTime)} (${formatDate(book.date)})`,
+                    time: `${formatISO8601ToHHMM(book.startTime)} - ${formatISO8601ToHHMM(book.endTime)} WIB (${formatDate(book.date)})`,
                     title: 'Demo '+ book.eventName,
                     onCancel: async () => {
+
                         const query = `UPDATE BOOKING_DEMO SET status = 'cancelled' WHERE bookingDemoId
                          = '${book.bookingDemoId}' RETURNING 1;`
                         await axios.post(BASE_URL+'/postgres/', {
                             queryString: query
                         })
+                        try {
+                            await axios.post(BASE_URL+'/postgres/schedule-email', {
+                                id: book.bookingDemoId,
+                                taskType: 'INFO',
+                                subject: 'Pembatalan Demo',
+                                text: ' telah dibatalkan oleh yang bersangkutan.'
+                            })
+                        } catch (error) {
+                            console.log(error)
+                        }
                         fireFetch()
                     },
                     status: book.status,
@@ -488,7 +516,7 @@ const CalendarPage = () => {
                                         setSelectedSession(time)
                                         setIsModalActive(true)
                                     },
-                                    timeRange: `${formatISO8601ToHHMM(time.startTime)} - ${formatISO8601ToHHMM(time.endTime)}`,
+                                    timeRange: `${formatISO8601ToHHMM(time.startTime)} - ${formatISO8601ToHHMM(time.endTime)} WIB`,
                                     date: formatDateToString(selectedDate)
                                 }
                             }/>
@@ -613,6 +641,16 @@ const CalendarPage = () => {
                                                    await axios.post(BASE_URL+'/postgres/', {
                                                        queryString: query
                                                    })
+                                                try {
+                                                    await axios.post(BASE_URL+'/postgres/schedule-email', {
+                                                        id: book.bookingDemoId,
+                                                        taskType: 'INFO',
+                                                        subject: 'Pembatalan Demo',
+                                                        text: ' telah dibatalkan oleh saya.'
+                                                    })
+                                                } catch (error) {
+                                                    console.log(error)
+                                                }
                                                    fireFetch()
                                                 },
                                                 platform: book.platform,
@@ -621,6 +659,16 @@ const CalendarPage = () => {
                                                 npm: book.npm,
                                                 administrator: {
                                                     onDelete: async ()=>{
+                                                        try {
+                                                            await axios.post(BASE_URL+'/postgres/schedule-email', {
+                                                                id: book.bookingDemoId,
+                                                                taskType: 'INFO',
+                                                                subject: 'Penghapusan Demo',
+                                                                text: ' telah dihapus oleh saya.'
+                                                            })
+                                                        } catch (error) {
+                                                            console.log(error)
+                                                        }
                                                         const query = `DELETE FROM BOOKING_DEMO WHERE bookingDemoId
                                                     = '${book.bookingDemoId}' RETURNING 1;`
                                                     await axios.post(BASE_URL+'/postgres/', {
@@ -634,6 +682,16 @@ const CalendarPage = () => {
                                                        await axios.post(BASE_URL+'/postgres/', {
                                                            queryString: query
                                                        })
+                                                       try {
+                                                        await axios.post(BASE_URL+'/postgres/schedule-email', {
+                                                            id: book.bookingDemoId,
+                                                            taskType: 'INFO',
+                                                            subject: 'Demo Selesai',
+                                                            text: ' telah diselesaikan oleh yang bersangkutan.'
+                                                        })
+                                                       } catch (error) {
+                                                        console.log(error)
+                                                       }
                                                        fireFetch()
                                                     }
                                                 }

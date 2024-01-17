@@ -62,7 +62,7 @@ const DemoScheduler = ({onEventSubmit}) => {
   };
 
   return (
-    <div className="container mx-auto">
+    <div className="w-full mx-auto">
       <button
         className="bg-blue-500 text-white px-4 py-2 rounded"
         onClick={openModal}

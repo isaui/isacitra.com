@@ -33,6 +33,7 @@
     "json-web-token": "^3.2.0",
     "jsonwebtoken": "^9.0.2",
     "method-override": "^3.0.0",
+    "moment-timezone": "^0.5.44",
     "mongodb": "^5.8.1",
     "mongoose": "^7.4.3",
     "nodemon": "^3.0.1",
