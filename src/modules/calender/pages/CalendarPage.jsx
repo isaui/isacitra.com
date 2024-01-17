@@ -20,10 +20,10 @@ import { useSelector } from "react-redux";
 
 //import query from "../../../../postgres/query";
 function formatISO8601ToHHMM(iso8601DateTime) {
-    const isoStringWithUTC = iso8601DateTime.includes('Z') ? iso8601DateTime : iso8601DateTime + 'Z';
+    const isoStringWithUTC = iso8601DateTime;
 
     const dateObj = new Date(isoStringWithUTC);
-    dateObj.setUTCHours(dateObj.getUTCHours() + 14);
+    dateObj.setUTCHours(dateObj.getUTCHours() + 7);
     const hours = String(dateObj.getUTCHours()).padStart(2, '0');
     const minutes = String(dateObj.getUTCMinutes()).padStart(2, '0');
     const formattedTime = `${hours}:${minutes}`;
