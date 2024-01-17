@@ -105,6 +105,13 @@ const formatDate = (inputDate) => {
     return strippedDate1.getTime() === strippedDate2.getTime();
   }
 
+  function areDateEqual(d1,d2){
+   // console.log(formatDate(d1))
+   // console.log(formatDate(d2))
+   // console.log('#############################################')
+    return formatDate(d1) == formatDate(d2)
+  }
+
 const CalendarPage = () => {
     const [selectedSection, setSelectedSection] = useState('Events')
 
@@ -136,7 +143,7 @@ const CalendarPage = () => {
             queryString: queryStr
         })
 
-        console.log(res.data)
+     //   console.log(res.data)
         const result = res.data.result;
         const rows = result.rows;
        
@@ -164,7 +171,7 @@ const CalendarPage = () => {
             const bookingDemoStatus = row.status;
             const platform = row.platform;
             const email = row.email;
-            console.log(row)
+       //     console.log(row)
 
             if(eventId != null){
                 eventsMap[eventId] = {
@@ -246,8 +253,16 @@ const CalendarPage = () => {
         if(selectedDate == null){
             return
         }
-
-        const res = Object.values(dates).find(dt => areDateStringEqual(dt.date, selectedDate.toISOString()) && dt.eventId == selectedEvent.id);
+        
+        const res = Object.values(dates).find(dt => {
+           // console.log(typeof selectedDate)
+            //console.log('ARE DATE EQUAL? ', areDateEqual(dt.date, selectedDate) )
+            //console.log('d1 ', dt.date)
+           // console.log('d kita ', selectedDate)
+            //console.log('/////////////////////////////////////////////////////////////////////////////////////')
+            //console.log('ARE EVENT EQUAL? ', dt.eventId == selectedEvent.id)
+            return areDateEqual(dt.date, selectedDate) && dt.eventId == selectedEvent.id
+        });
         if(res){
             const filteredTime = Object.values(sessions).filter(session => session.dateId == res.id && 
                 Object.values(booking).filter(book => (book.status == 'active' || book.status == 'completed')&& 
@@ -255,6 +270,7 @@ const CalendarPage = () => {
             setFilterTime(filteredTime)
         }
         else{
+           // console.log("YOLLOW")
             setFilterTime([])
         }
         setSelectedSession(null)
@@ -488,7 +504,9 @@ const CalendarPage = () => {
                 <div className="w-full items-center flex">
                 <Calendar
                   className={'w-full'}
-                  onChange={(date) => setSelectedDate(date)}
+                  onChange={(date) => {
+                 // console.log(typeof date)
+                  setSelectedDate(date)}}
                   value={selectedDate}
                   minDate={new Date() > new Date(selectedEvent.startDate)? new Date() : new Date(selectedEvent.startDate) }
                   maxDate={new Date(selectedEvent.endDate)}
