@@ -503,6 +503,7 @@ const CalendarPage = () => {
                 </div>
                 <div className="w-full items-center flex">
                 <Calendar
+                  //activeStartDate={new Date(selectedEvent.startDate)}
                   className={'w-full'}
                   onChange={(date) => {
                  // console.log(typeof date)
