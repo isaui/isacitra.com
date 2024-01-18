@@ -70,9 +70,9 @@ const DemoScheduler = ({onEventSubmit}) => {
   };
 
   return (
-    <div className="w-full mx-auto">
+    <div className="">
       <button
-        className="bg-blue-500 text-white px-4 py-2 rounded"
+        className="bg-blue-500 text-white px-4 py-3 rounded"
         onClick={openModal}
       >
         Buat Event

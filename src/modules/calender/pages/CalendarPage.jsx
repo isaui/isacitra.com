@@ -128,6 +128,8 @@ const CalendarPage = () => {
     const [filterTime, setFilterTime] = useState([])
     const [selectedSession, setSelectedSession] = useState(null)
     const textFieldRef = useRef(null);
+    const emailFilterRef = useRef(null);
+    const [ownerEmail, setOwnerEmail] = useState('');
 
    
     
@@ -562,6 +564,11 @@ const CalendarPage = () => {
              {
                 selectedSection == 'Admin' && 
                 <div className="w-full flex flex-col mt-4 space-y-4">
+                    <div className="flex space-x-4 items-center w-full ">
+
+
+
+
                     <DemoScheduler onEventSubmit={async (e)=>{
                         const demoEventId = e.id
                         const sessionDateLst = []
@@ -622,14 +629,42 @@ const CalendarPage = () => {
                         fireFetch()
                         
                     }}/>
+                    <div className="grow flex  items-center space-x-4">
+            <input ref={emailFilterRef}  required type="text" id="owner-email" name="email" placeholder='Filter by Owner Email'className="border  border-neutral-700 rounded-md w-full text-white px-3 py-3  bg-neutral-900" />
+            <button onClick={
+                () => {
+                    if(!emailFilterRef.current){
+                        toast.error('Terjadi kesalahan dengan sistem')
+                        return
+                    }
+                    else{
+                        setOwnerEmail(emailFilterRef.current.value)
+                        toast.success('Berhasil melakukan filter')
+                       // setSelectedNpm(textFieldRef.current.value)
+                      //  fireFetch()
+                    }
+                }
+            } className="rounded-md w-min px-2 md:px-3 py-3 ml-auto text-center text-white bg-teal-800">Filter</button>
+            </div>
+
+
+
+
+
+
+
+
+
+
+                    </div>
                     {
                         Object.keys(events).length != 0 &&
-                        Object.keys(events).map(key => {
-                            const event = events[key]
+                        Object.values(events).filter(ev => ev.email && ev.email.includes(ownerEmail)).map(event => {
+                
                             return <AuthorizedEventCard key={'authorized-'+event.id} props={{
                                 owner: event.email,
                                 title: event.title,
-                                eventId: key,
+                                eventId: event.id,
                                 callback: ()=> {
                                     fireFetch()
                                 },
@@ -643,17 +678,17 @@ const CalendarPage = () => {
                         <div className="flex flex-col w-full my-4">
                             <h1 className="text-xl text-white font-bold mb-4">Demo Booking </h1>
                             {
-                                Object.values(booking).length == 0 && <div
+                                Object.values(booking).filter(book => book.owner && book.owner.includes(ownerEmail)).length == 0 && <div
                                 className="w-full flex flex-col min-h-[12rem] items-center justify-center bg-slate-950 text-white rounded-md"
                                 >
                                     <h1>Gak Ada Apa-Apa</h1>
                                 </div>
                             }
                             {
-                                Object.values(booking).length > 0 &&   
+                                Object.values(booking).filter(book => book.owner && book.owner.includes(ownerEmail)).length > 0 &&   
                                 <div className="w-full flex flex-col space-y-3">
                                     {
-                                         Object.values(booking).sort((a, b) => {
+                                         Object.values(booking).filter(book => book.owner && book.owner.includes(ownerEmail)).sort((a, b) => {
                                             const statusOrder = ['active', 'cancelled', 'completed'];
                                           
                                             // Menentukan urutan status untuk a dan b
