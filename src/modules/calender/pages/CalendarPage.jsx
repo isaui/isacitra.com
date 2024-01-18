@@ -128,6 +128,13 @@ const CalendarPage = () => {
     const [filterTime, setFilterTime] = useState([])
     const [selectedSession, setSelectedSession] = useState(null)
     const textFieldRef = useRef(null);
+
+   
+    
+      useEffect(() => {
+        // Panggil fungsi scrollToTop() saat komponen dimuat
+        scrollToTop();
+      }, []);
     
    // const [rawNpm, setRawNpm] = useState('')
 
@@ -554,9 +561,9 @@ const CalendarPage = () => {
                         const demoEventId = e.id
                         const sessionDateLst = []
                         const sessionLst = []
-                        let queryStr = `INSERT INTO DEMO_EVENT (demoEventId, title, startDate, endDate)
+                        let queryStr = `INSERT INTO DEMO_EVENT (demoEventId, title, startDate, endDate, email)
                         VALUES 
-                        ('${demoEventId}', '${e.title}', '${e.startDate}', '${e.endDate}');`
+                        ('${demoEventId}', '${e.title}', '${e.startDate}', '${e.endDate}', '${e.email}');`
                         
                         const demoSessionDateObj = e.infoSesi
                         const keys = Object.keys(demoSessionDateObj);

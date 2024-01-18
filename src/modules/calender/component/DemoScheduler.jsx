@@ -9,6 +9,7 @@ const DemoScheduler = ({onEventSubmit}) => {
   const [title, setTitle] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [email, setEmail] = useState('');
   const initialId = uuidv4()
   const [infoSesi, setInfoSesi] = useState({[initialId]:{id: initialId, date: '', sessions: [{ startTime: '', endTime: '',  id: uuidv4()}]}});
   const tambahSesi = (sessionId) => {
@@ -49,8 +50,15 @@ const DemoScheduler = ({onEventSubmit}) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      // Jika email tidak valid, tampilkan popup alert
+      alert("Email tidak valid");
+      return;
+    }
     const newEvent = {
     id:uuidv4(),
+    email:email,
       title,
       startDate,
       endDate,
@@ -88,6 +96,18 @@ const DemoScheduler = ({onEventSubmit}) => {
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Email
+            </label>
+            <input
+              className="border rounded w-full py-2 px-3"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>

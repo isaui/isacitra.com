@@ -1,20 +1,17 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { HomepageNav } from "../nav/Nav";
 import {ArticleSlider} from "../article/ArticleCard";
 import Greeting from "../greeting/greeting";
 import Footer from "../footer/Footer";
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { CertificateContainer, certificationArray } from "../certificate/Certificate";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
 import CourseGreeting from "../course_greeting/CourseGreeting";
+import SchedulerGreeting from "../course_greeting/SchedulerGreeting.jsx";
 import VideoGreeting from "../greeting/VideoGreeting.jsx"
-export default function () {
+const Home =  ()=>{
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(false);
-
-    const location = useLocation();
     useEffect(()=>{
         setLoading(true)
         axios.get('https://isacitra-com-api.vercel.app/').then( res => {
@@ -37,6 +34,8 @@ export default function () {
       <CourseGreeting/>
       <hr className="mx-auto border border-[#0a88ff] opacity-20 border-spacing-1 border-dashed w-[100vw] max-w-[1240px]"/>
       <VideoGreeting/>
+      <hr className="mx-auto border border-[#0a88ff] opacity-20 border-spacing-1 border-dashed w-[100vw] max-w-[1240px]"/>
+      <SchedulerGreeting/>
       <hr className="mb-12 mt-6 mx-auto border border-[#0a88ff] opacity-20 border-spacing-1 border-dashed w-[100vw] max-w-[1240px]"/>
       <CertificateContainer data={certificationArray}/>
       </div>
@@ -47,6 +46,8 @@ export default function () {
     <Footer/>
 </div>
 }
+
+export default Home
 //<Greeting/>
 //<ArticleSlider posts={posts} heading={'Artikel Saya'}/>
   //  <CertificateContainer data={certificationArray}/>
