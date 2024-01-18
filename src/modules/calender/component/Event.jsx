@@ -2,12 +2,13 @@ import axios from "axios"
  import BASE_URL from "../../../api/base_url";
  import { useState } from 'react';
 const EventCard = (
-    {props={title: 'Unknown', callback: ()=>{console.log('Callback is not defined')}, action: 'Selected', timeRange: 'Unknown', isActive: true }}) =>{
+    {props={title: 'Unknown', callback: ()=>{console.log('Callback is not defined')}, owner:'example@email',action: 'Selected', timeRange: 'Unknown', isActive: true }}) =>{
     const title = props.title
     const callback = props.callback
     const timeRange = props.timeRange
     const isActive = props.isActive
     const action = props.action
+    const owner = props.owner
     return (
         <div className="w-full h-auto flex flex-col p-4 text-white space-y-2 rounded-md bg-slate-950">
             <div className="w-full flex items-center justify-between">
@@ -15,8 +16,11 @@ const EventCard = (
                 <button  className={`ml-2 px-2 py-1 text-xs rounded-md ${isActive? 'bg-green-500' : 'bg-orange-500'} text-white`}> 
                 {isActive? 'Dibuka' : 'Ditutup'}</button>
             </div>
-            <div className="w-full text-xs">
+            <div className="w-full text-sm">
                 <h1>{timeRange}</h1>
+            </div>
+            <div className="w-full text-sm text-blue-600">
+                <h1><span className="text-white">Owner: </span>{owner}</h1>
             </div>
             {
                 <div className="w-full flex justify-start">
@@ -30,8 +34,8 @@ const EventCard = (
     )
 }
 
-const AuthorizedEventCard = ({ props = { title: 'Unknown', eventId: '?', callback: () => { console.log('Callback is not defined') }, timeRange: 'Unknown', isActive: true } }) => {
-    const { title, callback, timeRange, eventId } = props;
+const AuthorizedEventCard = ({ props = { title: 'Unknown',owner:'example@email' ,eventId: '?', callback: () => { console.log('Callback is not defined') }, timeRange: 'Unknown', isActive: true } }) => {
+    const { title, callback, timeRange, eventId, owner} = props;
     const [isActive, setIsActive] = useState(props.isActive); // Menggunakan state untuk menyimpan status isActive
   
     const onToggleStatus = async () => {
@@ -83,9 +87,12 @@ const AuthorizedEventCard = ({ props = { title: 'Unknown', eventId: '?', callbac
             </select>
           </div>
         </div>
-        <div className="w-full text-xs">
+        <div className="w-full text-sm">
           <h1>{timeRange}</h1>
         </div>
+        <div className="w-full text-sm text-blue-600">
+                <h1><span className="text-white">Owner: </span>{owner}</h1>
+            </div>
         {
           <div className="w-full flex justify-start">
             <button onClick={onDelete} className="px-3 py-2 text-sm rounded-md bg-red-700 text-white">{'Delete'}</button>

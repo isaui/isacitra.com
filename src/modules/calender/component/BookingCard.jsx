@@ -3,13 +3,14 @@ const BookingCard = ({props={
     time: 'NOT DEFINED',
     title: 'Demo',
     onCancel: () => {},
+    owner: 'dot@example',
     platform: 'Discord',
     status: 'Active',
     email: 'dot@example',
     administrator: null,
     npm: null
 }}) =>{
-    const {time, title, status, onCancel, platform, email, administrator, npm} = props;
+    const {time, title, status, onCancel, platform, email, administrator, npm, owner} = props;
     return (
         <div className="w-full p-4 flex flex-col space-y-2 rounded-md text-white bg-slate-950">
             <div className="w-full text-base  flex justify-between">
@@ -18,6 +19,9 @@ const BookingCard = ({props={
                 status == 'completed'? 'bg-orange-500' : 'bg-red-500'} text-white`}> 
                 {status}</button>
             </div>
+            <div className="w-full text-sm flex text-blue-600 items-center">
+                <p><span className="text-white">Owner:</span> {owner}</p>
+            </div>
             <div className="w-full text-justify text-sm flex items-center">
                 <p>{time}</p>
             </div>
@@ -25,7 +29,7 @@ const BookingCard = ({props={
                 <p>{platform}</p>
             </div>
             <div className="w-full text-sm flex text-blue-600 items-center">
-                <p>{email}</p>
+                <p><span className="text-white">Request from:</span> {email}</p>
             </div>
             {
                 npm != null && 

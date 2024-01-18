@@ -142,7 +142,7 @@ const CalendarPage = () => {
 
 
     const fetchData = async () => {
-        const queryStr = `SELECT DISTINCT de.demoEventId, de.title, de.startDate, de.endDate, de.isActive,
+        const queryStr = `SELECT DISTINCT de.demoEventId, de.title, de.startDate, de.endDate, de.isActive, de.email as demoeventemail,
         ds.demoSessionDateId, ds.date, d.demoSessionId ,d.startTime, d.endTime, b.bookingDemoId, b.nomorMahasiswa, b.status, b.platform, b.email FROM DEMO_EVENT de LEFT JOIN
         DEMO_SESSIONS_DATE ds ON de.demoEventId = ds.demoEventId LEFT JOIN DEMO_SESSION d ON 
         ds.demoSessionDateId = d.demoSessionDateId LEFT JOIN BOOKING_DEMO b ON b.demoSessionId = d.demoSessionId;`
@@ -164,6 +164,7 @@ const CalendarPage = () => {
             
             const row = rows[i];
             const eventId = row.demoeventid;
+            const eventOwnerEmail = row.demoeventemail
             const startDate = row.startdate;
             const endDate = row.enddate;
             const eventTitle = row.title;
@@ -183,6 +184,7 @@ const CalendarPage = () => {
             if(eventId != null){
                 eventsMap[eventId] = {
                     id: eventId,
+                    email: eventOwnerEmail,
                     startDate: startDate,
                     endDate: endDate,
                     title: eventTitle,
@@ -212,6 +214,7 @@ const CalendarPage = () => {
                     bookingDemoId:bookingDemoId,
                     date:date,
                     eventName: eventTitle,
+                    owner:eventOwnerEmail,
                     eventId:eventId,
                     demoSessionId: sessionId,
                     npm: nomorMahasiswa,
@@ -411,6 +414,7 @@ const CalendarPage = () => {
                             return <div key={key+'-card'} className={`flex w-full rounded-md ${selectedEvent && selectedEvent.id == key? 
                             'border-4 border-blue-800':''}`}>
                                 <EventCard  props={{
+                                    owner: value.email,
                                 title: value.title,
                                 action: selectedEvent && selectedEvent.id == key? 'Selected' : 'Select',
                                 timeRange: 
@@ -471,6 +475,7 @@ const CalendarPage = () => {
                         return orderA - orderB;
                       }).map((book)=>{
                     return <BookingCard key={book.bookingDemoId} props={{
+                    owner:book.owner,
                     time: `${formatISO8601ToHHMM(book.startTime)} - ${formatISO8601ToHHMM(book.endTime)} WIB (${formatDate(book.date)})`,
                     title: 'Demo '+ book.eventName,
                     onCancel: async () => {
@@ -622,6 +627,7 @@ const CalendarPage = () => {
                         Object.keys(events).map(key => {
                             const event = events[key]
                             return <AuthorizedEventCard key={'authorized-'+event.id} props={{
+                                owner: event.email,
                                 title: event.title,
                                 eventId: key,
                                 callback: ()=> {
@@ -660,6 +666,7 @@ const CalendarPage = () => {
                                           return  <BookingCard
                                             key={book.bookingDemoId+'-adminstrator'}
                                             props={{
+                                                
                                                 time: `${formatISO8601ToHHMM(book.startTime)} - ${formatISO8601ToHHMM(book.endTime)} (${formatDate(book.date)})`,
                                                 title: book.eventName,
                                                 onCancel:async ()=>{
@@ -680,10 +687,12 @@ const CalendarPage = () => {
                                                 }
                                                    fireFetch()
                                                 },
+                                                
                                                 platform: book.platform,
                                                 status: book.status,
                                                 email: book.email,
                                                 npm: book.npm,
+                                                owner: book.owner,
                                                 administrator: {
                                                     onDelete: async ()=>{
                                                         try {
