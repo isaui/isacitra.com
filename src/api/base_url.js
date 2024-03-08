@@ -1,2 +1,2 @@
-const BASE_URL = 'https://isacitra-com-api.vercel.app'
+const BASE_URL = 'https://isacitracomapi-production.up.railway.app'
 export default BASE_URL

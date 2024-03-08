@@ -9,12 +9,13 @@ import axios from "axios";
 import CourseGreeting from "../course_greeting/CourseGreeting";
 import SchedulerGreeting from "../course_greeting/SchedulerGreeting.jsx";
 import VideoGreeting from "../greeting/VideoGreeting.jsx"
+import BASE_URL from "../../api/base_url.js";
 const Home =  ()=>{
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(false);
     useEffect(()=>{
         setLoading(true)
-        axios.get('https://isacitra-com-api.vercel.app/').then( res => {
+        axios.get(BASE_URL+'/').then( res => {
           setPosts(res.data.topPicks)
           setLoading(false)
         }).catch(err =>{ 
@@ -48,8 +49,4 @@ const Home =  ()=>{
 }
 
 export default Home
-//<Greeting/>
-//<ArticleSlider posts={posts} heading={'Artikel Saya'}/>
-  //  <CertificateContainer data={certificationArray}/>
-   // <ToastContainer/>
 

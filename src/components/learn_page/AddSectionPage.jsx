@@ -14,6 +14,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useSelector } from "react-redux";
 import axios from "axios";
+import BASE_URL from "../../api/base_url";
 
 
 
@@ -50,7 +51,7 @@ export default function () {
             bab:bab.trim(),
             materi:[]
           };
-          const res =   await axios.post('https://isa-citra.adaptable.app/learn/addSection/'+id, data).data;
+          const res =   await axios.post(BASE_URL+'/learn/addSection/'+id, data).data;
           toast.success('Berhasil menambahkan section', {
             autoClose: 2000,
           })

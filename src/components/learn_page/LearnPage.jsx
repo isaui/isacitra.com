@@ -9,6 +9,7 @@ import { HashtagList } from "../article/ArticleCard";
 import DefaultThumbnail from '../../assets/no_thumbnail/default.svg'
 import axios from "axios";
 import Loading from "../loading/Loading";
+import BASE_URL from "../../api/base_url";
 
 function formatDateToDDMMYYYY(dateString) {
   // Buat objek Date dari string tanggal yang diberikan
@@ -36,7 +37,7 @@ export default function () {
       const setCourses =  async () => {
         try {
           setLoading(true)
-          const res = await axios.get('https://isacitra-com-api.vercel.app/learn');
+          const res = await axios.get(BASE_URL+'/learn');
           setArr(res.data)
           setLoading(false)
         } catch (error) {

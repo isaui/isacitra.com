@@ -14,6 +14,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useSelector } from "react-redux";
 import { Storage } from "../../../firebase";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import BASE_URL from "../../api/base_url";
 
 
 
@@ -39,7 +40,7 @@ export default function () {
         const setup = async () => {
             if(id){
                 try {
-                    axios.get(`https://isacitra-com-api.vercel.app/articles/${id}`).then(result => {
+                    axios.get(BASE_URL+`/articles/${id}`).then(result => {
                         const {post} = result.data
                         console.log(post)
                         setTitle(post.title)
@@ -57,7 +58,7 @@ export default function () {
             }
             else {
                 try {
-                    const res = await axios.get('https://isacitra-com-api.vercel.app/articles/new')
+                    const res = await axios.get(BASE_URL+'/articles/new')
                     //console.log(res.data)
                     
                 } catch (error) {
@@ -103,7 +104,7 @@ export default function () {
     const handleDelete = async (articleId) => {
         try {
                 if(isReady){
-                    axios.delete('https://isacitra-com-api.vercel.app/articles/'+articleId).then((res)=>{
+                    axios.delete(BASE_URL+'/articles/'+articleId).then((res)=>{
                 navigate(-1)
             })
                 }
@@ -147,7 +148,7 @@ export default function () {
     }
     try {
         
-        await axios.post('https://isacitra-com-api.vercel.app/articles/', { "title": title, "content":updatedHtmlString, "tableOfContents": JSON.stringify(toc),
+        await axios.post(BASE_URL+'/articles/', { "title": title, "content":updatedHtmlString, "tableOfContents": JSON.stringify(toc),
      "categories":categories, "thumbnail":thumbnail, "isUpdate": isUpdate, "currentId": currentId, user: user}).then(res => {
         navigate(-1)
         

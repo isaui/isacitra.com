@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import {AiOutlineMenu, AiOutlineClose, AiFillCloseCircle, AiOutlineSearch} from 'react-icons/ai'
 import emailjs from '@emailjs/browser';
+import BASE_URL from '../../api/base_url';
 
 
 
@@ -53,7 +54,7 @@ const ContactAuthor = ({onClickOutside, notify= (data)=>{}, post}) => {
         email:email,
         message:message,
         post_title: post.title,
-        post_url:'http://isacitra.com/articles/'+post._id,
+        post_url:BASE_URL+'/articles/'+post._id,
         author_email:post.author.email,
         author_name: post.author.profile.firstName + ' '+post.author.profile.lastName,
 

@@ -8,6 +8,7 @@ import articles from "../../dummy/article";
 import Unknown from "../../assets/unknown/unknown.svg"
 import axios from "axios";
 import Loading from "../loading/Loading";
+import BASE_URL from "../../api/base_url";
 
 
 export default function () { // Edit ini untuk argument jika perlu
@@ -24,7 +25,7 @@ export default function () { // Edit ini untuk argument jika perlu
       const searchPosts = async (searchTerm) => {
         setLoading(true)
         try {
-          const response = await axios.get('https://isacitra-com-api.vercel.app/articles/search', {
+          const response = await axios.get(BASE_URL+'/articles/search', {
             params: { searchTerm },
           });
       

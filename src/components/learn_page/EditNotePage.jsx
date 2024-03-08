@@ -16,6 +16,7 @@ import { Storage } from "../../../firebase";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import mongoose from "mongoose";
 import Loading from "../loading/Loading";
+import BASE_URL from "../../api/base_url";
 
 
 
@@ -91,7 +92,7 @@ export default function () {
         try {
           setLoadingDel(true)
                 if(isReady){
-                    const res = await axios.post("https://isacitra-com-api.vercel.app/learn/deleteNote", {
+                    const res = await axios.post(BASE_URL+"/learn/deleteNote", {
                         "idMatkul": data.matkulId,
                         "idChapter": data.activeChapterId,
                         "idMateri": data.activeMateriId,
@@ -142,7 +143,7 @@ export default function () {
     }
     try {
         
-    const res = await axios.post("https://isacitra-com-api.vercel.app/learn/editNote", {
+    const res = await axios.post(BASE_URL+"/learn/editNote", {
       "idMatkul": data.matkulId,
       "idChapter": data.activeChapterId,
       "idMateri": data.activeMateriId,

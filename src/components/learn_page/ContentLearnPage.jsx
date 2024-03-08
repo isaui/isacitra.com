@@ -16,6 +16,7 @@ import { updateCurrentActiveMateri } from "../../slice/mapMatkulSlice";
 import { HashtagList } from "../article/ArticleCard";
 import { getDayString, getMonthString } from "../../../utils/date";
 import Ably from 'ably/build/ably-webworker.min';
+import BASE_URL from "../../api/base_url";
 
 const ably = new Ably.Realtime({
   key: 'o7gv-w.ulW0zw:olcD9FroY5pv3a9EhFzb4X7Hth-nedgovu4bdz8bsFI'
@@ -113,7 +114,7 @@ const EditVideoBox = ({  onCancel, matkul, activeChapter, activeMateri, currentV
                 }
                 setLoading(true)
                 try {
-                  axios.post("https://isacitra-com-api.vercel.app/learn/editVideo",{
+                  axios.post(BASE_URL+"/learn/editVideo",{
                     idMatkul: matkul._id, idChapter:activeChapter._id, idMateri:
                     activeMateri._id, idVideo:currentVideo._id ,dataVideo:{
                       title: judulMateri,
@@ -143,7 +144,7 @@ const EditVideoBox = ({  onCancel, matkul, activeChapter, activeMateri, currentV
               onClick={ async() => {
                 try {
                   setLoadingDel(true);
-                  await axios.post("https://isacitra-com-api.vercel.app/learn/deleteVideo",
+                  await axios.post(BASE_URL+"/learn/deleteVideo",
                   {idMatkul:matkul._id, idChapter: activeChapter._id, idMateri: activeMateri._id,  idVideo: currentVideo._id })
                setLoadingDel(false)
                onCancel()
@@ -484,7 +485,7 @@ function ChapterDropdown({ onClickInside=()=>{},activeChapter,setActiveChapter,c
           bab:bab.trim(),
           materi:[]
         }
-        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/addSection", 
+        const res = await axios.post(BASE_URL+"/learn/addSection", 
         {idMatkul:mataKuliah._id, dataChapter: newChapter});
         //socket.emit('update-matkul', editedMataKuliah);
         setMataKuliah(res.data)
@@ -508,7 +509,7 @@ function ChapterDropdown({ onClickInside=()=>{},activeChapter,setActiveChapter,c
       }
       try {
         setLoading(true)
-        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/editSection",
+        const res = await axios.post(BASE_URL+"/learn/editSection",
           {idMatkul: mataKuliah._id, idChapter: chapter._id, title:judul, bab:bab }
         );
         setMataKuliah(res.data)
@@ -538,7 +539,7 @@ function ChapterDropdown({ onClickInside=()=>{},activeChapter,setActiveChapter,c
           videos: [],
           notes:[]
         }
-        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/addMateri", 
+        const res = await axios.post(BASE_URL+"/learn/addMateri", 
         {idMatkul:mataKuliah._id, idChapter:chapter._id, dataMateri:newMateri } );
         setMataKuliah(res.data)
         setLoading(false)
@@ -561,7 +562,7 @@ function ChapterDropdown({ onClickInside=()=>{},activeChapter,setActiveChapter,c
       }
       try {
         setLoading(true)
-        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/editMateri", 
+        const res = await axios.post(BASE_URL+"/learn/editMateri", 
         {idMatkul: mataKuliah._id, idChapter:chapter._id, idMateri:idMateriToEdit.current, title: str });
         setMataKuliah(res.data)
         setLoading(false)
@@ -583,7 +584,7 @@ function ChapterDropdown({ onClickInside=()=>{},activeChapter,setActiveChapter,c
       }
       try {
         setLoading(true)
-        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/deleteMateri", 
+        const res = await axios.post(BASE_URL+"/learn/deleteMateri", 
         {idMatkul:mataKuliah._id, idChapter:chapter._id, idMateri:id });
         setMataKuliah(res.data)
         setLoading(false)
@@ -603,7 +604,7 @@ function ChapterDropdown({ onClickInside=()=>{},activeChapter,setActiveChapter,c
       }
       try {
         setLoading(true)
-        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/deleteSection", 
+        const res = await axios.post(BASE_URL+"/learn/deleteSection", 
         {idMatkul:mataKuliah._id, idChapter: id });
         setMataKuliah(res.data)
         console.log(res)
@@ -886,7 +887,7 @@ export default function () {
       }
       try {
         setLoading(true)
-        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/addVideo", 
+        const res = await axios.post(BASE_URL+"/learn/addVideo", 
         {idMatkul: mataKuliah._id, idChapter: activeChapter._id, idMateri: activeMateri._id,  dataMateri:video }
         );
         setMataKuliah(res.data)
@@ -915,7 +916,7 @@ export default function () {
           bab:bab.trim(),
           materi:[]
         }
-        const res = await axios.post("https://isacitra-com-api.vercel.app/learn/addSection", 
+        const res = await axios.post(BASE_URL+"/learn/addSection", 
         {idMatkul: mataKuliah._id, dataChapter: newSection });
 
         setMataKuliah(res.data)
@@ -933,7 +934,7 @@ export default function () {
     useEffect(()=>{
       const fetchData = async ()=>{
         try {
-            const MataKuliah = (await axios.get('https://isacitra-com-api.vercel.app/learn/' + id)).data;
+            const MataKuliah = (await axios.get(BASE_URL+'/learn/' + id)).data;
             setMataKuliah(MataKuliah);
             setLoad(false)
         } catch (error) {

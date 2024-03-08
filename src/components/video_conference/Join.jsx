@@ -27,6 +27,7 @@ import AgoraRTC from "agora-rtc-sdk-ng";
 import {decodeToken, isExpired} from 'react-jwt'
 
 import Ably from 'ably/build/ably-webworker.min';
+import BASE_URL from "../../api/base_url";
 
 const ably = new Ably.Realtime({
   key: 'o7gv-w.ulW0zw:olcD9FroY5pv3a9EhFzb4X7Hth-nedgovu4bdz8bsFI'
@@ -80,7 +81,7 @@ const ReactionPopUp = ({onClose,room, me, setRoom}) => {
   const submitReaction = async (react) => {
     try {
       console.log('ini id saya => ', me._id )
-      const res = await axios.post("https://isacitra-com-api.vercel.app/video/reaction",{
+      const res = await axios.post(BASE_URL+"/video/reaction",{
         roomId:room._id,
         guestId:me._id,
         reaction: react
@@ -431,7 +432,7 @@ const JoinPage = () =>{
         const fetchRoom = async () =>{
             setLoading(true)
             try {
-                const res = await axios.get(`https://isacitra-com-api.vercel.app/video/${roomId}`);
+                const res = await axios.get(BASE_URL+`/video/${roomId}`);
                 setRoom(res.data.room)
                 setLoading(false)
                 console.log(res)
@@ -983,7 +984,7 @@ const hidupkanVideo = async () => {
 
 const joinWithCookie = async () => {
   try {
-    const res = await axios.post('https://isacitra-com-api.vercel.app/video/addToRoomViaToken',{token: cookie});
+    const res = await axios.post(BASE_URL+'/video/addToRoomViaToken',{token: cookie});
     setRoom(res.data.room)
     setMe(res.data.participant)
     Cookie.set(`room-${roomId}-session`, res.data.token)
@@ -1011,12 +1012,12 @@ const submitJoin = async (username, password) =>{
       return "failed"
     }
       const guestId = new mongoose.Types.ObjectId();
-      await axios.post('https://isacitra-com-api.vercel.app/video/guest',{
+      await axios.post(BASE_URL+'/video/guest',{
               roomId:roomId,
               guestId: guestId,
               username: username,
             });
-      const res = await axios.post('https://isacitra-com-api.vercel.app/video/addToRoom', {roomId:roomId,password:password, isUser:false, participantId:guestId})
+      const res = await axios.post(BASE_URL+'/video/addToRoom', {roomId:roomId,password:password, isUser:false, participantId:guestId})
       console.log(res);
       Cookie.set(`room-${roomId}-session`, res.data.token)
       setRtcToken(res.data.rtcToken)
@@ -1232,7 +1233,7 @@ const Sidebar = ({isOpen, closeSidebar, onSelect, options, selectedValue, room, 
     }
     setLoading(true)
     try {
-      const res = await  axios.post('https://isacitra-com-api.vercel.app/video/addCommentToRoom', {roomId:room._id, senderId:me._id, receiverId: selectedValue, message: pesan});
+      const res = await  axios.post(BASE_URL+'/video/addCommentToRoom', {roomId:room._id, senderId:me._id, receiverId: selectedValue, message: pesan});
       toast("Berhasil mengirim pesan", {autoClose:2000})
       setPesan('')
       console.log('ini room kmoeh',res.data)
@@ -1310,7 +1311,7 @@ const ParticipantsSidebar = ({room, setParticipants,localMutedParticipantsAudio,
       <h1 className=" ml-2 text-white text-2xl">Participants</h1>
       <AiFillCloseCircle onClick={closeSidebar} color="#00A8FF" className="mr-2 w-8 h-8 "/>
     </div>
-    <div className="mt-16 flex flex-col bg-neutral-900 h-full overflow-y-auto">
+    <div className="mt-16 flex flex-col bg-neutral-900 h-full justify-start overflow-y-auto">
       <div className= {` text-white text-sm w-full py-4  flex items-center`}>
         <div  className={`ml-2 bg-teal-700  w-12 h-12 flex items-center justify-center rounded-full`}>
            {me.username[0]}

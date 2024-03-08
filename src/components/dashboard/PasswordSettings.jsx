@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { ToastContainer, toast } from 'react-toastify';
+import BASE_URL from '../../api/base_url';
 const PasswordSettings = () => {
   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch()
@@ -14,7 +15,7 @@ const PasswordSettings = () => {
     if (newPassword === confirmPassword) {
       // Update password logic
       try {
-        const res = await axios.post('https://isacitra-com-api.vercel.app/authentication/changePassword', {password: currentPassword, username: user.username, newPassword: newPassword})
+        const res = await axios.post(BASE_URL+'/authentication/changePassword', {password: currentPassword, username: user.username, newPassword: newPassword})
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('')

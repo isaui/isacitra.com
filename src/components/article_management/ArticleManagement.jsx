@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import {setUser, logoutUser } from '../../slice/authSlice.js'
 import { useSelector, useDispatch } from 'react-redux'
 import ZeroArticle from '../../assets/Zero/zero.svg'
+import BASE_URL from "../../api/base_url.js";
 export default function ({navbarEnabled = true, footerEnabled=true}) {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -17,7 +18,7 @@ export default function ({navbarEnabled = true, footerEnabled=true}) {
     const handleDelete = async (articleId) => {
         try {
             
-                axios.delete('https://isacitra-com-api.vercel.app/articles/'+articleId).then((res)=>{
+                axios.delete(BASE_URL+'/articles/'+articleId).then((res)=>{
                 setPosts((prevPosts) => prevPosts.filter((post) => post._id !== articleId));
                 //console.log(res)
             })
@@ -35,7 +36,7 @@ export default function ({navbarEnabled = true, footerEnabled=true}) {
             return
         }
         //console.log('ini adalah user kamu deck, ', user)
-        axios.post('https://isacitra-com-api.vercel.app/articles/edit', {user:user}).then( res => {
+        axios.post(BASE_URL+'/articles/edit', {user:user}).then( res => {
           setPosts(res.data.articles)
          // console.log('Berhasil mendapatkan artikel-artikel -> ', 'jumlah artikel : ', res.data.articles.length)
           setLoading(false)

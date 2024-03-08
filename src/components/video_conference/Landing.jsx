@@ -11,6 +11,7 @@ import {v4 as uuidv4} from "uuid";
 import Loading from "../loading/Loading";
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
+import BASE_URL from "../../api/base_url";
 
 
 
@@ -249,12 +250,12 @@ function CreateRoomDialog({ isOpen = true, onClose = () => {} }) {
               status:roomInfo.status
             }
             
-            const guest = await axios.post('https://isacitra-com-api.vercel.app/video/guest',{
+            const guest = await axios.post(BASE_URL+'/video/guest',{
               roomId:roomId,
               guestId: guestId,
               username: roomInfo.username,
             });
-            const room = await axios.post('https://isacitra-com-api.vercel.app/video/createRoom', data);
+            const room = await axios.post(BASE_URL+'/video/createRoom', data);
             setCreatedRoom(room.data)
             console.log(guest, room);
             setLoading(false)

@@ -13,6 +13,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { Storage } from "../../../firebase";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import axios from "axios";
+import BASE_URL from "../../api/base_url.js";
 
 const Dashboard = () => {
     const user = useSelector((state) => state.auth.user)
@@ -117,7 +118,7 @@ const ProfileSetting = () => {
         }
 
         try {
-            const res = await axios.post('https://isacitra-com-api.vercel.app/authentication/updateProfil',{
+            const res = await axios.post(BASE_URL+'/authentication/updateProfil',{
                 _id: user._id,
                 newData: {
                     email, username, firstName, lastName, bio, avatar:avatarFile, 

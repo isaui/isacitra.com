@@ -7,6 +7,7 @@ import { ArticleSlider, } from "./ArticleCard";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import YoutubePlayer from "../react-yt/YtVideoPlayer";
+import BASE_URL from "../../api/base_url";
 
 
 
@@ -16,7 +17,7 @@ export default function (){
     const navigate = useNavigate();
     useEffect(()=>{
         setLoading(true)
-        axios.get('https://isacitra-com-api.vercel.app/articles').then( res => {
+        axios.get(BASE_URL+'/articles').then( res => {
           setArticles(res.data.articles)
           setLoading(false)
 

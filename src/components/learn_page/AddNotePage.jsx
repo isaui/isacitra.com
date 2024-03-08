@@ -16,6 +16,7 @@ import { Storage } from "../../../firebase";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import mongoose from "mongoose";
 import Loading from "../loading/Loading";
+import BASE_URL from "../../api/base_url";
 
 
 
@@ -76,7 +77,7 @@ export default function () {
     const handleDelete = async (articleId) => {
         try {
                 if(isReady){
-                    axios.delete('https://isacitra-com-api.vercel.app/articles/'+articleId).then((res)=>{
+                    axios.delete(BASE_URL+'/articles/'+articleId).then((res)=>{
                 navigate(-1)
             })
                 }
@@ -121,7 +122,7 @@ export default function () {
     }
     try {
         
-    const res = await axios.post("https://isacitra-com-api.vercel.app/learn/addNotes", {
+    const res = await axios.post(BASE_URL+"/learn/addNotes", {
       "idMatkul": data.matkulId,
       "idChapter": data.activeChapterId,
       "idMateri": data.activeMateriId,

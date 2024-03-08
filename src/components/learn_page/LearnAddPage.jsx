@@ -15,6 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useSelector } from "react-redux";
 import axios from "axios";
 import mongoose from "mongoose";
+import BASE_URL from "../../api/base_url";
 
 
 
@@ -94,7 +95,7 @@ export default function () {
             thumbnail:thumbnail,
             author:user
           };
-          await axios.post('https://isacitra-com-api.vercel.app/learn', data)
+          await axios.post(BASE_URL+'/learn', data)
           toast.success('Berhasil menambahkan mata kuliah', {
             autoClose: 2000,
           })
