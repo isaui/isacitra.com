@@ -1,2 +1,2 @@
-const BASE_URL = 'https://isacitracomapi-production.up.railway.app'
+const BASE_URL = 'https://bkd.isacitra.com'
 export default BASE_URL
