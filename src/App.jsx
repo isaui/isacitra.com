@@ -21,6 +21,7 @@ import EditNotePage from './components/learn_page/EditNotePage';
 import Landing from './components/video_conference/Landing';
 import JoinPage from './components/video_conference/Join';
 import CalendarPage from './modules/calender/pages/CalendarPage';
+import QueryScreen from './components/query_screen/QueryScreen';
 
 
 
@@ -52,6 +53,7 @@ function App() {
             <Route path='/learn/add' element= {<LearnAddPage/>}></Route>
             <Route path='/learn/:id/addNote' element= {<AddNotePage/>}></Route>
             <Route path='/learn/:id/editNote' element={<EditNotePage/>}></Route>
+            <Route path='/try-query/' element={<QueryScreen/>}></Route>
             <Route path='*' element= {<ErrorPage/>}></Route>
     </Routes>
     </Router>
