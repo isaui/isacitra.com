@@ -16,7 +16,9 @@ const QueryScreen =  ()=>{
     },[])
 
     const submitQuery = async () => {
-        if(! ref.current && ref.current.value.trim().length != 0){
+        console.log("INFO")
+        if(! ref.current || ref.current.value.trim().length == 0){
+            console.log('HUH')
             return
         }
         const queryString = ref.current.value
