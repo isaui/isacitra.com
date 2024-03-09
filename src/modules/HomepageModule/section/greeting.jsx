@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import TypingText from "../typing_text/TypingText";
-import ProfilePicture from "../../assets//profile/profile.svg";
-import ContactPopup from "../contact/ContactPopUp";
+import { useState } from "react";
+import TypingText from "../../../components/typing_text/TypingText";
+import ProfilePicture from "../../../assets//profile/profile.svg";
+import ContactPopup from "../../../components/contact/ContactPopUp";
 import { ToastContainer, toast } from "react-toastify";
-export default function(){
+export default function Greeting(){
     const  [popUpOpen, setPopUpOpen] = useState(false)
 
     const notify = (data) => {

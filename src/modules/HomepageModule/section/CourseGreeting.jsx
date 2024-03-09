@@ -1,11 +1,10 @@
-import React, { useState } from "react";
-import TypingText from "../typing_text/TypingText";
-import ProfilePicture from "../../assets/profile/profile.svg";
-import CourseCardImg from "../../assets/course/course.svg";
-import ContactPopup from "../contact/ContactPopUp";
+import { useState } from "react";
+import CourseCardImg from "../../../assets/course/course.svg";
+import ContactPopup from "../../../components/contact/ContactPopUp";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-export default function(){
+
+export default function CourseGreeting(){
     const navigate = useNavigate();
     const  [popUpOpen, setPopUpOpen] = useState(false)
 

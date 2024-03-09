@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { HomepageNav } from "../nav/Nav";
+import { HomepageNav } from "../../../components/nav/Nav.jsx";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Footer from "../footer/Footer";
-import ProfileSettings from "./ProfileSettings";
-import  {setUser, logoutUser} from '../../slice/authSlice.js';
+import Footer from "../../../components/footer/Footer.jsx";
+import ProfileSettings from "../module-elements/ProfileSettings.jsx";
+import  {setUser, logoutUser} from '../../../slice/authSlice.js';
 import { AiFillLock, AiFillProfile, AiTwotoneAccountBook, AiTwotoneEdit } from "react-icons/ai";
 import { FaDoorOpen } from "react-icons/fa";
-import PasswordSettings from "./PasswordSettings";
-import ArticleManagement from "../article_management/ArticleManagement";
+import PasswordSettings from "../module-elements/PasswordSettings.jsx";
+import ArticleManagement from "../../../components/article_management/ArticleManagement.jsx";
 import { ToastContainer, toast } from "react-toastify";
-import { Storage } from "../../../firebase";
+import { Storage } from "../../../../firebase.js";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import axios from "axios";
-import BASE_URL from "../../api/base_url.js";
+import BASE_URL from "../../../api/base_url.js";
 
 const Dashboard = () => {
     const user = useSelector((state) => state.auth.user)

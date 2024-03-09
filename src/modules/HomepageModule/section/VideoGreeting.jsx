@@ -1,12 +1,9 @@
-import React, { useState } from "react";
-import TypingText from "../typing_text/TypingText";
-import ProfilePicture from "../../assets/profile/profile.svg";
-import VideoImg from "../../assets/course/video.svg";
-import VideoCardImg from "../../assets/new_meet/zoomcreate.svg";
-import ContactPopup from "../contact/ContactPopUp";
+import { useState } from "react";
+import VideoImg from "../../../assets/course/video.svg";
+import ContactPopup from "../../../components/contact/ContactPopUp";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-export default function(){
+export default function VideoGreeting(){
     const navigate = useNavigate();
     const  [popUpOpen, setPopUpOpen] = useState(false)
 

@@ -1,8 +1,7 @@
-import React, { useState, useRef } from 'react';
+import { useRef } from 'react';
 import { AiFillEdit } from 'react-icons/ai';
-import { useSelector, useDispatch } from "react-redux";
-import UnknownAvatar from '../../assets/unknown/unknown_avatar.svg';
-import Loading from '../loading/Loading';
+import UnknownAvatar from '../../../assets/unknown/unknown_avatar.svg';
+import Loading from '../../../components/loading/Loading';
 
 
 const ProfileSettings = ({data}) => {
@@ -36,9 +35,7 @@ const ProfileSettings = ({data}) => {
     }
   };
 
-  const openAvatarUploader = () => {
-    avatarInputRef.current.click(); // Trigger the hidden input
-  };
+  
 
   return (
     <div className="  md:max-w-lg lg:max-w-none mx-auto p-4 text-white">

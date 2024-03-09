@@ -1,7 +1,7 @@
 import  { useState } from "react";
 
-import CourseCardImg from "../../assets/course/scheduler.svg";
-import ContactPopup from "../contact/ContactPopUp";
+import CourseCardImg from "../../../assets/course/scheduler.svg";
+import ContactPopup from "../../../components/contact/ContactPopUp";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 

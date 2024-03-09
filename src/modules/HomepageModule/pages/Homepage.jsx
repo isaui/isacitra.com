@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
-import { HomepageNav } from "../nav/Nav";
-import {ArticleSlider} from "../article/ArticleCard";
-import Greeting from "../greeting/greeting";
-import Footer from "../footer/Footer";
+import { HomepageNav } from "../../../components/nav/Nav.jsx";
+import {ArticleSlider} from "../../../components/article/ArticleCard.jsx";
+import Greeting from "../section/greeting.jsx";
+import Footer from "../../../components/footer/Footer.jsx";
 import 'react-toastify/dist/ReactToastify.css';
-import { CertificateContainer, certificationArray } from "../certificate/Certificate";
+import { CertificateContainer, certificationArray } from "../../../components/certificate/Certificate.jsx";
 import axios from "axios";
-import CourseGreeting from "../course_greeting/CourseGreeting";
-import SchedulerGreeting from "../course_greeting/SchedulerGreeting.jsx";
-import VideoGreeting from "../greeting/VideoGreeting.jsx"
-import BASE_URL from "../../api/base_url.js";
+import CourseGreeting from "../section/CourseGreeting.jsx";
+import SchedulerGreeting from "../section/SchedulerGreeting.jsx";
+import VideoGreeting from "../section/VideoGreeting.jsx"
+import BASE_URL from "../../../api/base_url.js";
 const Home =  ()=>{
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(false);
