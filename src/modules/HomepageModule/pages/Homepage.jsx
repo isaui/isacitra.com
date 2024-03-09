@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { HomepageNav } from "../../../components/nav/Nav.jsx";
 import {ArticleSlider} from "../../../components/article/ArticleCard.jsx";
-import Greeting from "../section/Greeting.jsx";
+import Greeting from "../section/greeting.jsx";
 import Footer from "../../../components/footer/Footer.jsx";
 import 'react-toastify/dist/ReactToastify.css';
 import { CertificateContainer, certificationArray } from "../../../components/certificate/Certificate.jsx";
