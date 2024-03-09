@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { HomepageNav } from "../../../components/nav/Nav.jsx";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Footer from "../../../components/footer/Footer.jsx";
 import ProfileSettings from "../module-elements/ProfileSettings.jsx";
 import  {setUser, logoutUser} from '../../../slice/authSlice.js';
-import { AiFillLock, AiFillProfile, AiTwotoneAccountBook, AiTwotoneEdit } from "react-icons/ai";
+import { AiFillLock, AiFillProfile,  AiTwotoneEdit } from "react-icons/ai";
 import { FaDoorOpen } from "react-icons/fa";
 import PasswordSettings from "../module-elements/PasswordSettings.jsx";
 import ArticleManagement from "../../../components/article_management/ArticleManagement.jsx";
@@ -17,7 +15,6 @@ import BASE_URL from "../../../api/base_url.js";
 
 const Dashboard = () => {
     const user = useSelector((state) => state.auth.user)
-    const dispatch = useDispatch()
     const contents = [{title: 'Profil Setting', value:'profilSetting', icon: AiFillProfile},
      {title:'Password', icon: AiFillLock, value:'password'},
                     {title:"My Post", icon: AiTwotoneEdit, value:'myPost'}]
@@ -40,7 +37,7 @@ const Dashboard = () => {
             {user && currentContent == contents[2].value && <ArticleManagement navbarEnabled={false} footerEnabled={false}/>}
        </div>
        <div className=" lg:hidden bg-slate-950 fixed bottom-8 left-1/2 transform -translate-x-1/2 rounded-full px-3 py-3 flex justify-betweens space-x-5">
-            {contents.map((data, index)=> <div key={data.title} className="hover:bg-gray-500 rounded-full w-8 h-8 flex justify-center items-center" onClick={()=>{setCurrentContent(data.value)}}><data.icon  color={currentContent == data.value? '#00A8FF':'white'}className="hover:bg-gray-500 rounded-full w-6 h-6"/></div>)}
+            {contents.map((data)=> <div key={data.title} className="hover:bg-gray-500 rounded-full w-8 h-8 flex justify-center items-center" onClick={()=>{setCurrentContent(data.value)}}><data.icon  color={currentContent == data.value? '#00A8FF':'white'}className="hover:bg-gray-500 rounded-full w-6 h-6"/></div>)}
        </div>
     </div>
     
@@ -82,7 +79,6 @@ const ProfileSetting = () => {
       
         uploadTask
           .then((snapshot) => {
-            const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
             return getDownloadURL(snapshot.ref);
           })
           .then((downloadURL) => {
@@ -174,7 +170,6 @@ const ProfileSetting = () => {
 
 const DashboardSet = ({panels, currentContent, setCurrentContent}) => {
     const dispatch = useDispatch()
-    const user = useSelector((state) => state.auth.user)
     return (
         <div className=" hidden fixed top-0 left-0 w-[20%] bg-black h-screen lg:flex flex-col overflow-y-auto">
             <h1 className=" mt-4 mx-auto text-2xl md:text-3xl text-white mb-2">Dashboard</h1>

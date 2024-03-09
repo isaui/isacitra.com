@@ -10,6 +10,7 @@ import CourseGreeting from "../section/CourseGreeting.jsx";
 import SchedulerGreeting from "../section/SchedulerGreeting.jsx";
 import VideoGreeting from "../section/VideoGreeting.jsx"
 import BASE_URL from "../../../api/base_url.js";
+import MoneyManagementGreeting from "../section/MoneyManagementGreeting.jsx";
 const Home =  ()=>{
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -37,6 +38,8 @@ const Home =  ()=>{
       <VideoGreeting/>
       <hr className="mx-auto border border-[#0a88ff] opacity-20 border-spacing-1 border-dashed w-[100vw] max-w-[1240px]"/>
       <SchedulerGreeting/>
+      <hr className="mx-auto border border-[#0a88ff] opacity-20 border-spacing-1 border-dashed w-[100vw] max-w-[1240px]"/>
+      <MoneyManagementGreeting/>
       <hr className="mb-12 mt-6 mx-auto border border-[#0a88ff] opacity-20 border-spacing-1 border-dashed w-[100vw] max-w-[1240px]"/>
       <CertificateContainer data={certificationArray}/>
       </div>

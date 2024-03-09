@@ -24,7 +24,7 @@ const SchedulerGreeting = ()=>{
         <div className=" font-bold"></div>
         <h1 className="greeting-style pb-3 px-6 font-bold md:text-6xl sm:text-5xl text-4xl md:py-3">Sche<span className=" text-[#00A8FF]">duler</span></h1>
         <div className="filosofi">
-        <p className="text-center md:text-justify md:text-xl sm:text-lg text-sm md:py-7 py-5 px-6">Kayak Calendly tapi bukan Calendly. Dah gitu aja.</p>
+        <p className="text-center md:text-justify md:text-xl sm:text-lg text-sm md:py-7 py-5 px-6">Scheduler adalah platform manajemen jadwal yang dirancang untuk mengatur demo dan pertemuan dengan mudah. Dibuat untuk membantu individu dan tim dalam mengelola jadwal dengan efisien, Scheduler menawarkan fungsionalitas yang sederhana namun kuat untuk menyusun janji, demo, dan pertemuan. Solusi ideal bagi siapa pun yang ingin meningkatkan produktivitas dan efisiensi dalam mengatur jadwal.</p>
         </div>
         <div className="flex justify-center lg:justify-start px-6">
             <button onClick={ () => navigate('/jadwal')} className=" bg-[#00A8FF] hover:bg-blue-900 hover:text-white rounded-md py-3 px-3 text-sm md:text-base min-w-[200px] text-black">Lihat Selengkapnya</button>
