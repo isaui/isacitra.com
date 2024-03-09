@@ -217,7 +217,7 @@ const Navbar = ({links, floatingButtonOpen = false}) => {
     )
  };
  const HomepageNav = ({floatingButtonOpen=false}) => {
-    return <Navbar floatingButtonOpen={floatingButtonOpen} links={[{link: '/', title: 'Beranda'}, {link: '/articles', title: 'Artikel'}, {link: '/projects', title: 'Projects'}, {link: '/learn', title: 'Learn'}]}/>
+    return <Navbar floatingButtonOpen={floatingButtonOpen} links={[{link: '/', title: 'Beranda'}, {link: '/articles', title: 'Artikel'}, {link: '/video', title: 'Meeting'}, {link: '/learn', title: 'Learn'}]}/>
  };
  
  export { HomepageNav, NavLink }

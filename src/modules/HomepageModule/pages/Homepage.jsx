@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { HomepageNav } from "../../../components/nav/Nav.jsx";
 import {ArticleSlider} from "../../../components/article/ArticleCard.jsx";
-import Greeting from "../section/greeting.jsx";
+import Greeting from "../section/Greeting.jsx";
 import Footer from "../../../components/footer/Footer.jsx";
 import 'react-toastify/dist/ReactToastify.css';
 import { CertificateContainer, certificationArray } from "../../../components/certificate/Certificate.jsx";
@@ -11,6 +11,7 @@ import SchedulerGreeting from "../section/SchedulerGreeting.jsx";
 import VideoGreeting from "../section/VideoGreeting.jsx"
 import BASE_URL from "../../../api/base_url.js";
 import MoneyManagementGreeting from "../section/MoneyManagementGreeting.jsx";
+import BookphoriaGreeting from "../section/BookphoriaGreeting.jsx";
 const Home =  ()=>{
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -40,6 +41,8 @@ const Home =  ()=>{
       <SchedulerGreeting/>
       <hr className="mx-auto border border-[#0a88ff] opacity-20 border-spacing-1 border-dashed w-[100vw] max-w-[1240px]"/>
       <MoneyManagementGreeting/>
+      <hr className="mx-auto border border-[#0a88ff] opacity-20 border-spacing-1 border-dashed w-[100vw] max-w-[1240px]"/>
+      <BookphoriaGreeting/>
       <hr className="mb-12 mt-6 mx-auto border border-[#0a88ff] opacity-20 border-spacing-1 border-dashed w-[100vw] max-w-[1240px]"/>
       <CertificateContainer data={certificationArray}/>
       </div>
