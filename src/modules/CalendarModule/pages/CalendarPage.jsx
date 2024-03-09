@@ -1,14 +1,15 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { HomepageNav } from "../../../components/nav/Nav";
 import Footer from "../../../components/footer/Footer";
-import SectionButton from "../component/Section";
+import SectionButton from "../module-elements/Section";
 import { useEffect, useState, useRef } from "react";
-import EventCard, { AuthorizedEventCard } from "../component/Event";
-import BookingCard from "../component/BookingCard";
+import EventCard, { AuthorizedEventCard } from "../module-elements/Event";
+import BookingCard from "../module-elements/BookingCard";
 import Calendar from "react-calendar";
 import "../styles.css"
-import TimeCard from "../component/TimeCard";
-import DemoScheduler from "../component/DemoScheduler";
-import BookingModal from "../component/BookingModal";
+import TimeCard from "../module-elements/TimeCard";
+import DemoScheduler from "../module-elements/DemoScheduler";
+import BookingModal from "../module-elements/BookingModal";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { v4 as uuidv4 } from 'uuid';
@@ -92,18 +93,6 @@ const formatDate = (inputDate) => {
       return formattedDate;
   }
 
-  function areDateStringEqual(dateString1, dateString2) {
-    // Buat objek Date dari string tanggal pertama
-    const date1 = new Date(dateString1);
-    // Buat objek Date dari string tanggal kedua
-    const date2 = new Date(dateString2);
-  
-    // Bandingkan kedua tanggal tanpa memperhatikan jam, menit, detik, dan milidetik
-    const strippedDate1 = new Date(date1.toDateString());
-    const strippedDate2 = new Date(date2.toDateString());
-  
-    return strippedDate1.getTime() === strippedDate2.getTime();
-  }
 
   function areDateEqual(d1,d2){
    // console.log(formatDate(d1))

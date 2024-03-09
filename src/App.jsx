@@ -13,21 +13,17 @@ import ArticleManagement from './components/article_management/ArticleManagement
 import AuthenticationPage from './components/authentication/authpage';
 import ProjectPage from './components/project_page/ProjectPage';
 import Dashboard from './components/dashboard/Dashboard';
-import LearnPage from './components/learn_page/LearnPage';
-import LearnAddPage from './components/learn_page/LearnAddPage';
-import ContentLearnPage from './components/learn_page/ContentLearnPage';
-import AddNotePage from './components/learn_page/AddNotePage';
-import EditNotePage from './components/learn_page/EditNotePage';
-import Landing from './components/video_conference/Landing';
-import JoinPage from './components/video_conference/Join';
-import CalendarPage from './modules/calender/pages/CalendarPage';
+import LearnPage from './modules/LearnModule/pages/LearnPage';
+import LearnAddPage from './modules/LearnModule/pages/LearnAddPage';
+import ContentLearnPage from './modules/LearnModule/pages/ContentLearnPage';
+import AddNotePage from './modules/LearnModule/pages/AddNotePage';
+import EditNotePage from './modules/LearnModule/pages/EditNotePage';
 import QueryScreen from './components/query_screen/QueryScreen';
-
-
+import VideoConferenceHomeScreen from './modules/VideoConferenceModule/pages/VideoConferenceHomeScreen';
+import RoomPage from './modules/VideoConferenceModule/pages/VideoConferenceScreen';
+import CalendarPage from './modules/CalendarModule/pages/CalendarPage';
 
 function App() {
-  
-
   return (
     
       <Router>
@@ -47,8 +43,8 @@ function App() {
             <Route path='/projects' element= {<ProjectPage/>}></Route>
             <Route path='/search' element= {<SearchResult/>}></Route>
             <Route path='/learn' element= {<LearnPage/>}></Route>
-            <Route path='/video' element= {<Landing/>}></Route>
-            <Route path='/video/:id' element= {<JoinPage/>}></Route>
+            <Route path='/video' element= {<VideoConferenceHomeScreen/>}></Route>
+            <Route path='/video/:id' element= {<RoomPage/>}></Route>
             <Route path='/learn/:id' element= {<ContentLearnPage/>}></Route>
             <Route path='/learn/add' element= {<LearnAddPage/>}></Route>
             <Route path='/learn/:id/addNote' element= {<AddNotePage/>}></Route>

@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { HomepageNav } from "../nav/Nav";
-import Footer from "../footer/Footer";
-import Error from '../../assets/error/error.svg';
-import {AiOutlineMenu, AiOutlineClose, AiFillCloseCircle, AiOutlineSearch} from 'react-icons/ai'
-import { useNavigate, useLocation} from 'react-router-dom';
-import ZeroArticle from '../../assets/Zero/zero.svg';
-import { HashtagList } from "../article/ArticleCard";
-import DefaultThumbnail from '../../assets/no_thumbnail/default.svg'
+import { useEffect, useState } from "react";
+import { HomepageNav } from "../../../components/nav/Nav";
+import Footer from "../../../components/footer/Footer";
+import { AiOutlineSearch} from 'react-icons/ai'
+import { useNavigate} from 'react-router-dom';
+import ZeroArticle from '../../../assets/Zero/zero.svg';
+import { HashtagList } from "../../../components/article/ArticleCard";
+import DefaultThumbnail from '../../../assets/no_thumbnail/default.svg'
 import axios from "axios";
-import Loading from "../loading/Loading";
-import BASE_URL from "../../api/base_url";
+import Loading from "../../../components/loading/Loading";
+import BASE_URL from "../../../api/base_url";
 
 function formatDateToDDMMYYYY(dateString) {
   // Buat objek Date dari string tanggal yang diberikan
@@ -25,7 +24,7 @@ function formatDateToDDMMYYYY(dateString) {
 
   return formattedDate;
 }
-export default function () {
+export default function Page () {
     
     const navigate = useNavigate();
     const searchQuery = new URLSearchParams(location.search).get('q') ?? '';

@@ -1,25 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { HomepageNav } from "../nav/Nav";
-import Footer from "../footer/Footer";
-import Error from '../../assets/error/error.svg';
-import {AiOutlineMenu, AiOutlineClose, AiFillCloseCircle, AiOutlineSearch} from 'react-icons/ai'
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState } from "react";
+import { HomepageNav } from "../../../components/nav/Nav";
+import Footer from "../../../components/footer/Footer";
 import { useNavigate} from 'react-router-dom';
-import ZeroArticle from '../../assets/Zero/zero.svg';
-import CategoryLabel from "../category_label/CategoryLabel";
-import { Storage } from "../../../firebase";
+import CategoryLabel from "../../../components/category_label/CategoryLabel";
+import { Storage } from "../../../../firebase";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
-import ImageUpload from '../../components/file_upload/UploadImage';
-import AddCategoryForm from "../add_category/AddCategoryForm";
+import ImageUpload from '../../../components/file_upload/UploadImage';
+import AddCategoryForm from "../../../components/add_category/AddCategoryForm";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useSelector } from "react-redux";
 import axios from "axios";
 import mongoose from "mongoose";
-import BASE_URL from "../../api/base_url";
+import BASE_URL from "../../../api/base_url";
 
 
 
-export default function () {
+export default function Page() {
     const user = useSelector((state) => state.auth.user);
     const navigate = useNavigate();
     const [title, setTitle] = useState('');
@@ -46,12 +44,10 @@ export default function () {
         const uploadTask = uploadBytesResumable(storageRef, file);
         uploadTask.on("state_changed",
       (snapshot) => {
-        const progress =
           Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-        //setProgresspercent(progress);
       },
       (error) => {
-        //alert(error);
+        console.error(error)
         setUploadStatus('error')
       },
       () => {

@@ -1,24 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { HomepageNav } from "../nav/Nav";
-import Footer from "../footer/Footer";
-import Error from '../../assets/error/error.svg';
-import {AiOutlineMenu, AiOutlineClose, AiFillCloseCircle, AiOutlineSearch} from 'react-icons/ai'
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState } from "react";
+import { HomepageNav } from "../../../components/nav/Nav";
+import Footer from "../../../components/footer/Footer";
 import { useNavigate, useParams} from 'react-router-dom';
-import ZeroArticle from '../../assets/Zero/zero.svg';
-import CategoryLabel from "../category_label/CategoryLabel";
-import { Storage } from "../../../firebase";
-import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
-import ImageUpload from '../../components/file_upload/UploadImage';
-import AddCategoryForm from "../add_category/AddCategoryForm";
+
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useSelector } from "react-redux";
 import axios from "axios";
-import BASE_URL from "../../api/base_url";
+import BASE_URL from "../../../api/base_url";
 
 
 
-export default function () {
+export default function Page() {
     const {id} = useParams()
     const user = useSelector((state) => state.auth.user);
 
@@ -51,7 +45,7 @@ export default function () {
             bab:bab.trim(),
             materi:[]
           };
-          const res =   await axios.post(BASE_URL+'/learn/addSection/'+id, data).data;
+         await axios.post(BASE_URL+'/learn/addSection/'+id, data).data;
           toast.success('Berhasil menambahkan section', {
             autoClose: 2000,
           })

@@ -1,320 +1,41 @@
-import React, { useState, useEffect, useRef } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
+import { useState, useEffect, useRef } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
-import Footer from "../footer/Footer";
-import { useNavigate, useNavigation, useParams } from 'react-router-dom';
-import Loading from "../loading/Loading";
-import LandingImage from "../../assets/new_meet/zoomcreate.svg";
-import Scheduled from "../../assets/meet_status/scheduled.svg";
-import NoUserVideo from "../../assets/meet_status/novideo.svg";
-import Error from '../../assets/error/error.svg'
-import ErrorPage from "../error/ErrorPage";
-import CountdownTimer from "../time_counter/TimeCounter";
-import { AiFillCloseCircle, AiFillMessage, AiFillSetting, AiFillSmile, AiFillVideoCamera, AiOutlineDotChart } from "react-icons/ai";
-import { FaDoorOpen, FaGrinTears, FaHandHolding, FaMicrophone, FaMicrophoneSlash, FaRegWindowClose, FaRegWindowMinimize, FaSmile, FaUser, FaVideo, FaVideoSlash } from "react-icons/fa";
-import { useSelector, useDispatch } from "react-redux";
-import mongoose, { Mongoose, set } from "mongoose";
-import { MdAddReaction, MdChatBubble, MdContacts, MdFrontHand, MdMoreVert, MdOutlineExpand, MdOutlineExpandCircleDown, MdOutlineExpandLess, MdOutlineExpandMore, MdOutlineTopic, MdScreenShare, MdSend, MdSettings, MdThumbUp, MdWavingHand } from "react-icons/md";
+import Footer from "../../../components/footer/Footer";
+import { useNavigate, useParams } from 'react-router-dom';
+
+import LandingImage from "../../../assets/new_meet/zoomcreate.svg";
+import Scheduled from "../../../assets/meet_status/scheduled.svg";
+import Error from '../../../assets/error/error.svg'
+import ErrorPage from "../../../components/error/ErrorPage";
+import CountdownTimer from "../../../components/time_counter/TimeCounter";
+import { FaDoorOpen, FaGrinTears, FaMicrophone, FaMicrophoneSlash, FaSmile, FaUser, FaVideo, FaVideoSlash } from "react-icons/fa";
+import mongoose, {  } from "mongoose";
+import { MdAddReaction, MdChatBubble, MdFrontHand, MdOutlineExpandLess, MdOutlineExpandMore, MdScreenShare, MdThumbUp, MdWavingHand } from "react-icons/md";
 import Cookie from 'js-cookie';
-import {
-  createMicrophoneAudioTrack,
-  createCameraVideoTrack,
-  createMicrophoneAndCameraTracks,
-  AgoraVideoPlayer
-} from "agora-rtc-react";
 import AgoraRTC from "agora-rtc-sdk-ng";
-import {decodeToken, isExpired} from 'react-jwt'
+import BASE_URL from "../../../api/base_url";
+import CustomFullScreenAgoraLocalVideo from "../module-elements/FullScreenAgoraLocalVideo";
+import ParticipantsSidebar from "../module-elements/ParticipantSidebar";
+import Sidebar from "../module-elements/Sidebar";
+import agoraSetting from "../utils/AgoraConfig";
+import { agoraClient } from "../utils/AgoraConfig";
+import CustomAgoraVideo from "../module-elements/CustomAgoraVideo";
+import CustomAgoraLocalVideo from "../module-elements/CustomAgoraLocalVideo";
+import ReactionPopUp from "../module-elements/ReactionPopup";
+import LoadingOverlay from "../module-elements/LoadingOverlayStatus";
+import CustomFullScreenAgoraVideo from "../module-elements/FullScreenAgoraVideo";
+import JoinBox from "../module-elements/JoinBox";
+import AccessPopUp from "../module-elements/AccessPopup";
+import { roomChannel } from "../utils/AblyConfig";
+import { verifyToken } from "../utils/AgoraConfig";
+import {v4 as uuidv4} from "uuid";
 
-import Ably from 'ably/build/ably-webworker.min';
-import BASE_URL from "../../api/base_url";
-
-const ably = new Ably.Realtime({
-  key: 'o7gv-w.ulW0zw:olcD9FroY5pv3a9EhFzb4X7Hth-nedgovu4bdz8bsFI'
-})
-const roomChannel = ably.channels.get('room-channel')
-
-
-const agoraSetting = {
-  AGORA_APP_ID:  'd91d04d113ba4e6181f6da7f4cb9a1cc',
-  AGORA_CERTIFICATE: '5ee0129a61234f65bd4bfd5619178643',
-  config:{ 
-  mode: "rtc", codec: "vp8",
-}
-}
-
-//const useMicrophoneAndCameraTracks = createMicrophoneAndCameraTracks();
-
-const agoraClient = AgoraRTC.createClient({...agoraSetting.config})
-
-
-const verifyToken = (token)=>{
-  try{
-    const decoded = decodeToken(token);
-    const isTokenExpired = isExpired(token);
-    console.log(decoded)
-    if(isTokenExpired){
-      return false
-    }
-    if(!decoded){
-      return false;
-    }
-    return true
-   
-  }catch(error){
-        console.log(error)
-        return false;
-  }
-}
-//agoraClient.
-
-const ReactionPopUp = ({onClose,room, me, setRoom}) => {
-  console.log('dibuat lagi...')
-  const [reaction, setReaction] = useState('no-reaction');
-  console.log('reaksi baru-> ', reaction)
-  useEffect(()=>{
-    console.log('pembuktian...')
-    const itsUpdateOfMe = room.participants[me._id];
-    const newReact = itsUpdateOfMe ? itsUpdateOfMe.reaction : 'no-reaction';
-    setReaction(newReact)
-  },[ ])
-  const submitReaction = async (react) => {
-    try {
-      console.log('ini id saya => ', me._id )
-      const res = await axios.post(BASE_URL+"/video/reaction",{
-        roomId:room._id,
-        guestId:me._id,
-        reaction: react
-      })
-      const {room:newRoom} = res.data;
-      const itsUpdateOfMe = newRoom.participants[me._id];
-      const newReact = itsUpdateOfMe ? itsUpdateOfMe.reaction : 'no-reaction';
-      setReaction(newReact)
-      setRoom(newRoom)
-
-
-    } catch (error) {
-      console.log(error)
-      toast.error("Terdapat kesalahan dalam bereaksi")
-    }
-  }
-  return (
-    <div className="flex justify-start flex-col px-2 pt-1 pb-3 bg-slate-800 rounded-lg">
-      <div className="mb-2 flex  w-full  justify-between items-center ">
-        <h1 className=" text-white text-xs">Reactions</h1>
-        <AiFillCloseCircle onClick={()=>{
-          onClose()
-        }} color="red"className="w-6 h-6"/>
-      </div>
-      
-       <div className="flex flex-row space-x-3">
-       <FaSmile onClick={()=>{
-        submitReaction('smile-reaction')
-       }} color={`${reaction == 'smile-reaction'? 'yellow':'#00A8FF'}`} className=" w-8 h-8 "/>
-        <MdFrontHand onClick={()=>{
-        submitReaction('ask-reaction')
-       }} color={`${reaction == 'ask-reaction'? 'yellow':'#00A8FF'}`} className=" w-8 h-8 "/>
-        <MdThumbUp onClick={()=>{
-        submitReaction('thumbUp-reaction')
-       }} color={`${reaction == 'thumbUp-reaction'? 'yellow':'#00A8FF'}`} className=" w-8 h-8 "/>
-        <MdWavingHand onClick={()=>{
-        submitReaction('wavingHand-reaction')
-       }} color={`${reaction == 'wavingHand-reaction'? 'yellow':'#00A8FF'}`} className=" w-8 h-8 "/>
-        <FaGrinTears onClick={()=>{
-        submitReaction('grinTears-reaction')
-       }} color={`${reaction == 'grinTears-reaction'? 'yellow':'#00A8FF'}`} className=" w-8 h-8 "/>
-       </div>
-      
-    </div>
-  );
-}
-
-const LoadingOverlay = () => {
-  return (
-    <div id="loadingOverlay" className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-20">
-   
-    <div  role="status" className="bg-white bg-opacity-50 rounded-lg p-4 shadow-lg flex justify-center items-center">
-        <svg aria-hidden="true" className="w-10 h-10  text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
-        </svg>
-    </div>
-</div>
-  )
-}
-
-const LocalSettingDropDown = ({userId, onClose ,setLocalMutedParticipantsAudio,setLocalMutedParticipantsVideo ,localMutedParticipantsAudio, localMutedParticipantsVideo,participants,setParticipants }) => {
-  const dropdownRef = useRef(null);
-  const handleClickOutside = (event) => {
-    //console.log('here')
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      onClose();
-    }
-  };
-
-  
-  const muteAudio = async (userId) => {
-    //console.log(participants)
-    const newParticipants = [...participants]
-    const targetUser = newParticipants.find(participant => participant.participantId == userId);
-    if(!targetUser){
-        return toast.error('Terjadi kesalahan dalam me-mute audio', {autoClose:2000});
-    }
-    //console.log('ini dia remoteUser: ', agoraClient.remoteUsers)
-    const userToMute = agoraClient.remoteUsers.find(user => user.uid == userId) ?? targetUser.user;
-    if(userToMute && targetUser){
-      try {
-        await agoraClient.unsubscribe(userToMute, "audio")
-        targetUser.audioTrack = null;
-        setParticipants(newParticipants);
-        setLocalMutedParticipantsAudio(prev => [...prev, userId])
-        return toast.success('Berhasil me-mute audio', {autoClose:2000})
-      } catch (error) {
-        console.log("error", error)
-        return toast.error('Terjadi kesalahan dalam me-mute audio', {autoClose:2000});
-      }
-    }
-  }
-
- const unMuteAudio =  async (userId) => {
-    const newParticipants = [...participants]
-    const targetUser = newParticipants.find(participant => participant.participantId == userId);
-    if(!targetUser){
-        return toast.error('Terjadi kesalahan dalam unmute audio', {autoClose:2000});
-    }
-    const userToUnMute = agoraClient.remoteUsers.find(user => user.uid == userId) ?? targetUser.user;
-    if(userToUnMute && targetUser){
-      try {
-        const res = await agoraClient.subscribe(userToUnMute, "audio");
-        if(res){
-          targetUser.audioTrack = res;
-          setParticipants(newParticipants);
-          setLocalMutedParticipantsAudio(prev => prev.filter(id => id != userId));
-          return toast.success('Berhasil unmute audio', {autoClose:2000})
-        }
-        return toast.error('Terjadi kesalahan dalam unmute audio', {autoClose:2000});
-
-      } catch (error) {
-        console.log("error", error)
-        return toast.error('Terjadi kesalahan dalam unmute audio', {autoClose:2000});
-      }
-    }
-  }
-
-  const muteVideo = async (userId) => {
-    //console.log(participants)
-    const newParticipants = [...participants]
-    const targetUser = newParticipants.find(participant => participant.participantId == userId);
-    if(!targetUser){
-        return toast.error('Terjadi kesalahan dalam me-mute video', {autoClose:2000});
-    }
-    console.log('ini dia remoteUser: ', agoraClient.remoteUsers)
-    const userToMute = agoraClient.remoteUsers.find(user => user.uid == userId) ?? targetUser.user;
-    if(userToMute && targetUser){
-      try {
-        await agoraClient.unsubscribe(userToMute, "video")
-        targetUser.videoTrack = null;
-        setParticipants(newParticipants);
-        setLocalMutedParticipantsVideo(prev => [...prev, userId])
-        return toast.success('Berhasil me-mute video', {autoClose:2000})
-      } catch (error) {
-        console.log("error", error)
-        return toast.error('Terjadi kesalahan dalam me-mute video', {autoClose:2000});
-      }
-    }
-  }
-
-  const unMuteVideo = async (userId) => {
-    const newParticipants = [...participants]
-    const targetUser = newParticipants.find(participant => participant.participantId == userId);
-    if(!targetUser){
-        return toast.error('Terjadi kesalahan dalam unmute video', {autoClose:2000});
-    }
-    const userToUnMute = agoraClient.remoteUsers.find(user => user.uid == userId) ?? targetUser.user;
-    if(userToUnMute && targetUser){
-      try {
-        const res = await agoraClient.subscribe(userToUnMute, "video");
-        if(res){
-          targetUser.videoTrack = res;
-          setParticipants(newParticipants);
-          setLocalMutedParticipantsVideo(prev => prev.filter(id => id != userId));
-          return toast.success('Berhasil unmute video', {autoClose:2000})
-        }
-        return toast.error('Terjadi kesalahan dalam unmute video', {autoClose:2000});
-
-      } catch (error) {
-        console.log("error", error)
-        return toast.error('Terjadi kesalahan dalam unmute video', {autoClose:2000});
-      }
-    }
-  }
-
-  
-  
-  useEffect(() => {
-    // Tambahkan event listener ketika komponen sudah ter-mount
-    document.addEventListener("mousedown", handleClickOutside);
-
-    // Hapus event listener ketika komponen akan di-unmount
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-  const findParticipantInList = (userId, mode) => {
-    if(mode == 'VIDEO'){
-      const find = localMutedParticipantsVideo.find((id)=> id === userId);
-      if(!find){
-        return false;
-      }
-      return true;
-    }
-    else if(mode == 'AUDIO'){
-      const find = localMutedParticipantsAudio.find((id)=> id === userId);
-      if(!find){
-        return false;
-      }
-      return true;
-    }
-  }
-  return (
-    <div
-          className="origin-top-right absolute right-0 mt-4 w-40 rounded-md shadow-lg bg-blue-950 ring-1 ring-black ring-opacity-5"
-          role="menu"
-          ref={dropdownRef}
-          aria-orientation="vertical"
-          aria-labelledby="user-dropdown"
-        >
-          <div className="py-1" role="none">
-            <button
-             role="menuitem"
-             onClick={()=>{
-              if(!findParticipantInList(userId, 'AUDIO')){
-                return muteAudio(userId)
-              }
-              return unMuteAudio(userId)
-             }}
-             className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">
-              <h1>{findParticipantInList(userId, 'AUDIO')? 'Unmute audio' : 'Mute audio'}</h1>
-            </button>
-            <button
-             role="menuitem"
-             onClick={()=>{
-              if(!findParticipantInList(userId, 'VIDEO')){
-                return muteVideo(userId)
-              }
-              return unMuteVideo(userId)
-             }}
-             className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">
-              <h1>{findParticipantInList(userId, 'VIDEO')? 'Unmute video' : 'Mute video'}</h1>
-            </button>
-          </div>
-        </div>
-  )
-}
-
-const JoinPage = () =>{
+const RoomPage = () =>{
     const {id:roomId} = useParams();
-    const user = useSelector((state) => state.auth.user);
     const [room, setRoom] = useState(null);
     const [isError, setError] = useState(false); 
     const [errorMessage, setErrorMessage] = useState("");
@@ -356,13 +77,12 @@ const JoinPage = () =>{
     console.log('ini list banned audio ', localMutedParticipantsAudio)
 
     const handleStartShareScreen = async () =>{
-      console.log('mencoba share screen....')
+      toast("mencoba screen share")
       if(remoteScreenStream){
         return toast.error('Maaf, pengguna lain sedang membagikan layarnya', {autoClose:2000})
       }
       const shareScreenClient = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
       try {
-        
         await shareScreenClient.join(agoraSetting.AGORA_APP_ID, roomId, screenrtcToken, me._id+"-screenshare");
         const newScreenStream = await AgoraRTC.createScreenVideoTrack();
         await shareScreenClient.publish(newScreenStream);
@@ -400,10 +120,6 @@ const JoinPage = () =>{
       screenClient: screenClient,
       remoteScreenStream: remoteScreenStream
     }
-
-
-    //console.log(participants)
-    //console.log('apa isinya? ',room)
     
     const requestPermission = async () => {
       try {
@@ -624,8 +340,7 @@ const JoinPage = () =>{
       console.log('start my journey...')
       
       const init = async () => {
-        //await agoraClient.leave()
-        // Memasang event listener ketika pengguna lain mempublikasikan media
+        
         agoraClient.on("user-published", async (user, mediaType) => {
           await agoraClient.subscribe(user, mediaType);
           console.log("subscribe success");
@@ -695,9 +410,7 @@ const JoinPage = () =>{
         //  await agoraClient.unsubscribe(user, type)
         
         if(user.uid.toString().endsWith("-screenshare")){
-          setRemoteScreenStream(null)
-          setIsShareScreen(false)
-          user.videoTrack?.stop()
+          handleCloseShareScreen()
           return;
         }
 
@@ -731,7 +444,7 @@ const JoinPage = () =>{
             setRemoteScreenStream(null)
             setIsShareScreen(false)
             user.videoTrack?.stop()
-            user.leave()
+            user.leave();
             return;
           }
           setParticipants((prevParticipants) =>
@@ -853,33 +566,11 @@ const JoinPage = () =>{
           console.log('WADUH ERROR BRO')
           console.log(error)
         }
-        // Memublikasikan trek audio dan video lokal
-       // if (tracks) {
-       //   await agoraClient.publish([tracks[0], tracks[1]]);
-          
-      
-       //   setLocalStreams({
-        //    audioTrack: tracks[0], // Tentukan trek audio yang sesuai
-     //       videoTrack: tracks[1], // Tentukan trek video yang sesuai
-       //   });
-     //   }
       };
     init().then((res)=>{
       setSetup(true)
     });
-    console.log('UPPPPPP')
-   // if(ready && tracks){
-
-   //   setIsPermissionGranted(true)
-   //   init().then((res)=>{
-    //   setSetup(true)
-   //   })
-      
-      
-   // }
-   
-      
-  
+    console.log('UPPPPPP')    
     }, [me, updatePermissionStatus])
 
 useEffect(()=>{
@@ -1135,7 +826,25 @@ const userVideoSetting = {
           setLocalMutedParticipantsVideo={setLocalMutedParticipantsVideo}
           localMutedParticipantsAudio={localMutedParticipantsAudio}
           localMutedParticipantsVideo={localMutedParticipantsVideo}
-          setUpdatePermissionStatus={setUpdatePermissionStatus} setIsPermissionGranted={setIsPermissionGranted} startScreenStream={handleStartShareScreen} stopScreenStream={handleCloseShareScreen} isShareScreen={isShareScreen} screenStream={screenStream} remoteScreenStream={remoteScreenStream} screenStreamSetting={userScreenStreamConfig} isPermissionGranted={isPermissionGranted} onSelectChat={onSelectChat} setUnreadMessages={setUnreadMessages} unreadMessages={unreadMessages} chatOptions={['all', ...participants.map((participant)=> participant.participantId)]} selectedChatValue={selectedOptionChat} me={me} room={room} roomId={roomId} setRoom={setRoom} rtcToken={rtcToken} localStreams={localStreams} userSetting={userVideoSetting} remoteStreamData={streamData} participants={participants}/>
+          setUpdatePermissionStatus={setUpdatePermissionStatus} 
+          setIsPermissionGranted={setIsPermissionGranted} 
+          startScreenStream={handleStartShareScreen} 
+          stopScreenStream={handleCloseShareScreen}
+          isShareScreen={isShareScreen} 
+          screenStream={screenStream}
+          remoteScreenStream={remoteScreenStream}
+          screenStreamSetting={userScreenStreamConfig}
+          isPermissionGranted={isPermissionGranted}
+          onSelectChat={onSelectChat}
+          setUnreadMessages={setUnreadMessages}
+          unreadMessages={unreadMessages}
+          chatOptions={['all', ...participants.map((participant)=> participant.participantId)]} 
+          selectedChatValue={selectedOptionChat} 
+          me={me} 
+          room={room} 
+          roomId={roomId} 
+          setRoom={setRoom} 
+          rtcToken={rtcToken} localStreams={localStreams} userSetting={userVideoSetting} remoteStreamData={streamData} participants={participants}/>
         </div> :<div className='homepage-content  min-h-screen w-full flex flex-col my-auto items-center max-w-full'>
         {isJoinBoxOpen &&
          <div onClick={()=>{setJoinBoxOpen(false)}} className="fixed z-50 top-0 left-0 w-screen flex bg-black bg-opacity-30 flex-col justify-center items-center min-h-screen">
@@ -1195,585 +904,6 @@ const userVideoSetting = {
     {screen == 'lobby'&& <Footer/>}</>}
 </div>
 }
-function formatTimestampToWIB(timestamp) {
-  const options = {
-    hour: "numeric",
-    minute: "numeric",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    timeZone: "Asia/Jakarta", // Atur zona waktu ke Waktu Indonesia Barat (WIB)
-  };
-
-  return new Intl.DateTimeFormat("id-ID", options).format(new Date(timestamp));
-}
-
-const Sidebar = ({isOpen, closeSidebar, onSelect, options, selectedValue, room, me, })=>{
-  const [loading, setLoading] = useState(false);
-  const [pesan, setPesan] = useState('');
-  const [filteredChats, setFilteredChats] = useState([]);
-  useEffect(()=>{
-    if(!room){
-      return
-    }
-    const chats = room.chats;
-    if(selectedValue == 'all'){
-      const selectedChats = chats.filter((chat)=> (chat.receiver == null || chat.receiver == "all"));
-      setFilteredChats(selectedChats);
-    }
-    else{
-      const selectedChats = chats.filter((chat)=>((chat.sender == me._id || chat.sender == selectedValue) && 
-      (chat.receiver == me._id  || chat.receiver == selectedValue)))
-      setFilteredChats(selectedChats)
-    }
-  }, [room, selectedValue])
-  const submitMessage= async () => {
-    if(pesan.trim().length == 0){
-      return toast.error("Maaf pesan Anda masih kosong", {autoClose:2000})
-    }
-    setLoading(true)
-    try {
-      const res = await  axios.post(BASE_URL+'/video/addCommentToRoom', {roomId:room._id, senderId:me._id, receiverId: selectedValue, message: pesan});
-      toast("Berhasil mengirim pesan", {autoClose:2000})
-      setPesan('')
-      console.log('ini room kmoeh',res.data)
-    } catch (error) {
-      console.log(error)
-      toast.error("gagal mengirim pesan", {autoClose:2000})
-    }
-    setLoading(false)
-  }
-  const handleChangePesan = async (e) => {
-    setPesan(e.target.value);
-    
-  }
-
-  return <div onClick={(e)=>{e.stopPropagation()}} className={`fixed  bottom-0 left-0 flex flex-col min-w-[18rem] h-screen max-h-screen w-screen md:max-w-[40%] lg:max-w-[30%] bg-neutral-900 `}>
-    <div className="fixed flex  z-10 flex-col top-0 left-0 w-screen min-w-[18rem] md:max-w-[40%] lg:max-w-[30%]">
-      <ToastContainer/>
-    <div className=" bg-neutral-950 h-16 flex items-center  w-full">
-      <h1 className="ml-2 text-white text-2xl mr-auto">CHATS</h1>
-      <DropdownChat onSelect={onSelect} options={options} selectedValue={selectedValue} room={room} />
-      <AiFillCloseCircle onClick={closeSidebar} color="#00A8FF" className="ml-2 mr-2 w-8 h-8 "/>
-    </div>
-    </div>
-    <div className={`${filteredChats.length > 0 ? 'mt-20 mb-20' : 'my-auto'} w-full flex flex-col overflow-y-auto`}>
-      {filteredChats.length  == 0? <h1 className="mx-auto text-white text-sm">Belum ada pesan</h1>:
-        <div className=" w-full flex flex-col items-center justify-start">
-          {
-            filteredChats.map((chat)=>{
-              if(chat.sender == me._id){
-                return <div className="w-full flex flex-col text-white">
-                <h1 className="text-sm ml-auto mr-2 my-1 break-words text-teal-400">
-                  Anda
-                </h1>
-                <div className="max-w-[90%] bg-teal-800 mb-1 text-sm break-words  rounded-lg px-2 py-2 ml-auto mr-1">
-                {chat.message}
-              </div>
-              <div className="mb-2 breaks-word mr-2 text-xs text-teal-200 ml-auto">
-                {formatTimestampToWIB(chat.createdAt)}
-              </div>
-              </div>
-              }
-
-              return <div className="w-full flex flex-col text-white">
-                <h1 className="text-sm mr-auto ml-2 my-1 break-word text-blue-500">
-                  {room? room.participants[chat.sender]? room.participants[chat.sender].guestId.username : 'loading...' : 'loading...'}
-                </h1>
-                <div className="max-w-[90%] bg-slate-800 mb-1 text-sm break-words  rounded-lg px-2 py-2 mr-auto ml-1">
-                {chat.message} 
-              </div>
-              <div className="mb-2 breaks-word ml-2 text-xs text-blue-300 mr-auto">
-                {formatTimestampToWIB(chat.createdAt)}
-              </div>
-              </div>
-            })
-          }
-        </div>
-      }
-    </div>
-    <div className="fixed -z-10 bottom-0 left-0 w-full min-w-[18rem] md:max-w-[40%] lg:max-w-[30%]">
-    <div className=" px-2 h-16 flex justify-between items-center bg-neutral-950  w-full ">
-      <input value={pesan} onChange={handleChangePesan} type="text" className="text-white grow text-sm py-3 px-2 rounded-md outline-none bg-transparent focus:border-[#00A8FF] border-2 border-[#00A8FF]" placeholder="Masukkan pesan Anda"/>
-      <div className="ml-2" onClick={submitMessage}>
-      {loading? <Loading/> : <MdSend color="#00A8FF" className="ml-4 w-6 h-6 "/>}
-      </div>
-    </div>
-    </div>
-    
-
-  </div>
-}
-const ParticipantsSidebar = ({room, setParticipants,localMutedParticipantsAudio,localMutedParticipantsVideo,setLocalMutedParticipantsAudio,setLocalMutedParticipantsVideo,setSelectedOptionChat, isOpen, closeSidebar, me, participants=[], openChatSidebar})=>{
-
-  return <div onClick={(e)=>{e.stopPropagation()}} className={`flex flex-col min-w-[18rem] relative h-screen w-screen md:max-w-[40%] lg:max-w-[30%] bg-slate-950 `}>
-    <div className=" absolute right-0 top-0  my-2 flex items-center justify-between w-full">
-      <h1 className=" ml-2 text-white text-2xl">Participants</h1>
-      <AiFillCloseCircle onClick={closeSidebar} color="#00A8FF" className="mr-2 w-8 h-8 "/>
-    </div>
-    <div className="mt-16 flex flex-col bg-neutral-900 h-full justify-start overflow-y-auto">
-      <div className= {` text-white text-sm w-full py-4  flex items-center`}>
-        <div  className={`ml-2 bg-teal-700  w-12 h-12 flex items-center justify-center rounded-full`}>
-           {me.username[0]}
-        </div>
-        <div className="ml-4 flex flex-col items-start space-y-1">
-        <h1 className=" text-sm break-words">
-          {me? me.username : '...'} {'(Anda)'}
-        </h1>
-        <div className="text-white bg-blue-400 px-2 py-1 rounded-md text-xs">
-          Guest
-        </div>
-        </div>
-
-      </div>
-      {participants.map((participant)=>{
-        const data = room.participants[participant.participantId];
-        return (
-          <ParticipantSetting key={data? data.guestId : 'abcdefghijklmn'} 
-          data={data}
-          setLocalMutedParticipantsAudio={setLocalMutedParticipantsAudio}
-          setLocalMutedParticipantsVideo={setLocalMutedParticipantsVideo}
-          setSelectedOptionChat={setSelectedOptionChat}
-          openChatSidebar={openChatSidebar}
-          participant={participant}
-          participants={participants}
-          localMutedParticipantsAudio={localMutedParticipantsAudio}
-          localMutedParticipantsVideo={localMutedParticipantsVideo}
-          setParticipants={setParticipants}
-          />
-        )
-      })}
-    </div>
-
-  </div>
-}
-
-const ParticipantSetting = ({data, setSelectedOptionChat, openChatSidebar, participant, participants, setParticipants,
-localMutedParticipantsAudio, localMutedParticipantsVideo,
-setLocalMutedParticipantsAudio,setLocalMutedParticipantsVideo})=>{
-  const [isMutedSettingOpen,setIsMutedSettingOpen] = useState(false);
-  return ( 
-  <div className= {`mb-auto text-white text-sm w-full py-4  flex items-center`}>
-  <div  className={`ml-2 bg-teal-700  w-12 h-12 flex items-center justify-center rounded-full`}>
-     {data? data.guestId.username[0] : '?' }
-  </div>
-  <div className="ml-4 flex flex-col items-start space-y-1">
-  <h1 className=" text-sm break-words">
-    {data? data.guestId.username : '...'} 
-  </h1>
-  <div className="text-white bg-blue-400 px-2 py-1 rounded-md text-xs">
-    Guest
-  </div>
-  </div>
-  <div className="relative flex ml-auto mr-4 items-center space-x-2">
-    { isMutedSettingOpen && 
-    <div className="absolute top-0 right-0 z-20">
-      <LocalSettingDropDown 
-    userId={participant? participant.participantId : 'undefined'}
-    onClose={()=>{setIsMutedSettingOpen(false)}}
-    participants={participants}
-    setLocalMutedParticipantsAudio={setLocalMutedParticipantsAudio}
-    setLocalMutedParticipantsVideo={setLocalMutedParticipantsVideo}
-    localMutedParticipantsAudio={localMutedParticipantsAudio}
-    localMutedParticipantsVideo={localMutedParticipantsVideo}
-    setParticipants={setParticipants}
-     />
-    </div>}
-    <AiFillMessage onClick={()=>{
-      setSelectedOptionChat(participant.participantId)
-      openChatSidebar()
-    }} color="white" className="w-8 h-8"/>
-    <MdMoreVert onClick={()=>{
-      setIsMutedSettingOpen(true);
-    }} color="white" className="w-8 h-8"/>
-  </div>
-  </div> )
-
-}
-
-function CustomFullScreenAgoraVideo({showControl=true, audioTrack, videoTrack, isUser, name, isVideoEnabled=true, isAudioEnabled=true }) {
-
-  const videoRef = useRef(null);
-    useEffect(() => {
-      if (videoTrack && videoRef.current) {
-        // Dapatkan MediaStreamTrack dari videoTrack
-        const mediaStreamTrack = videoTrack.getMediaStreamTrack();
-  
-        // Buat MediaStream baru yang berisi MediaStreamTrack
-        const mediaStream = new MediaStream();
-        mediaStream.addTrack(mediaStreamTrack);
-  
-        // Assign MediaStream ke elemen video
-        videoRef.current.srcObject = mediaStream;
-      }
-    }, [videoTrack]);
-  return (
-    
-    <div className="flex flex-col bg-slate-950 w-full h-full rounded-lg">
-      {isVideoEnabled && videoTrack? ( // i change this
-        <video
-          className=" w-screen md:h-[93vh] h-[95vh] object-cover rounded-t-lg"
-          style={{}}
-          ref={videoRef}
-          autoPlay
-          playsInline
-          muted    
-        />
-      ) : (
-        <img src={NoUserVideo} className=" w-screen md:h-[93vh] h-[95vh] object-cover rounded-t-lg" alt="No Video" />
-      )}
-
-      <div className="w-full mx-2  py-2 flex items-center justify-between">
-        {(!isUser && showControl )&& (
-          <div className="ml-2 flex items-center space-x-4">
-            <div>
-              { !isVideoEnabled ? (
-                <FaVideoSlash
-                  color="red"
-                  className="w-6 h-auto"
-                  // Logic to toggle video track on/off
-                />
-              ) : (
-                <FaVideo
-                  color="#00A8FF"
-                  className="w-6 h-auto"
-                  // Logic to toggle video track on/off
-                />
-              )}
-            </div>
-            <div>
-              {!isAudioEnabled ? (
-                <FaMicrophoneSlash
-                  color="red"
-                  className="w-6 h-auto"
-                  // Logic to toggle audio track on/off
-                />
-              ) : (
-                <FaMicrophone
-                  color="#00A8FF"
-                  className="w-6 h-auto"
-                  // Logic to toggle audio track on/off
-                />
-              )}
-            </div>
-          </div>
-        )}
-        <div className="truncate ml-auto">
-          <h1 className="text-white text-sm mr-4 truncate">
-            {name}
-            {isUser ? ' (Anda)' : ''}
-          </h1>
-        </div>
-      </div>
-    </div>
-  );
-}
-// i change this
-function CustomAgoraVideo({ audioTrack, videoTrack, isUser, name, isVideoEnabled=true, isAudioEnabled=true }) {
-  const videoRef = useRef(null);
-    useEffect(() => {
-      if (videoTrack && videoRef.current) {
-        // Dapatkan MediaStreamTrack dari videoTrack
-        const mediaStreamTrack = videoTrack.getMediaStreamTrack();
-  
-        // Buat MediaStream baru yang berisi MediaStreamTrack
-        const mediaStream = new MediaStream();
-        mediaStream.addTrack(mediaStreamTrack);
-  
-        // Assign MediaStream ke elemen video
-        videoRef.current.srcObject = mediaStream;
-      }
-    }, [videoTrack]);
-  return (
-    
-    <div className="flex flex-col bg-slate-950 w-full h-full rounded-lg">
-      {isVideoEnabled && videoTrack? ( // i change this
-        <video
-          className="aspect-video object-cover rounded-t-lg"
-          style={{}}
-          ref={videoRef}
-          autoPlay
-          playsInline
-          muted    
-        />
-      ) : (
-        <img src={NoUserVideo} className="aspect-video object-cover rounded-t-lg" alt="No Video" />
-      )}
-
-      <div className="w-full mx-2  py-2 flex items-center justify-between">
-        {!isUser && (
-          <div className="ml-2 flex items-center space-x-4">
-            <div>
-              { !isVideoEnabled ? (
-                <FaVideoSlash
-                  color="red"
-                  className="w-6 h-auto"
-                  // Logic to toggle video track on/off
-                />
-              ) : (
-                <FaVideo
-                  color="#00A8FF"
-                  className="w-6 h-auto"
-                  // Logic to toggle video track on/off
-                />
-              )}
-            </div>
-            <div>
-              {!isAudioEnabled ? (
-                <FaMicrophoneSlash
-                  color="red"
-                  className="w-6 h-auto"
-                  // Logic to toggle audio track on/off
-                />
-              ) : (
-                <FaMicrophone
-                  color="#00A8FF"
-                  className="w-6 h-auto"
-                  // Logic to toggle audio track on/off
-                />
-              )}
-            </div>
-          </div>
-        )}
-        <div className="truncate ml-auto">
-          <h1 className="text-white text-sm mr-4 truncate">
-            {name}
-            {isUser ? ' (Anda)' : ''}
-          </h1>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function CustomAgoraLocalVideo({ audioTrack, videoTrack, isUser, name, isVideoEnabled=true, isAudioEnabled=true }) {
-
-  
-  return (
-    
-    <div className="flex flex-col bg-slate-950 w-full h-full rounded-lg">
-      {isVideoEnabled && videoTrack? ( // i change this
-        <AgoraVideoPlayer
-          className="aspect-video object-cover rounded-t-lg"
-          style={{}} 
-          videoTrack={videoTrack}  
-        />
-      ) : (
-        <img src={NoUserVideo} className="aspect-video object-cover rounded-t-lg" alt="No Video" />
-      )}
-
-      <div className="w-full mx-2  py-2 flex items-center justify-between">
-        {!isUser && (
-          <div className="ml-2 flex items-center space-x-4">
-            <div>
-              { !isVideoEnabled ? (
-                <FaVideoSlash
-                  color="red"
-                  className="w-6 h-auto"
-                  // Logic to toggle video track on/off
-                />
-              ) : (
-                <FaVideo
-                  color="#00A8FF"
-                  className="w-6 h-auto"
-                  // Logic to toggle video track on/off
-                />
-              )}
-            </div>
-            <div>
-              {!isAudioEnabled ? (
-                <FaMicrophoneSlash
-                  color="red"
-                  className="w-6 h-auto"
-                  // Logic to toggle audio track on/off
-                />
-              ) : (
-                <FaMicrophone
-                  color="#00A8FF"
-                  className="w-6 h-auto"
-                  // Logic to toggle audio track on/off
-                />
-              )}
-            </div>
-          </div>
-        )}
-        <div className="truncate ml-auto">
-          <h1 className="text-white text-sm mr-4 truncate">
-            {name}
-            {isUser ? ' (Anda)' : ''}
-          </h1>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
-function CustomFullScreenAgoraLocalVideo({ showControl= true,audioTrack, videoTrack, isUser, name, isVideoEnabled=true, isAudioEnabled=true }) {
-
-  
-  return (
-    
-    <div className="flex flex-col bg-slate-950 w-full h-full rounded-lg">
-      {isVideoEnabled && videoTrack? ( // i change this
-        <AgoraVideoPlayer
-          className="w-full h-full object-cover rounded-t-lg"
-          style={{}} 
-          videoTrack={videoTrack}  
-        />
-      ) : (
-        <img src={NoUserVideo} className="w-full h-full object-cover rounded-t-lg" alt="No Video" />
-      )}
-
-      {showControl && <div className="w-full mx-2  py-2 flex items-center justify-between">
-        {!isUser && (
-          <div className="ml-2 flex items-center space-x-4">
-            <div>
-              { !isVideoEnabled ? (
-                <FaVideoSlash
-                  color="red"
-                  className="w-6 h-auto"
-                  // Logic to toggle video track on/off
-                />
-              ) : (
-                <FaVideo
-                  color="#00A8FF"
-                  className="w-6 h-auto"
-                  // Logic to toggle video track on/off
-                />
-              )}
-            </div>
-            <div>
-              {!isAudioEnabled ? (
-                <FaMicrophoneSlash
-                  color="red"
-                  className="w-6 h-auto"
-                  // Logic to toggle audio track on/off
-                />
-              ) : (
-                <FaMicrophone
-                  color="#00A8FF"
-                  className="w-6 h-auto"
-                  // Logic to toggle audio track on/off
-                />
-              )}
-            </div>
-          </div>
-        )}
-        <div className="truncate ml-auto">
-          <h1 className="text-white text-sm mr-4 truncate">
-            {name}
-            {isUser ? ' (Anda)' : ''}
-          </h1>
-        </div>
-      </div>
-      }
-    </div>
-  );
-}
-
-
-function VideoControl({ setting, isUser = false, name = "Ucok GTA" }) {
-  
-
-  return (
-    <div className="flex flex-col  bg-slate-800 w-full h-full rounded-lg">
-      
-        {isVideoEnabled ? (
-          <video
-            muted
-            autoPlay
-            playsInline
-            ref={mediaRef}
-            className=" aspect-video object-cover"
-          />
-        ) : (
-          <img src={NoUserVideo} className="aspect-video object-cover "/>
-       
-        )}
-
-      <div className="w-full bg-slate-950 py-2 flex items-center space-x-4">
-        {!isUser && (
-          <div className="flex items-center space-x-4">
-            <div>
-              {isVideoEnabled ? (
-                <FaVideo
-                  onClick={matikanVideo}
-                  color="#00A8FF"
-                  className="w-6 h-auto"
-                />
-              ) : (
-                <FaVideoSlash
-                  onClick={hidupkanVideo}
-                  color="red"
-                  className="w-6 h-auto"
-                />
-              )}
-            </div>
-            <div>
-              {isAudioEnabled ? (
-                <FaMicrophone
-                  onClick={matikanAudio}
-                  color="#00A8FF"
-                  className="w-6 h-auto"
-                />
-              ) : (
-                <FaMicrophoneSlash
-                  onClick={hidupkanAudio}
-                  color="red"
-                  className="w-6 h-auto"
-                />
-              )}
-            </div>
-          </div>
-        )}
-        <div className="truncate ml-auto">
-          <h1 className="text-white text-sm mr-4 truncate">
-            {name}
-            {isUser ? "(Anda)" : ""}
-          </h1>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-const AccessPopUp = ({notifier=()=>{}})=>{
-  return(
-    <div className="fixed  justify-center md:top-4 top-12 w-full px-4 flex items-center text-white text-sm  py-2">
-      <div className="flex flex-col px-2 py-2 max-w-[24rem] bg-slate-800 rounded-md">
-      <h1 className=" mb-4 mx-2">
-        Izinkan kamera atau mikrofon untuk menyambungkan ke  room ini.
-      </h1>
-      <button onClick={async()=>{
-          await getPermission()
-          notifier()
-      }} className=" ml-auto px-2 py-1 bg-[#00A8FF] hover:bg-blue-800 text-black rounded-sm">
-        Izinkan
-      </button>
-      </div>
-    </div>
-  )
-}
-const getPermission = async () => {
-  
-  try{
-   // const res = await AgoraRTC.createMicrophoneAudioTrack();
-   const stream = await navigator.mediaDevices.getUserMedia({
-    video: true,
-    audio: true // Gunakan state video
-    // Gunakan state audio
-  });
-    console.log('ini berjalan?')
-  }
-  catch (error) {
-    console.log('set ulang')
-    console.log(error)
-    toast.error("DOM Exception: Permission denied by system")
-  }
-}
-
-
 const RoomScreen= ({setParticipants,loadingOverlayState,setLocalMutedParticipantsAudio,setLocalMutedParticipantsVideo,localMutedParticipantsAudio,localMutedParticipantsVideo,setUpdatePermissionStatus,setIsPermissionGranted,screenStreamSetting={},startScreenStream, stopScreenStream,isShareScreen,remoteScreenStream,screenStream,userSetting={},isPermissionGranted,unreadMessages,setUnreadMessages,me,room, onSelectChat, selectedChatValue, chatOptions,roomId ,setRoom, rtcToken, remoteStreamData = {},localStreams ,participants = []}) => {
   const [showBottomNavbar, setShowBottomNavbar] = useState(false);
   const [timeOutId, setTimeOutId] = useState(null)
@@ -1800,7 +930,7 @@ const RoomScreen= ({setParticipants,loadingOverlayState,setLocalMutedParticipant
     
     try{
      // const res = await AgoraRTC.createMicrophoneAudioTrack();
-     const stream = await navigator.mediaDevices.getUserMedia({
+     await navigator.mediaDevices.getUserMedia({
       video: false,
       audio: true // Gunakan state video
       // Gunakan state audio
@@ -2039,10 +1169,10 @@ const RoomScreen= ({setParticipants,loadingOverlayState,setLocalMutedParticipant
               isVideoEnabled = {userSetting.isVideoEnabled}
               />
             </div>}
-          {expandMiniVideo && participants.map((participant)=>{
+          {expandMiniVideo && participants.map((participant,index)=>{
             
             return (
-              <div className={` relative border-4 border-blue-700 min-w-[25vw] w-[25vw] max-w-[25vw] ${isLandscape? 'aspect-[16/9]' : 'aspect-[9/16]'}`}>
+              <div key={`mini-video-expand-${index}`} className={` relative border-4 border-blue-700 min-w-[25vw] w-[25vw] max-w-[25vw] ${isLandscape? 'aspect-[16/9]' : 'aspect-[9/16]'}`}>
             
             <div className="absolute right-1 top-1 z-10 flex">
                 {
@@ -2242,211 +1372,7 @@ const RoomScreen= ({setParticipants,loadingOverlayState,setLocalMutedParticipant
     </div>}
   </div>
 }
-const JoinBox = ({closeBox=()=>{},   submitJoin= async(username,password)=>{
-  return "success"
-} }) =>{
 
 
-  const [joinInfo, setJoinInfo] = useState({
-   'password':'',
-   'username':'',
-  })
-  const [loading, setLoading] = useState(false)
-  const updateJoinInfo = (key, value) => {
-   // Clone objek joinInfo saat ini untuk menghindari mutasi langsung
-   const updatedJoinInfo = { ...joinInfo };
- 
-   // Mengubah nilai properti yang sesuai dengan key
-   updatedJoinInfo[key] = value;
- 
-   // Menetapkan objek joinInfo yang telah diperbarui
-   setJoinInfo(updatedJoinInfo);
- };
 
-
-  return <div
-  onClick={(e)=>{
-    e.stopPropagation()
-  }}
-    className=" inline-block min-w-[20rem] max-w-[95%] align-bottom bg-slate-800 text-left z-50 shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="modal-headline"
-  >
-    {/* Tombol close di ujung kanan atas */}
-    <button
-      onClick={()=>{closeBox()}}
-      className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-6 w-6"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M6 18L18 6M6 6l12 12"
-        />
-      </svg>
-    </button>
-
-    <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-      <div className="sm:flex sm:items-start">
-        <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-          <h3
-            className="text-lg leading-6 font-medium text-gray-900 dark:text-white"
-            id="modal-headline"
-          >
-            Masuk ke Room
-          </h3>
-          <div className="mt-2">
-            <div className="mb-4">
-              <label
-                htmlFor="username"
-                className="block text-gray-700 dark:text-gray-300"
-              >
-                Display Name Kamu
-              </label>
-              <input
-                type="text"
-                name="username"
-                id="username"
-                value={joinInfo.username}
-                className="mt-1 p-2 w-full border rounded-md bg-gray-100 dark:bg-gray-700 dark:text-gray-300"
-                placeholder="Masukkan nama kamu"
-                onChange={(e)=>{ updateJoinInfo("username", e.target.value)}}
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                htmlFor="password"
-                className="block text-gray-700 dark:text-gray-300"
-              >
-                Password Room ini
-              </label>
-              <input
-                type="password"
-                name="password"
-                value={joinInfo.password}
-                id="password"
-                className="mt-1 p-2 w-full border rounded-md bg-gray-100 dark:bg-gray-700 dark:text-gray-300"
-                placeholder="Masukkan password room ini"
-                onChange={(e)=>{updateJoinInfo("password",e.target.value)}}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div className="bg-gray-100 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-      <button
-        type="button"
-        onClick={async ()=>{
-          setLoading(true)
-          const res = await submitJoin(joinInfo.username, joinInfo.password);
-          setLoading(false)
-          if(res == "success"){
-            closeBox()
-          }
-
-        }}
-        className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#00A8FF] text-base font-medium text-black hover:text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
-      >
-        {loading? <Loading/> : 'Join'}
-      </button>
-      <button
-        type="button"
-        onClick={()=>{}}
-        className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 dark:focus:ring-gray-500 sm:mt-0 sm:w-auto sm:text-sm"
-      >
-        Join as Host
-      </button>
-    </div>
-  </div>
-}   
-const DropdownChat = ({ onSelect, options=[], selectedValue, room}) => {
-  const [isOpen, setIsOpen] = useState(false);
-  console.log('ini optionnya',options)
-  console.log('ini roomnya', room)
-  //const [selectedValue, setSelectedValue] = useState(options[0].label);
-  const dropdownRef = useRef(null)
-
-  useEffect(() => {
-    // Tambahkan event listener ketika komponen sudah ter-mount
-    document.addEventListener("mousedown", handleClickOutside);
-
-    // Hapus event listener ketika komponen akan di-unmount
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const handleClickOutside = (event) => {
-    //console.log('here')
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setIsOpen(false);
-    }
-  };
-
-  return (
-    <div className="relative inline-block text-left" ref={dropdownRef}>
-      <button
-        onClick={toggleDropdown}
-        type="button"
-        className="inline-flex justify-center w-full rounded-md border border-gray-700 shadow-sm px-4 py-2 bg-gray-800 text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
-        id="options-menu"
-        aria-haspopup="true"
-        aria-expanded="true"
-      >
-        {selectedValue == 'all'? 'Semua' : room? room.participants[selectedValue].guestId.username : 'loading...'}
-        <svg
-          className="-mr-1 ml-2 h-5 w-5"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          aria-hidden="true"
-        >
-          <path
-            fillRule="evenodd"
-            d="M6.293 6.293a1 1 0 011.414 0L10 8.586l2.293-2.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
-            clipRule="evenodd"
-          />
-        </svg>
-      </button>
-
-      {isOpen && (
-        <div
-          className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5"
-          role="menu"
-          aria-orientation="vertical"
-          aria-labelledby="options-menu"
-        >
-          <div className="py-1" role="none">
-            {options.map((option) => (
-              <button
-                key={option}
-                onClick={() => {
-                  onSelect(option);
-                  setIsOpen(false)
-                }}
-                className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
-                role="menuitem"
-              >
-                {option == 'all'? 'Semua' : room? room.participants[option].guestId.username ?? 'loading...': "loading..." }
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default JoinPage;
+export default RoomPage;
