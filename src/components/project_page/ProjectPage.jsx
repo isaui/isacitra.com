@@ -1,10 +1,10 @@
-import React from "react";
+
 import { HomepageNav } from "../nav/Nav";
 import Footer from "../footer/Footer";
 import { ProjectWithVideo } from "../project/Project";
 import { CircleWithDivider } from "../divider/Divider";
 
-export default function () {
+export default function ProjectPage() {
     return <div className=" bg-slate-900">
         <div className=' min-h-screen flex justify-center items-center flex-col w-full'>
             <HomepageNav/>

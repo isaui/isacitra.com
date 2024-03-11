@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import  { useState } from "react";
 
 const certificationArray = [
     {
@@ -46,11 +45,11 @@ const CertificateContainer = ({ data }) => {
 
     return (
         <div className="">
-            <div className="mt-3 -mb-3 flex justify-center items-center">
-                <h1 className="text-white lg:text-4xl md:text-3xl text-2xl font-bold text-center"><span className="text-[#00A8FF]">Sertifikasi</span> Saya</h1>
-                <div className="ml-3">
+            <div className="mt-3 -mb-3 flex justify-center items-center px-4">
+                <h1 className="text-white md:text-6xl sm:text-5xl text-4xl font-bold text-center"><span className="text-[#00A8FF]">Sertifikasi Saya</span></h1>
+                <div className="ml-3 md:ml-6">
             <button
-                    className="px-4 py-2 text-white bg-slate-800  text-xs rounded-md hover:bg-slate-700"
+                    className="px-4 py-2 text-white bg-slate-800  text-sm rounded-md hover:bg-slate-700"
                     onClick={toggleShowAll}
                 >
                     {showAll ? 'Tampilkan Lebih Sedikit' : 'Tampilkan Semua'}
@@ -73,7 +72,6 @@ const CertificateContainer = ({ data }) => {
 }
 
 const CertificateCard = ({data}) => {
-    const navigate = useNavigate()
     return <div className=" flex-auto my-3 rounded-lg max-w-xs certificate-card w-auto flex flex-col">
              
              <div>
