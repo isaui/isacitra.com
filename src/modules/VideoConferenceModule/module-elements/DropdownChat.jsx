@@ -61,8 +61,22 @@ const DropdownChat = ({ onSelect, options=[], selectedValue, room}) => {
             aria-labelledby="options-menu"
           >
             <div className="py-1" role="none">
+              
               {options.map((option, index) => {
-                if(! room.participants[option].guestId.username){
+                if(option == 'all'){
+                 return <button
+                  key={option}
+                  onClick={() => {
+                    onSelect(option);
+                    setIsOpen(false)
+                  }}
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
+                  role="menuitem"
+                >
+                  {option == 'all'? 'Semua' : room? room.participants[option].guestId.username ?? 'loading...': "loading..." }
+                </button>
+                }
+                if(! room.participants[option].guestId && ! room.participants[option].guestId.username){
                     return <div key={`null-${index}`}></div>
                 }
                 return <button

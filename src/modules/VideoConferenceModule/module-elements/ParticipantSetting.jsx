@@ -3,9 +3,10 @@ import { AiFillMessage } from "react-icons/ai";
 import LocalSettingDropDown from "./DropdownSetting";
 import { MdMoreVert } from "react-icons/md";
 
-const ParticipantSetting = ({data, setSelectedOptionChat, openChatSidebar, participant, participants, setParticipants,
+const ParticipantSetting = ({data,room,setSelectedOptionChat, openChatSidebar, participant, participants, setParticipants,
     localMutedParticipantsAudio, localMutedParticipantsVideo,
     setLocalMutedParticipantsAudio,setLocalMutedParticipantsVideo})=>{
+      
       const [isMutedSettingOpen,setIsMutedSettingOpen] = useState(false);
       return ( 
       <div className= {` text-white text-sm w-full py-4  flex items-center`}>
@@ -17,7 +18,7 @@ const ParticipantSetting = ({data, setSelectedOptionChat, openChatSidebar, parti
         {data? data.guestId.username : '...'} 
       </h1>
       <div className="text-white bg-blue-400 px-2 py-1 rounded-md text-xs">
-        Guest
+        {room.host.guestId._id == data.guestId._id? 'Host' : 'Guest'}
       </div>
       </div>
       <div className="relative flex ml-auto mr-4 items-center space-x-2">

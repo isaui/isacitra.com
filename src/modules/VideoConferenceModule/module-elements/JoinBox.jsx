@@ -6,7 +6,7 @@ const JoinBox = ({closeBox=()=>{},   submitJoin= async(username,password)=>{
     return "success"
   } }) =>{
   
-  
+    const[isJoinAsHost, setIsJoinAsHost] = useState(false)
     const [joinInfo, setJoinInfo] = useState({
      'password':'',
      'username':'',
@@ -64,7 +64,8 @@ const JoinBox = ({closeBox=()=>{},   submitJoin= async(username,password)=>{
               Masuk ke Room
             </h3>
             <div className="mt-2">
-              <div className="mb-4">
+              {
+                !isJoinAsHost && <div className="mb-4">
                 <label
                   htmlFor="username"
                   className="block text-gray-700 dark:text-gray-300"
@@ -81,12 +82,13 @@ const JoinBox = ({closeBox=()=>{},   submitJoin= async(username,password)=>{
                   onChange={(e)=>{ updateJoinInfo("username", e.target.value)}}
                 />
               </div>
+              }
               <div className="mb-4">
                 <label
                   htmlFor="password"
                   className="block text-gray-700 dark:text-gray-300"
                 >
-                  Password Room ini
+                  {isJoinAsHost ? 'Host Key' : 'Password Room ini'}
                 </label>
                 <input
                   type="password"
@@ -94,7 +96,7 @@ const JoinBox = ({closeBox=()=>{},   submitJoin= async(username,password)=>{
                   value={joinInfo.password}
                   id="password"
                   className="mt-1 p-2 w-full border rounded-md bg-gray-100 dark:bg-gray-700 dark:text-gray-300"
-                  placeholder="Masukkan password room ini"
+                  placeholder={isJoinAsHost? 'Masukkan host key': 'Masukkan password room ini'}
                   onChange={(e)=>{updateJoinInfo("password",e.target.value)}}
                 />
               </div>
@@ -107,7 +109,7 @@ const JoinBox = ({closeBox=()=>{},   submitJoin= async(username,password)=>{
           type="button"
           onClick={async ()=>{
             setLoading(true)
-            const res = await submitJoin(joinInfo.username, joinInfo.password);
+            const res = await submitJoin(joinInfo.username, joinInfo.password, isJoinAsHost);
             setLoading(false)
             if(res == "success"){
               closeBox()
@@ -120,10 +122,12 @@ const JoinBox = ({closeBox=()=>{},   submitJoin= async(username,password)=>{
         </button>
         <button
           type="button"
-          onClick={()=>{}}
+          onClick={()=>{
+            setIsJoinAsHost(prev => !prev)
+          }}
           className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 dark:focus:ring-gray-500 sm:mt-0 sm:w-auto sm:text-sm"
         >
-          Join as Host
+         {isJoinAsHost? 'Join as Guest' : 'Join as Host'}
         </button>
       </div>
     </div>

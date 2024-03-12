@@ -696,11 +696,31 @@ const joinWithCookie = async () => {
   }
 }
 
-const submitJoin = async (username, password) =>{
+const submitJoin = async (username, password, isHost) =>{
   try {
-    if(username.trim().length == 0){
+    if(username.trim().length == 0 && !isHost){
       toast.error("Maaf nama tidak boleh kosong", {autoClose:2000})
       return "failed"
+    }
+    if(isHost){
+      const roomRequest = await axios.get(BASE_URL+'/video/'+roomId)
+      const currentRoom = roomRequest.data.room;
+      if(currentRoom){
+        if(password ==  currentRoom.hostKey){
+          const res = await axios.post(BASE_URL+'/video/addToRoom', {roomId:roomId, password: room.password, isUser:false,
+             participantId:currentRoom.host.guestId._id})
+          console.log(res);
+          Cookie.set(`room-${roomId}-session`, res.data.token)
+          setRtcToken(res.data.rtcToken)
+          setScreenRtcToken(res.data.screenRtcToken)
+          setCookie(res.data.token)
+          setScreen('room')
+          setMe(res.data.participant);
+          return 'success';
+        }
+        toast.error('Maaf, host key yang Anda masukkan tidak benar', {autoClose:2000})
+      }
+      return "failed";
     }
       const guestId = new mongoose.Types.ObjectId();
       await axios.post(BASE_URL+'/video/guest',{
@@ -715,7 +735,6 @@ const submitJoin = async (username, password) =>{
       setScreenRtcToken(res.data.screenRtcToken)
       setCookie(res.data.token)
       setScreen('room')
-    //  setRoom(res.data.room);
       setMe(res.data.participant);
       if(mediaRef){
         mediaRef.current = null // mengedit ini
@@ -1359,7 +1378,7 @@ const RoomScreen= ({setParticipants,loadingOverlayState,setLocalMutedParticipant
       </div>
       {
          <div className="relative">
-        {isReactionModalOpen && <div className="z-20 absolute bottom-16 right-2 ">
+        {isReactionModalOpen && <div className="z-50 absolute bottom-16 right-2 ">
         <ReactionPopUp setRoom={setRoom} me={me} room={room} onClose={()=>{
           setReactionModalOpen(false)
         }} />
