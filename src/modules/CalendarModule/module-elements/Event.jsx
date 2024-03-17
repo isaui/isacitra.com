@@ -22,7 +22,7 @@ const EventCard = (
             <div className="w-full text-sm text-blue-600">
                 <h1><span className="text-white">Owner: </span>{owner}</h1>
             </div>
-            {
+            { isActive &&
                 <div className="w-full flex justify-start">
                 <button onClick={()=>{
                     callback()
