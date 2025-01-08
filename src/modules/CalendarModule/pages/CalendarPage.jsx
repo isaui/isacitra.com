@@ -401,7 +401,7 @@ const CalendarPage = () => {
                 selectedSection == 'Events' && <div className="w-full flex flex-col mt-2 space-y-2">
                     {
                         Object.entries(events).length != 0 && 
-                        Object.entries(events).map(([key, value])=> {
+                        Object.entries(events).sort(([,a], [,b]) => new Date(a.startDate) - new Date(b.startDate)).map(([key, value])=> {
                             return <div key={key+'-card'} className={`flex w-full rounded-md ${selectedEvent && selectedEvent.id == key? 
                             'border-4 border-blue-800':''}`}>
                                 <EventCard  props={{
